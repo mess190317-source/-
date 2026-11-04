@@ -193,6 +193,16 @@ p{margin:0}
 .exp code{align-self:flex-start;font-size:13px;overflow-wrap:anywhere}
 .exp span{font-size:14px;color:var(--sub);line-height:1.6;padding-left:2px}
 .exp span::before{content:"→ ";color:var(--accent);font-weight:700}
+/* splash / update loading */
+#splash{position:fixed;inset:0;z-index:50;background:linear-gradient(135deg,#1A2F6E,#2C4A9A);color:#fff;display:grid;place-items:center;transition:opacity .35s ease}
+#splash.hide{opacity:0;pointer-events:none}
+.sp-in{display:flex;flex-direction:column;align-items:center;gap:18px;font-family:var(--f-ui)}
+.sp-logo{display:flex;flex-direction:column;align-items:center;line-height:1;font-weight:700;font-size:56px;letter-spacing:-.01em}
+.sp-logo span{font-size:24px;color:#FFD45C;margin-top:6px}
+.sp-spin{width:34px;height:34px;border-radius:50%;border:3.5px solid rgba(255,255,255,.25);border-top-color:#fff;animation:spin .8s linear infinite}
+.sp-msg{font-size:14px;font-weight:700;color:#DCE4FA;margin:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.sp-spin{animation-duration:2.4s}}
 /* notes */
 .points{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column}
 .points li{display:grid;grid-template-columns:auto auto minmax(0,1fr);gap:4px 10px;padding:12px 0;border-top:1px dashed var(--line);align-items:start}
@@ -280,6 +290,7 @@ ol.ilist li::before{counter-increment:s;content:counter(s);width:24px;height:24p
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
+<div id="splash" role="status" aria-live="polite"><div class="sp-in"><div class="sp-logo">DB3<span>ドリル</span></div><div class="sp-spin" aria-hidden="true"></div><p class="sp-msg">読み込み中…</p></div></div>
 <header><div class="wrap bar">
   <button class="iconbtn" id="back" type="button" aria-label="戻る"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
   <div class="ttl" id="ttl">DB3 試験ドリル</div>
@@ -833,7 +844,7 @@ const R=(l,no,q,o,e,n=1)=>add({l,k:'r',t:'c',src:no,q,o,n,e});
 R(2,1,`SELECT文のWHERE句などに、他のSELECT文の結果を利用する問い合わせを何といいますか？`,[`副問い合わせ`,`主問い合わせ`,`集合演算`,`結合`],`外側を主問い合わせ、内側を副問い合わせといいます。副問い合わせはSELECT文以外でも使えます。`);
 R(2,2,`空欄に入る組み合わせはどれですか？\n・副問い合わせと主問い合わせでは【①】が先に実行される\n・【②】の結果は【③】で利用される`,[`①副問い合わせ　②副問い合わせ　③主問い合わせ`,`①主問い合わせ　②主問い合わせ　③副問い合わせ`,`①副問い合わせ　②主問い合わせ　③副問い合わせ`,`①主問い合わせ　②副問い合わせ　③主問い合わせ`],`( ) の中から先に実行され、その結果が主問い合わせに戻されて使われます。`);
 R(2,3,`次のようなSELECT文を何といいますか？\nSELECT EMPNAME, SALARY FROM EMPLOYEE\nWHERE SALARY >= (SELECT AVG(SALARY) FROM EMPLOYEE);`,[`単一行副問い合わせ`,`複数行副問い合わせ`,`複数列副問い合わせ`,`集合演算`],`演算子が >= なので単一行副問い合わせです。複数行は IN・ANY・ALL、複数列は WHERE (job, sal) = (…) の形です。`);
-R(2,4,`問3のSQLで、副問い合わせ（内側のSELECT文）は何行返りますか？`,[`1行返る`,`複数行返る`,`構文エラーになる`,`0行返る`],`グループ関数を使い GROUP BY句がない副問い合わせは、必ず1行を返します。`);
+R(2,4,`次のSQLで、副問い合わせ（内側のSELECT文）は何行返りますか？\nSELECT EMPNAME, SALARY FROM EMPLOYEE\nWHERE SALARY >= (SELECT AVG(SALARY) FROM EMPLOYEE);`,[`1行返る`,`複数行返る`,`構文エラーになる`,`0行返る`],`グループ関数を使い GROUP BY句がない副問い合わせは、必ず1行を返します。`);
 R(2,5,`内側のSELECT文が複数行を戻す問い合わせを何といいますか？`,[`複数行副問い合わせ`,`単一行副問い合わせ`,`複数列副問い合わせ`,`主問い合わせ`],`単一行・複数行は、副問い合わせが戻す行数のことです。確実に1行という確信がなければ複数行条件を使います。`);
 R(2,6,`次の副問い合わせはエラーになります。理由を正しく説明しているものはどれですか？\nSELECT * FROM emp WHERE dept_id =\n  SELECT dept_id FROM emp WHERE ename = 'KENJI';`,[`副問い合わせ部分が ( ) で囲まれていない`,`副問い合わせで = 演算子は使えない`,`副問い合わせの中で、dept_id列ではなく ename列で条件を指定できない`,`副問い合わせと主問い合わせで同じ表は使えない`],`副問い合わせは必ず ( ) で囲み、条件の右側に置きます。`);
 R(2,7,`単一行副問い合わせで使用できる演算子を3つ選びなさい。`,[`=`,`>=`,`<>`,`IN`,`ALL`],`=、>、<、>=、<=、<> など、WHERE句で学んだ演算子が使えます。IN・ALLは複数行条件です。`,3);
@@ -856,7 +867,7 @@ R(4,1,`集合演算について正しく説明しているものはどれです�
 R(4,2,`集合Bだけに含まれる部分（Aと重なる部分を除いたB）を求める集合演算はどれですか？`,[`B MINUS A`,`A MINUS B`,`A UNION B`,`B INTERSECT A`],`BからAに含まれるデータを引くので B MINUS A。MINUSは左右を入れかえると結果が変わります。`);
 R(4,3,`A INTERSECT B を図（ベン図）で表すと、どの部分になりますか？`,[`AとBが重なっている部分`,`Aだけの部分`,`Bだけの部分`,`AとBの全体`],`INTERSECT は A と B の両方に含まれるデータだけを返します。`);
 R(4,4,`2つの集合のすべての行を、重複するデータを除いて表示する演算はどれですか？\nSELECT emp_no, empname FROM emp 【　】 SELECT emp_no, empname FROM emp2;`,[`UNION`,`UNION ALL`,`INTERSECT`,`MINUS`],`UNION は、両方に含まれる重複データを1回だけ表示します。`);
-R(4,5,`問4と同じSQLで、重複するデータも含めてすべての行を返す演算はどれですか？`,[`UNION ALL`,`UNION`,`INTERSECT`,`MINUS`],`UNION ALL は、両方に含まれるデータをデータの数だけ表示します。`);
+R(4,5,`2つの集合のすべての行を、重複するデータも含めて表示する演算はどれですか？\nSELECT emp_no, empname FROM emp 【　】 SELECT emp_no, empname FROM emp2;`,[`UNION ALL`,`UNION`,`INTERSECT`,`MINUS`],`UNION ALL は、両方に含まれるデータをデータの数だけ表示します。`);
 R(4,6,`集合演算の MINUS は、どの集合を実現しますか？`,[`差集合`,`和集合`,`共通集合`,`補集合`],`和集合＝UNION・UNION ALL、共通集合＝INTERSECT。補集合という集合演算はありません。`);
 R(4,7,`A INTERSECT B はどのような集合になりますか？`,[`集合Aにも集合Bにも含まれる行を返す`,`集合Aと集合Bの重複を除いたすべての行を返す`,`集合Aの中から集合Bに含まれる行を取り除いた行を返す`,`集合Bの中から集合Aに含まれる行を取り除いた行を返す`],`INTERSECT は共通集合（2つの集合が交差する部分）です。`);
 R(4,8,`集合演算が成立する条件として正しいものをすべて選びなさい。`,[`SELECT句で指定する列の数、データ型が一致していなければならない`,`SELECT句で指定する列名、表名は異なっていても構わない`,`SELECT句で指定する列の数、列名、データ型が一致していなければならない`,`SELECT句で指定する表が同じ表でなければならない`],`列の数とデータ型は合わせます。列名が違うときは1つ目の問合せの列名が使われます。`,2);
@@ -866,7 +877,7 @@ R(4,10,`集合演算で ORDER BY句を指定するときの規則として正し
 R(5,1,`Oracleのデータ操作言語（DML）を3つ選びなさい。`,[`INSERT`,`UPDATE`,`DELETE`,`CREATE`,`GRANT`],`DMLは INSERT・UPDATE・DELETE・MERGE・SELECT。特に左の3つはしっかり覚えましょう。`,3);
 R(5,2,`新規データを追加する文はどれですか？`,[`INSERT文`,`DELETE文`,`SELECT文`,`UPDATE文`],`追加は INSERT、変更は UPDATE、削除は DELETE です。`);
 R(5,3,`空欄に入る組み合わせはどれですか？\nINSERT 【①】 emp (empno, ename, salary)\n【②】 (1000, '鈴木', 190000);`,[`①INTO　②VALUES`,`①TO　②VALUES`,`①INTO　②VALUE`,`①FROM　②SET`],`INSERT INTO で覚えます。VALUES は VALUE の複数形なので最後は S です。`);
-R(5,4,`問3のINSERT文で、emp表に定義されていてINSERT文で指定されなかった列には、どんな値が入りますか？`,[`NULL または DEFAULT値`,`必ず 0`,`必ず空白`,`エラーになり挿入できない`],`DEFAULT値が設定されていればその値、なければNULLが入ります。`);
+R(5,4,`次のINSERT文で、emp表に定義されているがINSERT文で指定しなかった列には、どんな値が入りますか？\nINSERT INTO emp (empno, ename, salary)\nVALUES (1000, '鈴木', 190000);`,[`NULL または DEFAULT値`,`必ず 0`,`必ず空白`,`エラーになり挿入できない`],`DEFAULT値が設定されていればその値、なければNULLが入ります。`);
 R(5,5,`次のINSERT文の【　】にNULL値を挿入するには、どう書きますか？\nINSERT INTO emps (e_no, ename, hiredate)\nVALUES (10, '山崎', 【　】);`,[`NULL`,`'NULL'`,`"NULL"`,`''`],`NULL値はそのまま NULL と書きます。'NULL' や "NULL" としてはいけません。`);
 R(5,6,`次のINSERT文について正しい説明を2つ選びなさい。\nINSERT INTO dept VALUES (50, '製造', '博多');`,[`表定義で定義した順番に、VALUESの後ろで指定した値が挿入される`,`表定義の列数と合わない場合はエラーが返る`,`表名「dept」の後ろに列名を指定していないのでエラーになる`,`表定義の列数と合わない場合は、最初の3列に値が入り残りはNULLになる`],`列名を省略すると表定義の順に値が入ります。列数やデータ型が合わないとエラーです。`,2);
 R(5,7,`UPDATE文の基本構文の空欄に入る組み合わせはどれですか？\n【①】 表名 【②】 列名 = 値 WHERE 条件;`,[`①UPDATE　②SET`,`①UPDATE　②VALUES`,`①MODIFY　②SET`,`①UPDATE　②TO`],`行の指定（WHERE）は省略できますが、省略すると全行が変更されます。`);
@@ -875,7 +886,7 @@ R(5,9,`「TEST」表のある行を削除する文の空欄に入るものはど
 R(5,10,`次のDELETE文を実行した結果はどうなりますか？\nDELETE FROM employees;`,[`全ての行が削除される`,`表の定義ごと削除される`,`1行目だけ削除される`,`WHERE句がないのでエラーになる`],`WHERE句を指定しないと表内の全行が削除されます。WHERE句忘れに注意しましょう。`);
 /* 第6回 トランザクション */
 R(6,1,`データベースで同じテーブルのデータを複数のユーザーが同時に処理することを、何アクセスといいますか？`,[`マルチユーザー・アクセス`,`シングルユーザー・アクセス`,`リモート・アクセス`,`ランダム・アクセス`],`同じデータベースユーザーで複数のセッションを張ることもできます。`);
-R(6,2,`問1の状態のとき、それぞれのアクセスを区別する単位を何といいますか？`,[`セッション`,`コネクション`,`ユニット`,`ステータス`],`データベースサーバーがセッションIDなどを割り振って管理しています。`);
+R(6,2,`同じテーブルのデータを複数のユーザーが同時に処理している（マルチユーザー・アクセス）とき、それぞれのアクセスを区別する単位を何といいますか？`,[`セッション`,`コネクション`,`ユニット`,`ステータス`],`データベースサーバーがセッションIDなどを割り振って管理しています。`);
 R(6,3,`次の文の中で正しいものはどれですか？`,[`トランザクションとは、同時に確定すべき関連のある処理のまとまりの単位である`,`トランザクションとは、INSERTやUPDATEなどひとつひとつの文の単位である`,`トランザクションとは、データベースに接続してから終了するまでの単位である`,`トランザクションとは、3つか4つくらいの処理をまとめたものである`],`接続から終了までは「セッション」です。数で分けることはありません。`);
 R(6,4,`ひとつのセッションとトランザクションの関係を正しく説明しているものはどれですか？`,[`ひとつ前のトランザクションが終了したのち、次のトランザクションを開始できる`,`複数のトランザクションを並行して行うことができる`,`ひとつのトランザクションが終了すると、セッションも終了する`,`あるトランザクションの中で、他のトランザクションをネストできる`],`1つのセッションの中ではトランザクションは1つずつ。異なるセッション間なら並行できます。`);
 R(6,5,`トランザクションを確定するSQLはどれですか？`,[`COMMIT`,`CONNECT`,`COMMAND`,`ROLLBACK`],`一連の処理をまとめて確定するには COMMIT; を実行します。`);
@@ -887,7 +898,7 @@ R(6,10,`ユーザXがSELECT文を実行中に、ユーザYが関連するデー�
 /* 第7回 データベースオブジェクトと表の作成 */
 R(7,1,`表、ビュー、シノニムなど、データベース内に格納され永続化されているモノを何といいますか？`,[`データベースオブジェクト（スキーマオブジェクト）`,`データディクショナリ`,`トランザクション`,`セッション`],`CREATE文で作って永続化するものです。必ずどこかのスキーマに所属するので、スキーマオブジェクトともいいます。`);
 R(7,2,`オブジェクトの管理の単位であり、誰の持ち物かを明確にするための概念を何といいますか？`,[`スキーマ`,`アカウント`,`ログオン`,`グループ`],`オブジェクトは必ずどこかの名前空間（スキーマ）に属します。`);
-R(7,3,`問2に対して、データベースにログオンする単位・権限管理の単位という観点から呼ぶときの名称はどれですか？`,[`ユーザ`,`スキーマ`,`ロール`,`セッション`],`Oracleではユーザを作成すると同名のスキーマが自動的に作成されます。`);
+R(7,3,`オブジェクトの持ち主を表す「スキーマ」を、データベースにログオンする単位・権限管理の単位という観点から呼ぶときの名称はどれですか？`,[`ユーザ`,`スキーマ`,`ロール`,`セッション`],`Oracleではユーザを作成すると同名のスキーマが自動的に作成されます。`);
 R(7,4,`「食品表」を作成する文の空欄に入るものはどれですか？\n【　】 食品表 ( 列名 データ型, 列名 データ型 … );`,[`CREATE TABLE`,`MAKE TABLE`,`INSERT TABLE`,`NEW TABLE`],`CREATE TABLE に続けて表名、( ) の中に列名とデータ型を定義します。`);
 R(7,5,`INSERT文などで列を指定しなかったとき、自動的に指定した値を挿入するオプションはどれですか？`,[`DEFAULT`,`SYSDATE`,`DESC`,`DDL`],`列名とデータ型のあとに DEFAULT 値（式）と指定します。`);
 R(7,6,`「食品表」の定義を削除する文はどれですか？`,[`DROP TABLE 食品表;`,`DELETE TABLE 食品表;`,`TRUNCATE TABLE 食品表;`,`UPDATE TABLE 食品表;`],`DROP TABLE で表定義がデータディクショナリから削除され、データにもアクセスできなくなります。`);
@@ -944,10 +955,10 @@ R(12,1,`データベースのユーザデータが保存されているオブジ
 R(12,2,`ビューについて正しく説明しているものはどれですか？`,[`SELECT文で取り出したデータを見せる機能で、ビューを通じてデータを変更すると元表のデータが変更される`,`表の一部を取り出し、そのデータを複製して作ったものである`,`SELECT文で取り出したデータを一時的に見せる機能で、切断して再接続すると無効になる`,`ビューと表はまったく同じもので、表に別の名前をつけたものである`],`ビューの実体はSELECT文で、データディクショナリに登録されているだけです。副問合せに名前をつけて保存したようなものです。`);
 R(12,3,`ビューの効果（目的）としてふさわしくないものはどれですか？`,[`ビューを使用すると、SELECT文が速くなる`,`アプリケーション開発の上でバグが生じにくくなる`,`アクセス可能な列や行を制限し、セキュリティ効果を上げることが出来る`,`データを加工して表示できる`],`ビューを使うと遅くなることはあっても、速くなることはありません。`);
 R(12,4,`「Address」という名前でビューを作成する文の空欄に入るものはどれですか？\n【　】 SELECT文;`,[`CREATE VIEW Address AS`,`CREATE VIEW Address`,`CREATE Address VIEW AS`,`MAKE VIEW Address AS`],`SELECT文の前に CREATE VIEW を追加するだけです。AS を忘れないように。`);
-R(12,5,`問4のビューの定義を変更するとき、空欄に当てはまるキーワードはどれですか？\n【　】 Address AS SELECT文;`,[`CREATE OR REPLACE VIEW`,`ALTER VIEW`,`RENAME VIEW`,`CREATE AND REPLACE VIEW`],`OR REPLACE は初めて作成するビューで使ってもエラーになりません。`);
+R(12,5,`作成済みのビュー「Address」の定義を変更するとき、空欄に当てはまるキーワードはどれですか？\n【　】 Address AS SELECT文;`,[`CREATE OR REPLACE VIEW`,`ALTER VIEW`,`RENAME VIEW`,`CREATE AND REPLACE VIEW`],`OR REPLACE は初めて作成するビューで使ってもエラーになりません。`);
 R(12,6,`元表がなくてもビューを強制的に作成するときに使用するキーワードはどれですか？`,[`FORCE`,`FROM`,`NO FORCE`,`REPLACE`],`FORCE＝強制。表の定義がなくてもビューを作る必要があるときに使います。`);
 R(12,7,`ビューにビュー列名をつける方法として、正しいものを2つ選びなさい。`,[`ビュー名につづけて（ビュー列名, ビュー列名…）として定義する`,`ビューの元となるSELECT文において列別名をつけて定義する`,`ビュー名につづけて AS COLUMNS NAME "ビュー列名" として定義する`,`そのようなことはできない`],`SELECT文で列別名をつけた場合も、列別名がビュー列名になります。`,2);
-R(12,8,`問4のビューを削除するSQL文の空欄に入るものはどれですか？\n【　】 Address;`,[`DROP VIEW`,`DELETE VIEW`,`REMOVE VIEW`,`TRUNCATE VIEW`],`DROP はオブジェクトを削除するときに使うキーワードです。`);
+R(12,8,`ビュー「Address」を削除するSQL文の空欄に入るものはどれですか？\n【　】 Address;`,[`DROP VIEW`,`DELETE VIEW`,`REMOVE VIEW`,`TRUNCATE VIEW`],`DROP はオブジェクトを削除するときに使うキーワードです。`);
 R(12,9,`ビューを削除すると、ビューの元となる表はどうなりますか？`,[`ビューを削除しても、元表には何の影響もない`,`ビューを削除すると、同時に元表も削除される`,`元表があるときは、まず元表を消さないとビューは削除できない`,`ビューで参照されていたデータは、元表から削除される`],`表を削除してもビューは削除されませんが、そのビューを使うとコンパイルエラーになります。`);
 R(12,10,`ビューのSELECT文を確認するデータディクショナリ名と列名はどれですか？`,[`USER_VIEWS の TEXT列`,`USER_TABLES の SELECT列`,`USER_VIEWS の VIEW列`,`VIEW_TEXT の COMPILE列`],`ビューに関する情報は USER_VIEWS、元となるSELECT文は TEXT列です。`);
 /* 第13回 ビューでのデータ操作 */
@@ -963,13 +974,13 @@ R(13,9,`表を読み取り専用にするキーワードはどれですか？`,[
 R(13,10,`表を読み書き可能に戻す文の空欄に入るものはどれですか？\nALTER TABLE 表名 【　】;`,[`READ WRITE`,`WRITE ONLY`,`READ ONLY OFF`,`NO READ ONLY`],`「読み取りも書き込みも可」なので READ WRITE です。`);
 /* 第14回 索引 */
 R(14,1,`データベースでデータを素早く検索するためにつけるものを何と呼びますか？`,[`索引（INDEX）`,`ビュー`,`シノニム`,`順序`],`本の索引と同じように、データとアドレスが組になって昇順に保存されています。`);
-R(14,2,`問1がない表の場合、どのような方法でデータを検索しますか？`,[`全表走査`,`検索できない`,`索引は必ず必要であり、索引のない表はない`],`物理的に記録された順番どおり、表のはじめから最後まで検索します。`);
-R(14,3,`問1を作成すると検索が高速になる表（列）の条件はどれですか？`,[`WHERE句でひんぱんに利用される列`,`更新が多い列`,`データ量の少ない表`,`検索条件にあまり使われない列`],`ほかに「データ量の多い表」「NULLが多くNULL以外を検索する」「データのばらつきが大きい」も正解です。`);
-R(14,4,`問1を作成しない方がよい表の条件はどれですか？`,[`データ量の少ない表`,`データ量の多い表`,`WHERE句でひんぱんに利用される列`,`NULLが多く、NULL以外を検索する列`],`ほかに「検索条件にあまり使われない」「更新が多い」「式の一部として使われることが多い」も正解です。`);
+R(14,2,`索引（INDEX）がない表の場合、どのような方法でデータを検索しますか？`,[`全表走査`,`検索できない`,`索引は必ず必要であり、索引のない表はない`],`物理的に記録された順番どおり、表のはじめから最後まで検索します。`);
+R(14,3,`索引（INDEX）を作成すると検索が高速になる表（列）の条件はどれですか？`,[`WHERE句でひんぱんに利用される列`,`更新が多い列`,`データ量の少ない表`,`検索条件にあまり使われない列`],`ほかに「データ量の多い表」「NULLが多くNULL以外を検索する」「データのばらつきが大きい」も正解です。`);
+R(14,4,`索引（INDEX）を作成しない方がよい表の条件はどれですか？`,[`データ量の少ない表`,`データ量の多い表`,`WHERE句でひんぱんに利用される列`,`NULLが多く、NULL以外を検索する列`],`ほかに「検索条件にあまり使われない」「更新が多い」「式の一部として使われることが多い」も正解です。`);
 R(14,5,`制約をつけると自動的に索引が作成されるものを2つ選びなさい。`,[`PRIMARY KEY`,`UNIQUE`,`NOT NULL`,`FOREIGN KEY`,`CHECK`],`制約名と同じ名前で索引が作成されます。`,2);
 R(14,6,`制約をつけることで自動的に作成された索引の索引名はどうなりますか？`,[`制約名と同じ索引名がつく`,`制約名に関係なく SYS_INDxxxx という名前がつく`,`SYS_Cxxxx という名前がつくが、制約名とは異なる番号になる`],`CONSTRAINTで指定した制約名、指定しなければ自動の SYS_Cxxxx と同じ名前です。`);
 R(14,7,`索引名 emp_idx、表名 emps、列名 tel で索引を作成する正しい文はどれですか？`,[`CREATE INDEX emp_idx ON emps(tel);`,`CREATE INDEX emp_idx FOR emps(tel);`,`CREATE INDEX emps(tel) AS emp_idx;`,`CREATE emp_idx INDEX ON emps(tel);`],`「どの表の、どの列に」を ON 表名(列名) で指定します。`);
-R(14,8,`問7の索引を削除する正しい文はどれですか？`,[`DROP INDEX emp_idx;`,`DELETE INDEX emp_idx;`,`DROP INDEX emps(tel);`,`ALTER INDEX emp_idx DROP;`],`作成は CREATE INDEX、削除は DROP INDEX に続けて索引名を書きます。`);
+R(14,8,`emps表の tel列に作った索引 emp_idx を削除する正しい文はどれですか？`,[`DROP INDEX emp_idx;`,`DELETE INDEX emp_idx;`,`DROP INDEX emps(tel);`,`ALTER INDEX emp_idx DROP;`],`作成は CREATE INDEX、削除は DROP INDEX に続けて索引名を書きます。`);
 R(14,9,`制約をつけることで自動的に作成された索引について正しいものはどれですか？`,[`制約で自動作成された索引は、制約を削除することで削除できる`,`制約で自動作成された索引は、どうやっても削除できない`,`制約で自動作成された索引でも、DROP INDEXで削除できる`,`制約で自動作成される索引というものはない`],`制約に連動しているので、制約を削除または無効化すると索引も削除されます。`);
 R(14,10,`索引について正しい説明を2つ選びなさい。`,[`索引をつけると検索は高速になるが、挿入や更新などは遅くなることがある`,`データ量が多く該当行が全データの2〜4%未満の表には効果的だが、データ量の少ない表ではあまり効果がない`,`検索が高速になるので、表にはなるべく多くの索引をつけるべきだ`,`主キーで検索することが多いので、主キーには必ず手動で索引をつけるべきだ`],`主キーは PRIMARY KEY 制約で自動的に索引が作られるので、手動でつける必要はありません。`,2);
 /* 第15回 順序 */
@@ -985,14 +996,14 @@ R(15,9,`順序の次の番号を採番するキーワードはどれですか？
 R(15,10,`順序 SeqEmp によって直近に採番された番号を調べる正しいSELECT文はどれですか？`,[`SELECT SeqEmp.CURRVAL FROM dual;`,`SELECT SeqEmp.NEXTVAL FROM dual;`,`SELECT CURRVAL FROM SeqEmp;`,`SELECT SeqEmp.CURRVAL;`],`dual表を使ってSELECTします。同じセッションの中で先に NEXTVAL で採番している必要があります。`);
 /* 第16回 ユーザの作成 */
 R(16,1,`ユーザの作成や権限の付与、日常的な管理業務を行うときに接続するユーザはどれですか？（Oracleで最初から用意されているユーザ）`,[`SYSTEM`,`GAME`,`SCOTT`,`ORA`],`インストール直後から使える通常管理用のユーザです。`);
-R(16,2,`問1のユーザのスキーマ内に一般業務用の表を作ってはいけない理由はどれですか？`,[`管理のための表へのアクセスが遅くなるから`,`SYSTEMスキーマには表を作れないから`,`表の名前が変えられなくなるから`,`パスワードが他のユーザに見えてしまうから`],`管理者ユーザのスキーマには、データベース管理用の表がたくさん保存されています。`);
+R(16,2,`管理者ユーザ SYSTEM のスキーマ内に、一般業務用の表を作ってはいけない理由はどれですか？`,[`管理のための表へのアクセスが遅くなるから`,`SYSTEMスキーマには表を作れないから`,`表の名前が変えられなくなるから`,`パスワードが他のユーザに見えてしまうから`],`管理者ユーザのスキーマには、データベース管理用の表がたくさん保存されています。`);
 R(16,3,`ユーザ名 BRONZE、パスワード PASS でユーザを作成する正しい文はどれですか？（QUOTAは省略）`,[`CREATE USER BRONZE IDENTIFIED BY PASS;`,`CREATE USER BRONZE PASSWORD PASS;`,`CREATE USER BRONZE IDENTIFIED PASS;`,`CREATE BRONZE USER IDENTIFIED BY PASS;`],`ユーザ名とパスワードは省略できません。パスワードはユーザが接続後に変更できます。`);
 R(16,4,`ユーザ名に関する特徴を2つ選びなさい。`,[`ユーザ名はCREATE USERのときのみ指定できる`,`ユーザ名の大文字・小文字は区別されない`,`ユーザ名はALTER USER文で変更できる`,`データベース内に同じ名前のユーザを作成できる`],`ユーザ名は変更できません。ユーザ名以外の属性は ALTER USER で変更できます。`,2);
 R(16,5,`パスワードに関する特徴を2つ選びなさい。`,[`IDENTIFIED BY句で設定することができる`,`ユーザ自身によるパスワードの変更は、データベースに接続後行うことができる`,`パスワードの大文字・小文字は区別されない`,`データベースに接続前でも、ユーザ自身はパスワードを変更できる`],`接続前に自由に変更できると不正アクセスかどうかわからなくなるので、接続前の変更は不可能です。`,2);
 R(16,6,`QUOTAを省略してユーザを作成すると、どうなりますか？`,[`このユーザもDB管理者も、このユーザのスキーマにはオブジェクトを作成できない`,`このユーザのオブジェクトはSYSTEM表領域に作成される`,`このユーザは作成できないが、DB管理者はこのユーザのスキーマに作成できる`,`QUOTAを省略するとエラーになり、ユーザは作成されない`],`書き込みの割り当てがないので、どんなオブジェクトも持てません。`);
 R(16,7,`GAMEユーザのパスワードを変更できるユーザをすべて選びなさい。（SCOTTは一般ユーザ）`,[`SYSTEM`,`ユーザ自身（GAME）`,`SCOTT`,`誰も変更できない`],`パスワードを忘れたときは、SYSTEMなどの管理者に再設定してもらいます。`,2);
 R(16,8,`ユーザ名が「BRONZE」であるとき、これを削除する正しい文はどれですか？`,[`DROP USER BRONZE;`,`DELETE USER BRONZE;`,`DROP BRONZE;`,`REMOVE USER BRONZE;`],`表などのオブジェクトを持っている場合は、エラーになり削除できません。`);
-R(16,9,`問8のようなユーザを削除する文が失敗する理由を2つ選びなさい。`,[`データベースに接続中のユーザを削除しようとした`,`オブジェクトを持つユーザを削除時に、CASCADEオプションを付け忘れた`,`あらかじめユーザの持つオブジェクトを削除せずに削除しようとした`,`データベースにログインしていないユーザを削除しようとした`],`CASCADEをつければオブジェクトも同時に削除されます。先にオブジェクトを削除する必要はありません。`,2);
+R(16,9,`DROP USER BRONZE; のようなユーザを削除する文が失敗する理由を2つ選びなさい。`,[`データベースに接続中のユーザを削除しようとした`,`オブジェクトを持つユーザを削除時に、CASCADEオプションを付け忘れた`,`あらかじめユーザの持つオブジェクトを削除せずに削除しようとした`,`データベースにログインしていないユーザを削除しようとした`],`CASCADEをつければオブジェクトも同時に削除されます。先にオブジェクトを削除する必要はありません。`,2);
 R(16,10,`データベースオブジェクトの持ち主を明確にする概念を何といいますか？`,[`スキーマ`,`ロール`,`セッション`,`表領域`],`オブジェクトは必ず誰かのスキーマに所属します。適切なスキーマに分けることが望ましいです。`);
 /* 第17回 権限の管理 */
 R(17,1,`「SELECT ANY TABLE」権限について正しいものはどれですか？`,[`データベース内のすべての表を閲覧することのできる権限`,`自スキーマ内の表をすべて閲覧することのできる権限`,`自スキーマ内の表を他のスキーマがSELECTできるようにする権限`,`このような権限はない`],`ANYがつく権限は「データベース内のすべての」という意味です。`);
@@ -1027,6 +1038,39 @@ R(19,7,`SELECT文に名前をつけて、よく使うデータに簡単にアク
 R(19,8,`順序について正しく説明しているものはどれですか？`,[`表に一意な数値を登録する目的で使用するオブジェクトである`,`データの検索を素早くする目的のオブジェクトである`,`オブジェクトに別名をつけ、アクセスしやすくするためのオブジェクトである`,`SELECT文に名前をつけアクセスしやすくするためのオブジェクトである`],`主キーなどの一意なデータを簡単に生成するのが目的です。複数の表で同じ順序を共有できます。`);
 R(19,9,`ある列のデータと行のアドレスをセットで保存し、行を素早く検索するためのオブジェクトはどれですか？`,[`索引`,`シノニム`,`テーブル`,`ビュー`],`WHERE句などでよく使う列のデータを昇順に並べ、行のアドレスとともに保存します。`);
 R(19,10,`オブジェクトに別名を与え、他のデータベースユーザからもアクセスしやすくするものはどれですか？`,[`シノニム`,`ビュー`,`索引`,`ロール`],`長い名前を短くしたり、スキーマ名を入力せずにアクセスしたりできます。スキーマ名を隠すのでセキュリティも上がります。`);
+
+/* ===== アプリの版と自動更新 =====
+  公開ページ（github.io）では version.json を見て、新しい版があれば
+  問題を解いていないタイミングでローディング画面を出して自動で読み直す。
+  版を上げるときは APP_VER と version.json を同じ値にする。 */
+const APP_VER='2026-11-05.1';
+let UPD=null;
+const SAFE_VIEWS=['home','lessons','lesson','gram','test','record','setup'];
+const isPages=/\.github\.io$/.test(location.hostname);
+if(isPages&&location.search){try{history.replaceState(null,'',location.pathname)}catch(e){}}
+function splash(msg){const s=document.getElementById('splash');if(!s)return;s.querySelector('.sp-msg').textContent=msg;s.classList.remove('hide')}
+function hideSplash(){const s=document.getElementById('splash');if(s)s.classList.add('hide')}
+function checkUpdate(){
+  if(!isPages)return;
+  fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{
+    if(!j||!j.v||j.v===APP_VER)return;
+    let tried='';try{tried=sessionStorage.getItem('db3upd')||''}catch(e){}
+    if(tried===j.v)return;   /* 一度読み直しても古いまま（反映待ち）なら、くり返さない */
+    UPD=j.v;tryUpdate();
+  }).catch(()=>{});
+}
+function tryUpdate(){
+  if(!UPD||!SAFE_VIEWS.includes(view)||document.querySelector('.ov'))return;
+  try{sessionStorage.setItem('db3upd',UPD)}catch(e){}
+  splash('最新版に更新しています…');
+  setTimeout(()=>location.replace(location.pathname+'?v='+encodeURIComponent(UPD)),700);
+}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
+setInterval(checkUpdate,5*60*1000);
+
+/* ===== 問題文を直した問題は、前と同じIDを使う（記録を引き継ぐため） ===== */
+const IDFIX={"qe4ytw2": "qkp66r", "q1qym1wb": "qbm74p6", "qts8gln": "q1i4mntp", "q1nw14sp": "q1mncp88", "q1nnex8s": "q805310", "q1b4xo38": "qsm4a5h", "q1qlggxl": "q1v0y0jv", "q1padj87": "q1fmg5pz", "q1cimuga": "qdphone", "q167binf": "q9sjgy3", "q14kkqcg": "qh40x9a", "qpcdl1g": "qsedxq8", "q1leiedp": "q1o1xkph"};
+QS.forEach(q=>{if(IDFIX[q.id])q.id=IDFIX[q.id]});
 
 /* ===== 保存（このブラウザだけ） ===== */
 const KEY='db3drill.v1';
@@ -1273,6 +1317,7 @@ function go(v,o={}){
   view=v;closeModal();
   try{history[o.replace?'replaceState':'pushState']({v,l:CUR},'')}catch(e){}
   render();window.scrollTo(0,0);
+  if(UPD)setTimeout(tryUpdate,300);
 }
 window.addEventListener('popstate',e=>{const s=e.state;if(!s)return;
   view=((s.v==='quiz'||s.v==='result')&&!Z)?'home':s.v;if(s.l!=null)CUR=s.l;closeModal();render();window.scrollTo(0,0)});
@@ -1301,7 +1346,7 @@ function render(){
 
 /* ===== モーダル ===== */
 function modal(html,bind){const m=document.getElementById('modal');m.innerHTML=`<div class="ov" id="ovl"><div class="sheetm" role="dialog" aria-modal="true">${html}</div></div>`;document.getElementById('ovl').onclick=e=>{if(e.target.id==='ovl')closeModal()};bind&&bind()}
-function closeModal(){const m=document.getElementById('modal');if(m)m.innerHTML=''}
+function closeModal(){const m=document.getElementById('modal');if(m)m.innerHTML='';if(typeof UPD!=='undefined'&&UPD)setTimeout(tryUpdate,300)}
 const INTRO=[
   {t:'ようこそ！',b:`<p>DB3（データベース技術3）の試験勉強アプリです。</p><p>授業の回ごとに<b>決まった順番で進めるだけ</b>でOK。次に何をやればいいかは、ホームの<b>「つぎにやること」</b>がいつも教えてくれます。</p>`},
   {t:'1回分は4ステップ',b:`<ol class="ilist">${STEPS.map(s=>`<li><b>${s.name}</b><span>${s.desc}</span></li>`).join('')}</ol><p class="small muted">1つ終わると、次のステップに進むボタンが出ます。</p>`},
@@ -1698,7 +1743,9 @@ function renderResult(){
 }
 
 render();
+setTimeout(hideSplash,450);
 if(!S.intro)showIntro(0);
+checkUpdate();
 </script>
 
 </body></html>

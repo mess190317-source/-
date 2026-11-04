@@ -193,6 +193,16 @@ p{margin:0}
 .exp code{align-self:flex-start;font-size:13px;overflow-wrap:anywhere}
 .exp span{font-size:14px;color:var(--sub);line-height:1.6;padding-left:2px}
 .exp span::before{content:"→ ";color:var(--accent);font-weight:700}
+/* splash / update loading */
+#splash{position:fixed;inset:0;z-index:50;background:linear-gradient(135deg,#1A2F6E,#2C4A9A);color:#fff;display:grid;place-items:center;transition:opacity .35s ease}
+#splash.hide{opacity:0;pointer-events:none}
+.sp-in{display:flex;flex-direction:column;align-items:center;gap:18px;font-family:var(--f-ui)}
+.sp-logo{display:flex;flex-direction:column;align-items:center;line-height:1;font-weight:700;font-size:56px;letter-spacing:-.01em}
+.sp-logo span{font-size:24px;color:#FFD45C;margin-top:6px}
+.sp-spin{width:34px;height:34px;border-radius:50%;border:3.5px solid rgba(255,255,255,.25);border-top-color:#fff;animation:spin .8s linear infinite}
+.sp-msg{font-size:14px;font-weight:700;color:#DCE4FA;margin:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.sp-spin{animation-duration:2.4s}}
 /* notes */
 .points{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column}
 .points li{display:grid;grid-template-columns:auto auto minmax(0,1fr);gap:4px 10px;padding:12px 0;border-top:1px dashed var(--line);align-items:start}
@@ -280,6 +290,7 @@ ol.ilist li::before{counter-increment:s;content:counter(s);width:24px;height:24p
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
+<div id="splash" role="status" aria-live="polite"><div class="sp-in"><div class="sp-logo">DB3<span>ドリル</span></div><div class="sp-spin" aria-hidden="true"></div><p class="sp-msg">読み込み中…</p></div></div>
 <header><div class="wrap bar">
   <button class="iconbtn" id="back" type="button" aria-label="戻る"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
   <div class="ttl" id="ttl">DB3 試験ドリル</div>
@@ -1028,6 +1039,35 @@ R(19,8,`順序について正しく説明しているものはどれですか？
 R(19,9,`ある列のデータと行のアドレスをセットで保存し、行を素早く検索するためのオブジェクトはどれですか？`,[`索引`,`シノニム`,`テーブル`,`ビュー`],`WHERE句などでよく使う列のデータを昇順に並べ、行のアドレスとともに保存します。`);
 R(19,10,`オブジェクトに別名を与え、他のデータベースユーザからもアクセスしやすくするものはどれですか？`,[`シノニム`,`ビュー`,`索引`,`ロール`],`長い名前を短くしたり、スキーマ名を入力せずにアクセスしたりできます。スキーマ名を隠すのでセキュリティも上がります。`);
 
+/* ===== アプリの版と自動更新 =====
+  公開ページ（github.io）では version.json を見て、新しい版があれば
+  問題を解いていないタイミングでローディング画面を出して自動で読み直す。
+  版を上げるときは APP_VER と version.json を同じ値にする。 */
+const APP_VER='2026-11-05.1';
+let UPD=null;
+const SAFE_VIEWS=['home','lessons','lesson','gram','test','record','setup'];
+const isPages=/\.github\.io$/.test(location.hostname);
+if(isPages&&location.search){try{history.replaceState(null,'',location.pathname)}catch(e){}}
+function splash(msg){const s=document.getElementById('splash');if(!s)return;s.querySelector('.sp-msg').textContent=msg;s.classList.remove('hide')}
+function hideSplash(){const s=document.getElementById('splash');if(s)s.classList.add('hide')}
+function checkUpdate(){
+  if(!isPages)return;
+  fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(j=>{
+    if(!j||!j.v||j.v===APP_VER)return;
+    let tried='';try{tried=sessionStorage.getItem('db3upd')||''}catch(e){}
+    if(tried===j.v)return;   /* 一度読み直しても古いまま（反映待ち）なら、くり返さない */
+    UPD=j.v;tryUpdate();
+  }).catch(()=>{});
+}
+function tryUpdate(){
+  if(!UPD||!SAFE_VIEWS.includes(view)||document.querySelector('.ov'))return;
+  try{sessionStorage.setItem('db3upd',UPD)}catch(e){}
+  splash('最新版に更新しています…');
+  setTimeout(()=>location.replace(location.pathname+'?v='+encodeURIComponent(UPD)),700);
+}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
+setInterval(checkUpdate,5*60*1000);
+
 /* ===== 問題文を直した問題は、前と同じIDを使う（記録を引き継ぐため） ===== */
 const IDFIX={"qe4ytw2": "qkp66r", "q1qym1wb": "qbm74p6", "qts8gln": "q1i4mntp", "q1nw14sp": "q1mncp88", "q1nnex8s": "q805310", "q1b4xo38": "qsm4a5h", "q1qlggxl": "q1v0y0jv", "q1padj87": "q1fmg5pz", "q1cimuga": "qdphone", "q167binf": "q9sjgy3", "q14kkqcg": "qh40x9a", "qpcdl1g": "qsedxq8", "q1leiedp": "q1o1xkph"};
 QS.forEach(q=>{if(IDFIX[q.id])q.id=IDFIX[q.id]});
@@ -1277,6 +1317,7 @@ function go(v,o={}){
   view=v;closeModal();
   try{history[o.replace?'replaceState':'pushState']({v,l:CUR},'')}catch(e){}
   render();window.scrollTo(0,0);
+  if(UPD)setTimeout(tryUpdate,300);
 }
 window.addEventListener('popstate',e=>{const s=e.state;if(!s)return;
   view=((s.v==='quiz'||s.v==='result')&&!Z)?'home':s.v;if(s.l!=null)CUR=s.l;closeModal();render();window.scrollTo(0,0)});
@@ -1305,7 +1346,7 @@ function render(){
 
 /* ===== モーダル ===== */
 function modal(html,bind){const m=document.getElementById('modal');m.innerHTML=`<div class="ov" id="ovl"><div class="sheetm" role="dialog" aria-modal="true">${html}</div></div>`;document.getElementById('ovl').onclick=e=>{if(e.target.id==='ovl')closeModal()};bind&&bind()}
-function closeModal(){const m=document.getElementById('modal');if(m)m.innerHTML=''}
+function closeModal(){const m=document.getElementById('modal');if(m)m.innerHTML='';if(typeof UPD!=='undefined'&&UPD)setTimeout(tryUpdate,300)}
 const INTRO=[
   {t:'ようこそ！',b:`<p>DB3（データベース技術3）の試験勉強アプリです。</p><p>授業の回ごとに<b>決まった順番で進めるだけ</b>でOK。次に何をやればいいかは、ホームの<b>「つぎにやること」</b>がいつも教えてくれます。</p>`},
   {t:'1回分は4ステップ',b:`<ol class="ilist">${STEPS.map(s=>`<li><b>${s.name}</b><span>${s.desc}</span></li>`).join('')}</ol><p class="small muted">1つ終わると、次のステップに進むボタンが出ます。</p>`},
@@ -1702,7 +1743,9 @@ function renderResult(){
 }
 
 render();
+setTimeout(hideSplash,450);
 if(!S.intro)showIntro(0);
+checkUpdate();
 </script>
 
 </body></html>

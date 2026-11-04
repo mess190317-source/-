@@ -1,0 +1,1704 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>DB3 試験ドリル</title>
+<meta name="description" content="データベース技術3（Oracle SQL）の試験対策アプリ。授業ごとの4ステップ学習、文法辞典、模擬テスト50問。">
+<meta name="theme-color" content="#2C4A9A">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="DB3 試験ドリル">
+<meta property="og:title" content="DB3 試験ドリル">
+<meta property="og:description" content="授業ごとに進めるだけの試験対策アプリ。4ステップ学習・文法辞典・模擬テスト50問。">
+<meta property="og:url" content="https://mess190317-source.github.io/-/">
+<meta property="og:image" content="https://mess190317-source.github.io/-/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DB3 試験ドリル">
+<meta name="twitter:description" content="授業ごとに進めるだけの試験対策アプリ。">
+<meta name="twitter:image" content="https://mess190317-source.github.io/-/og.png">
+<link rel="icon" type="image/png" href="icon-512.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="DB3ドリル">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic:wght@400;700&family=BIZ+UDPGothic:wght@400;700&display=swap">
+<style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;padding:0}[hidden]{display:none!important}</style>
+</head>
+<body>
+<style>
+/* App shell: sticky top bar (back / title / help), bottom tab bar, fixed action bar in focus screens */
+:root{
+  --paper:#F2F4F8; --card:#FFFFFF; --ink:#1B2130; --sub:#596278; --line:#D8DDE7;
+  --accent:#2C4A9A; --accent-ink:#FFFFFF; --accent-soft:#E6EBF7;
+  --ok:#1E7A4C; --ok-soft:#E2F2E9; --ng:#C23B22; --ng-soft:#FBE7E2;
+  --sheet:#E2483A; --code-bg:#EDF0F6; --shadow:0 1px 2px rgba(27,33,48,.06),0 4px 14px rgba(27,33,48,.05);
+  --scrim:rgba(14,18,28,.48);
+  --f-ui:"BIZ UDPGothic","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",sans-serif;
+  --f-code:"BIZ UDGothic","Consolas","Menlo","MS Gothic",monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#11141B; --card:#191E29; --ink:#E5E8EF; --sub:#9BA3B7; --line:#2B3243;
+  --accent:#93AAF0; --accent-ink:#0D1120; --accent-soft:#222B44;
+  --ok:#5CC48C; --ok-soft:#163124; --ng:#F17D65; --ng-soft:#3A1D17;
+  --sheet:#C8473B; --code-bg:#141925; --shadow:none; --scrim:rgba(0,0,0,.6); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#11141B; --card:#191E29; --ink:#E5E8EF; --sub:#9BA3B7; --line:#2B3243;
+  --accent:#93AAF0; --accent-ink:#0D1120; --accent-soft:#222B44;
+  --ok:#5CC48C; --ok-soft:#163124; --ng:#F17D65; --ng-soft:#3A1D17;
+  --sheet:#C8473B; --code-bg:#141925; --shadow:none; --scrim:rgba(0,0,0,.6); color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-ui);font-size:15px;line-height:1.7;-webkit-text-size-adjust:100%}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--card)}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:720px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+/* top bar */
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border-bottom:1px solid var(--line)}
+.bar{display:grid;grid-template-columns:84px minmax(0,1fr) 84px;align-items:center;height:52px}
+.rbtns{display:flex;justify-content:flex-end;gap:2px}
+#snd[aria-pressed="false"]{color:var(--sub)}
+.ttl{text-align:center;font-weight:700;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iconbtn{width:40px;height:40px;border:0;background:transparent;border-radius:10px;display:grid;place-items:center;color:var(--accent)}
+.iconbtn:hover{background:var(--accent-soft)}
+.iconbtn svg{width:22px;height:22px}
+.iconbtn[hidden]{visibility:hidden;display:grid!important}
+/* bottom tabs */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabs .in{max-width:720px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+.tabs button{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 0 6px;font-size:11px;font-weight:700;color:var(--sub)}
+.tabs svg{width:24px;height:24px}
+.tabs button[aria-current="page"]{color:var(--accent)}
+body[data-view="quiz"] .tabs,body[data-view="note"] .tabs,body[data-view="guide"] .tabs,body[data-view="setup"] .tabs{display:none}
+/* fixed action bar */
+.actbar{position:fixed;left:0;right:0;bottom:0;z-index:7;background:var(--card);border-top:1px solid var(--line);padding:10px 0 calc(10px + env(safe-area-inset-bottom,0px))}
+.actbar .wrap{display:flex;gap:8px;align-items:center;min-height:44px}
+.actbar .grow{flex:1}
+.actbar .note{flex:1;text-align:center;color:var(--sub);font-size:13px}
+main>.wrap{padding-block:18px 108px;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{text-wrap:balance;margin:0;line-height:1.4}
+h1{font-size:22px}
+h2{font-size:17px}
+p{margin:0}
+.muted{color:var(--sub)}
+.small{font-size:13px}
+.num{font-variant-numeric:tabular-nums}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:var(--shadow)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.between{justify-content:space-between}
+.end{justify-content:flex-end}
+.btn{border:1px solid var(--line);background:var(--card);padding:10px 16px;border-radius:10px;font-weight:700;font-size:15px;line-height:1.4;min-height:44px}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--accent)}
+.btn.ghost:hover{background:var(--accent-soft)}
+.btn.big{width:100%;padding:14px 16px;font-size:16px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.label{font-size:12px;letter-spacing:.06em;color:var(--sub);font-weight:700}
+.sec-t{font-size:13px;color:var(--sub);font-weight:700;margin:6px 2px -6px}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;padding:2px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.ng{background:var(--ng-soft);color:var(--ng)}
+.pill.plain{background:var(--code-bg);color:var(--sub)}
+.hint{font-size:13px;color:var(--sub);background:var(--code-bg);border-radius:8px;padding:8px 12px;line-height:1.6}
+.bar2{height:8px;border-radius:4px;background:var(--code-bg);overflow:hidden}
+.bar2 i{display:block;height:100%;background:var(--accent);border-radius:4px}
+.bar2.ok i{background:var(--ok)}
+/* step dots */
+.dots{display:inline-flex;gap:4px;align-items:center}
+.dots i{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--ok)}
+.dots.big i{width:8px;height:8px}
+.dots.big i.on{background:var(--accent);width:22px;border-radius:4px}
+/* next-up card */
+.next{display:flex;flex-direction:column;gap:12px;border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),var(--shadow)}
+.next .where{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.next .stepname{font-size:20px;font-weight:700;line-height:1.35}
+/* stat tiles */
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.tile b{font-size:22px;font-variant-numeric:tabular-nums;line-height:1.2}
+.tile span{font-size:12px;color:var(--sub);line-height:1.4}
+/* list rows */
+.list{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}
+.nrow{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;width:100%;text-align:left;border:0;border-top:1px solid var(--line);background:transparent;padding:12px 14px;min-height:60px}
+.nrow:first-child{border-top:0}
+.nrow:hover{background:var(--accent-soft)}
+.nrow:disabled{opacity:.5;cursor:default;background:transparent}
+.nrow .ic{width:40px;height:40px;border-radius:10px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:700;font-size:15px}
+.nrow .ic svg{width:22px;height:22px}
+.nrow .ic.done{background:var(--ok);color:#fff}
+.nrow .tx{display:flex;flex-direction:column;min-width:0;line-height:1.45}
+.nrow .tx b{font-size:15px}
+.nrow .tx span{font-size:12.5px;color:var(--sub)}
+.nrow .chev{color:var(--sub);font-size:20px;line-height:1}
+.nrow .meta{display:flex;align-items:center;gap:8px;color:var(--sub);font-size:12px}
+/* lesson steps */
+.phead{display:flex;flex-direction:column;gap:6px}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.step{display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:var(--shadow)}
+.step .n{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;background:var(--code-bg);color:var(--sub)}
+.step.done .n{background:var(--ok);color:#fff}
+.step.cur{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),var(--shadow)}
+.step.cur .n{background:var(--accent);color:var(--accent-ink)}
+.step .bd{display:flex;flex-direction:column;gap:8px;min-width:0}
+.step .bd h3{font-size:16px}
+.step .bd p{font-size:13px;color:var(--sub);line-height:1.6}
+.gslide{display:flex;flex-direction:column;gap:14px}
+.gslide h2{font-size:20px}
+.gslide p{line-height:1.85}
+.tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tcap{font-size:12px;font-weight:700;color:var(--sub);margin-bottom:4px}
+.dt{border-collapse:collapse;font-family:var(--f-code);font-size:13px;min-width:100%}
+.dt th,.dt td{border:1px solid var(--line);padding:5px 9px;text-align:left;white-space:nowrap}
+.dt th{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.nul{color:var(--sub);font-style:italic;font-size:12px}
+.pre{display:flex;flex-direction:column;gap:10px;padding:14px}
+.pre .list{box-shadow:none}
+/* grammar */
+.ordercard{display:flex;flex-direction:column;gap:12px}
+.ptabs{gap:6px}
+.order{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;counter-reset:o}
+.ob{width:100%;display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px;align-items:center;text-align:left;border:1.5px dashed var(--line);background:var(--card);border-radius:10px;padding:9px 12px}
+.ob.req{border-style:solid;border-color:var(--accent);background:var(--accent-soft)}
+.ob:hover{border-color:var(--accent)}
+.ob .oi{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;background:var(--code-bg);color:var(--sub)}
+.ob.req .oi{background:var(--accent);color:var(--accent-ink)}
+.ob .ot{display:flex;flex-direction:column;min-width:0;gap:2px}
+.ob code{background:transparent;padding:0;font-size:15px;font-weight:700;color:var(--ink);overflow-wrap:anywhere}
+.ob .oy{font-size:12px;color:var(--sub);line-height:1.5}
+.ob .oy b{color:var(--accent)}
+.ob .ex{font-size:11px;font-weight:700;color:var(--sub);border:1px solid var(--line);border-radius:999px;padding:0 7px;white-space:nowrap;background:var(--card)}
+.gi{border-top:1px solid var(--line);scroll-margin-top:64px}
+.gi:first-child{border-top:0}
+.gi summary{list-style:none;cursor:pointer;display:flex;flex-direction:column;gap:2px;padding:12px 40px 12px 14px;position:relative}
+.gi summary::-webkit-details-marker{display:none}
+.gi summary::after{content:"›";position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--sub);font-size:20px;transition:transform .2s}
+.gi[open] summary::after{transform:translateY(-50%) rotate(90deg)}
+.gi summary:hover{background:var(--accent-soft)}
+.gw{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.gw code{background:transparent;padding:0;font-size:16px;font-weight:700;color:var(--accent)}
+.gy{font-size:12px;color:var(--sub);font-weight:700}
+.gm{font-size:14px}
+.gb{display:flex;flex-direction:column;gap:10px;padding:0 14px 16px}
+.gb .label{display:block;margin-bottom:4px}
+.exd{display:flex;flex-direction:column;gap:8px;border-left:3px solid var(--accent);padding-left:12px}
+.exj{font-weight:700;line-height:1.7}
+.exj .label{display:block;margin-bottom:2px}
+.exp{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.exp li{display:flex;flex-direction:column;gap:2px}
+.exp code{align-self:flex-start;font-size:13px;overflow-wrap:anywhere}
+.exp span{font-size:14px;color:var(--sub);line-height:1.6;padding-left:2px}
+.exp span::before{content:"→ ";color:var(--accent);font-weight:700}
+/* notes */
+.points{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column}
+.points li{display:grid;grid-template-columns:auto auto minmax(0,1fr);gap:4px 10px;padding:12px 0;border-top:1px dashed var(--line);align-items:start}
+.points li:first-child{border-top:0}
+.points input{width:20px;height:20px;margin:3px 0 0;accent-color:var(--ok)}
+.points .no{font-weight:700;color:var(--accent);min-width:1.3em}
+.points .qa{display:flex;flex-direction:column;gap:3px;min-width:0}
+.points .q{font-weight:700}
+.points .a{border-radius:4px;padding:1px 4px;margin-left:-4px;overflow-wrap:anywhere}
+.points li.done .q{color:var(--sub)}
+.red .a.hide{color:transparent;background:var(--sheet);cursor:pointer;user-select:none;opacity:.8}
+.red .a.hide code{color:transparent;background:transparent}
+.toggle{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--sub);cursor:pointer;min-height:36px}
+.toggle input{accent-color:var(--sheet);width:18px;height:18px}
+code,.code{font-family:var(--f-code);font-size:.92em}
+code{background:var(--code-bg);padding:0 4px;border-radius:4px}
+pre.code{background:var(--code-bg);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:0;overflow-x:auto;white-space:pre;line-height:1.6;font-size:14px}
+.blank{display:inline-block;min-width:4.5em;text-align:center;border-bottom:2px solid var(--ng);color:var(--ng);font-weight:700}
+/* quiz */
+.qprog{display:flex;align-items:center;gap:10px}
+.qprog .progress{flex:1}
+.progress{height:8px;background:var(--code-bg);border-radius:4px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--accent);transition:width .25s}
+.qbody{display:flex;flex-direction:column;gap:14px}
+.qtext{font-size:17px;font-weight:700;line-height:1.7;overflow-wrap:anywhere}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;gap:10px;align-items:flex-start;text-align:left;border:1.5px solid var(--line);background:var(--card);border-radius:10px;padding:12px 14px;line-height:1.6;min-height:48px}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt .k{font-family:var(--f-code);font-weight:700;color:var(--sub);min-width:1.3em}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.opt.right{border-color:var(--ok);background:var(--ok-soft)}
+.opt.wrong{border-color:var(--ng);background:var(--ng-soft)}
+.opt:disabled{cursor:default}
+.ans-input{width:100%;border:1.5px solid var(--line);background:var(--card);border-radius:10px;padding:12px 14px;font-size:16px}
+textarea.ans-input{font-family:var(--f-code);min-height:110px;resize:vertical;line-height:1.6}
+.ans-input:focus{border-color:var(--accent);outline:none}
+.fb{border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px;border:1px solid;scroll-margin-bottom:96px}
+.fb.ok{background:var(--ok-soft);border-color:var(--ok)}
+.fb.ng{background:var(--ng-soft);border-color:var(--ng)}
+.verdict{font-weight:700;font-size:18px;display:flex;align-items:center;gap:8px}
+.fb.ok .verdict{color:var(--ok)}
+.fb.ng .verdict{color:var(--ng)}
+.mark{font-size:26px;line-height:1}
+.fb .src{font-size:12px;color:var(--sub)}
+/* result */
+.score{display:flex;align-items:center;gap:18px}
+.ring{width:110px;height:110px;flex:none}
+.ring circle{fill:none;stroke-width:10}
+.ring .bg{stroke:var(--code-bg)}
+.ring .fg{stroke:var(--accent);stroke-linecap:round;transform:rotate(-90deg);transform-origin:50% 50%}
+.ring text{fill:var(--ink);font-weight:700;font-size:24px;font-family:var(--f-ui)}
+.score .msg{display:flex;flex-direction:column;gap:4px}
+.score .msg b{font-size:18px}
+.donebox{display:flex;gap:10px;align-items:center;background:var(--ok-soft);color:var(--ok);border-radius:10px;padding:12px 14px;font-weight:700}
+.wronglist{display:flex;flex-direction:column;gap:12px;margin:0;padding:0;list-style:none}
+.wronglist li{border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:4px}
+.wronglist li:first-child{border-top:0;padding-top:0}
+.catrows{display:flex;flex-direction:column;gap:10px}
+.catrow{display:grid;grid-template-columns:minmax(0,9em) minmax(0,1fr) auto;gap:10px;align-items:center;font-size:14px}
+/* setup */
+fieldset{border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+legend{padding:0;margin-bottom:8px}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;color:var(--sub);min-height:36px}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.mini{border:1px solid var(--line);background:transparent;border-radius:8px;padding:4px 10px;font-size:13px;font-weight:700;color:var(--accent)}
+/* modal */
+.ov{position:fixed;inset:0;background:var(--scrim);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheetm{background:var(--card);width:100%;max-width:520px;border-radius:18px 18px 0 0;padding:22px 20px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px;max-height:90vh;overflow:auto}
+@media (min-width:621px){.ov{align-items:center}.sheetm{border-radius:18px}}
+.ibody{display:flex;flex-direction:column;gap:10px;font-size:15px}
+.ilist{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;counter-reset:s}
+.ilist li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:2px 10px;align-items:start;background:var(--code-bg);border-radius:10px;padding:10px 12px}
+.ilist li::before{content:"•";grid-row:span 2;color:var(--accent);font-weight:700;text-align:center}
+ol.ilist li::before{counter-increment:s;content:counter(s);width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:13px}
+.ilist b{font-size:15px}
+.ilist span{font-size:13px;color:var(--sub);line-height:1.55}
+@media (max-width:620px){
+  body{font-size:16px}
+  main>.wrap{padding-block:14px 104px;gap:14px}
+  h1{font-size:20px}
+  .card{padding:15px}
+  .catrow{grid-template-columns:minmax(0,7.5em) minmax(0,1fr) auto}
+  .ring{width:92px;height:92px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header><div class="wrap bar">
+  <button class="iconbtn" id="back" type="button" aria-label="戻る"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+  <div class="ttl" id="ttl">DB3 試験ドリル</div>
+  <div class="rbtns"><button class="iconbtn" id="snd" type="button" aria-label="効果音" aria-pressed="true"></button>
+  <button class="iconbtn" id="help" type="button" aria-label="使い方"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M9.6 9.2a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.6"/><path d="M12 17h.01"/></svg></button></div>
+</div></header>
+<main><div class="wrap" id="app"></div></main>
+<nav class="tabs" aria-label="メニュー"><div class="in">
+  <button type="button" data-tab="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3.5 10.5 12 4l8.5 6.5V20H15v-5.5H9V20H3.5z"/></svg>ホーム</button>
+  <button type="button" data-tab="lessons"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19v-3"/><path d="M9 7.5h6"/></svg>授業</button>
+  <button type="button" data-tab="gram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5a2 2 0 0 1 2-2h14v14H6a2 2 0 0 0-2 2 2 2 0 0 0 2 2h14"/><path d="m9 13 2.5-6 2.5 6M10 11h3"/></svg>文法</button>
+  <button type="button" data-tab="test"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><rect x="4" y="3.5" width="16" height="17" rx="2"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>テスト</button>
+  <button type="button" data-tab="record"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 20v-7M12 20V5M18 20v-10M3.5 20h17"/></svg>記録</button>
+</div></nav>
+<div id="modal"></div>
+
+<script>
+/* ===== 分野と授業回 ===== */
+const CATS=[
+  {id:1,name:'副問い合わせ',n:9,ls:[2,3]},
+  {id:2,name:'集合演算',n:6,ls:[4]},
+  {id:3,name:'DML',n:6,ls:[5]},
+  {id:4,name:'トランザクション',n:3,ls:[6]},
+  {id:5,name:'テーブル作成・データ型',n:8,ls:[7,8]},
+  {id:6,name:'制約',n:7,ls:[9,10,11]},
+  {id:7,name:'その他のオブジェクト',n:7,ls:[12,13,14,15,19]},
+  {id:8,name:'ユーザー作成と権限',n:4,ls:[16,17,18]}
+];
+const LT={2:'単一行副問い合わせ',3:'複数行副問い合わせ',4:'集合演算',5:'データ操作言語',6:'トランザクション',7:'データベースオブジェクトと表の作成',8:'表の作成とデータ型',9:'エンティティ整合性制約の種類',10:'参照整合性制約',11:'表レベルでの制約の定義',12:'ビューの作成',13:'ビューでのデータ操作',14:'索引',15:'順序',16:'ユーザの作成',17:'権限の管理',18:'ロールの管理',19:'シノニム'};
+const L2C={};CATS.forEach(c=>c.ls.forEach(l=>L2C[l]=c.id));
+const KINDS={p:'シート内容チェック',r:'カルテ',s:'授業シート問題',k:'コードの単語',d:'記述'};
+const CIRC='①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮';
+
+/* ===== 復習ノート（授業シートのキーポイント） ===== */
+const NOTES={
+2:[[`副問い合わせ（サブクエリー）とは？`,`他のSQLに埋め込まれた（ネストした）SELECT文。主問い合わせの前に一度だけ実行される`],
+[`主問い合わせ／副問い合わせ`,`外側のSELECT文＝主問い合わせ、内側のSELECT文＝副問い合わせ`],
+[`副問い合わせを使える場所`,`SELECT文のFROM句・WHERE句・HAVING句、INSERT文のVALUES句、UPDATE文のSET句・WHERE句、DELETE文のWHERE句など`],
+[`単一行副問い合わせ`,`副問い合わせが結果を1行だけ返す　例）WHERE 列名 = (SELECT …)`],
+[`複数行副問い合わせ`,`副問い合わせが結果を複数行返す（1行でもよい）　例）WHERE 列名 IN (SELECT …)`],
+[`副問い合わせのガイドライン`,`( )で囲む／比較条件の右側に置く／複数行副問い合わせには複数行条件を使う`],
+[`単一行条件`,`=、>、>=、<、<=、<> など`],
+[`単一行条件で、副問い合わせが複数行を返すと？`,`エラーになる（「単一行副問い合わせにより2つ以上の行が戻されます」）`],
+[`複数行条件で、副問い合わせが1行だけ返すと？`,`エラーにならない。わからないときは複数行条件を使う`],
+[`副問い合わせが1行も返さないと？`,`NULLを返す → = NULL と同じでtrueにならず、主問い合わせは「行が選択されていません」。エラーではない`],
+[`グループ関数＋GROUP BYなし`,`副問い合わせは必ず1行を返す（単一行副問い合わせ）`],
+[`複数列副問い合わせ`,`WHERE (job, sal) = (SELECT job, sal FROM emp …) のように複数列を一度に比べる`]],
+3:[[`複数行条件`,`IN、ANY、ALL（ANY・ALLは単一行条件と組み合わせて使う。単独では使えない）`],
+[`IN／NOT IN`,`IN＝戻された値のいずれかと等しい／NOT IN＝いずれとも等しくない`],
+[`NOT INの結果にNULLが含まれると？`,`NOT INは比較のAND。<> NULL が1つでもあると文全体は決してtrueにならない → 0行`],
+[`ANYとは`,`「どれか」。戻された値との比較をORで結んだもの`],
+[`> ANY／< ANY`,`> ANY＝最小値より大きい／< ANY＝最大値より小さい`],
+[`= ANY`,`INと同じ`],
+[`ALLとは`,`「すべて」。戻された値との比較をANDで結んだもの`],
+[`> ALL／< ALL`,`> ALL＝最大値より大きい／< ALL＝最小値より小さい`],
+[`<> ALL`,`NOT INと同じ`],
+[`使わない条件`,`<> ANY（何でもOKになってしまう）、= ALL（ありえない条件）`]],
+4:[[`集合演算とは`,`列の数・データ型が一致している複数のSELECT文を組み合わせて、和・差・積を求める演算（複合問合せともいう）`],
+[`集合演算の種類`,`UNION、UNION ALL、MINUS、INTERSECT`],
+[`UNION`,`和集合：どちらかに存在するすべての行（重複は1回だけ）`],
+[`UNION ALL`,`重複するデータもすべて表示する（2重に表示）`],
+[`MINUS`,`差集合：左側の結果から右側の結果を取り除いた行（引かれる集合を左、引く集合を右）`],
+[`INTERSECT`,`共通集合：両方に存在する行`],
+[`成立する条件`,`列の数が同じ、データ型に互換性がある（列名は違ってよい。結果の列名は1つ目のSELECT文のもの）`],
+[`自動ソート`,`ORDER BYがない場合、第1問合せの第1列でソート（重複を調べるため。UNION ALL以外）。UNION ALLは第1問合せの結果のあとに第2問合せ`],
+[`手動ソート`,`ORDER BY句は最後のSELECT文の文末に1度だけ。列名は1つ目のSELECT文の列名（列別名）に合わせる`],
+[`豆知識`,`商は実装されていない。補集合もない。21c以降はMINUSのかわりにEXCEPTも使える`]],
+5:[[`DML（データ操作言語）の種類`,`INSERT、UPDATE、DELETE、SELECT、MERGE`],
+[`INSERT文の基本構文(1)`,`INSERT INTO 表名 (列名1, 列名2…) VALUES (値1, 値2…);`],
+[`列名リストにない列に入る値`,`DEFAULT値が設定されていればその値、なければNULL`],
+[`NULL値・DEFAULT値の明示的な挿入`,`VALUES (NULL, DEFAULT …)　※ 'NULL' としない`],
+[`INSERT文の基本構文(2)`,`INSERT INTO 表名 VALUES (値1, 値2…);`],
+[`(2)の値リストのルール`,`DESCで表示される順番どおりに、すべての列の値を指定する（列数や型が合わないとエラー）`],
+[`UPDATE文`,`UPDATE 表名 SET 列名 = 値 WHERE 条件;`],
+[`複数列の更新`,`SET 列1 = 値1, 列2 = 値2（カンマで区切る。ANDは×）`],
+[`DELETE文`,`DELETE FROM 表名 WHERE 条件;（列名や*は書かない。行単位で削除）`],
+[`WHERE句をつけないと？`,`UPDATE＝すべての行の列値が同じ値に／DELETE＝全行消える`]],
+6:[[`マルチユーザー・アクセス`,`同じデータベースユーザーで複数の接続を作り、同時にアクセスできる`],
+[`セッション`,`複数の接続を区別する単位。データベースに接続してから切断するまでの一連の処理`],
+[`トランザクション`,`同時に確定しないと不整合が起こる、関連のあるINSERT・UPDATE・DELETEなどの処理の集まり`],
+[`セッションとトランザクション`,`1つのセッションではトランザクションは1つずつ。異なるセッションでは並行して実行される`],
+[`COMMIT`,`トランザクションを確定する（コミットからコミットまでが1つのトランザクション）`],
+[`ROLLBACK`,`トランザクションを取り消す（前回のコミット時、またはセーブポイントまで戻る）`],
+[`SAVEPOINT`,`SAVEPOINT 名前; でロールバック時に戻る位置を保存（ROLLBACK TO 名前;）。セーブポイントではトランザクションは終了しない`],
+[`正常終了と暗黙のコミット`,`COMMIT・ROLLBACKの発行、DDL・DCLの実行（直前のトランザクションを暗黙的にコミット）、正常な切断`],
+[`異常終了と暗黙のロールバック`,`マシン障害・ネットワーク障害・サーバーダウンなどの異常切断 → 暗黙的にロールバック`],
+[`読み取り一貫性`,`SELECT文の実行中に他のユーザーがデータを変更しても、SELECT文が終わるまでは変更前のデータを参照する`],
+[`ロック（テキスト）`,`変更中の行には排他ロックがかかる。SELECT … FOR UPDATE [NOWAIT | WAIT n] でも行をロックできる`]],
+7:[[`データベースオブジェクト`,`表、ビュー、順序、索引、シノニムなど（スキーマオブジェクトともいう）`],
+[`スキーマとは？`,`オブジェクトの持ち主。オブジェクトが属する名前空間。オブジェクトは必ずどこかのスキーマに所属する`],
+[`ユーザとは？`,`権限や制限などのアクセス権を管理する単位。Oracleではユーザごとに同名のスキーマを持つ`],
+[`表の作成（DDL）`,`CREATE TABLE 表名 ( 列名 データ型 [制約], 列名 データ型 [制約] … );`],
+[`既定値の指定`,`DEFAULTオプション　例）loc VARCHAR2(10) DEFAULT '東京'`],
+[`表の削除（DDL）`,`DROP TABLE 表名;（表定義を削除）`],
+[`表を確認するコマンド`,`DESCコマンド　例）DESC emp（SQL*Plusのコマンドなので ; はいらない）`],
+[`文字型`,`VARCHAR2(バイト数)（VARCHARは古い型なので使わない）`],
+[`数値型（整数）`,`NUMBER(p)　pは10進数での桁数（値の範囲ではない）`],
+[`日付型`,`DATE（年・月・日・時・分・秒）。7バイト固定なので長さは指定しない`]],
+8:[[`可変長文字型`,`VARCHAR2(バイト数)　最大4000バイト`],
+[`固定長文字型`,`CHAR(バイト数)　最大2000バイト。未使用部分は空白で埋める`],
+[`固定小数点数`,`NUMBER(p, s)　pは全体の桁数、sは小数点以下の桁数`],
+[`整数`,`NUMBER(p)　sを省略すると小数部は保持されない`],
+[`浮動小数点数`,`NUMBER　有効桁数38桁`],
+[`日付型`,`DATE　7バイト固定（DATAではない）`],
+[`表定義を削除`,`DROP TABLE 表名;　DDL（ロールバックできない）`],
+[`データのみ高速に削除`,`TRUNCATE TABLE 表名;　DDL（ロールバックできない）。表の切り捨て`],
+[`通常のデータの削除`,`DELETE FROM 表名 [WHERE 条件];　DML（ロールバックできる・特定の行だけ削除できる）`],
+[`命名規則（テキスト）`,`使える文字はA〜Z・a〜z・0〜9・_・$・#。最初の文字は英字。128バイト以内（12c R1までは30）。予約語は不可。大文字小文字は区別しない`],
+[`副問い合わせで表を作る（テキスト）`,`CREATE TABLE 新しい表 AS SELECT文;　コピーされるのは列名・データ型・NOT NULL制約・データ`]],
+9:[[`制約とは？`,`不整合なデータが入らないように一定の制限をつけ、データの整合性を保つ`],
+[`データ単体の整合性制約`,`エンティティ整合性制約（PRIMARY KEY、UNIQUE、NOT NULL、CHECK）`],
+[`データとデータの関係の整合性制約`,`参照整合性制約（FOREIGN KEY制約ともいう）`],
+[`主キー制約（PRIMARY KEY）`,`重複しない・NULL値を許可しない・表の中に1つだけ定義できる`],
+[`一意キー制約（UNIQUE）`,`重複しない（NULLはあってもよい）。表に複数設定できる`],
+[`NOT NULL制約`,`NULL値を許可しない`],
+[`CHECK制約`,`自由な条件で制約をかける　例）「20以上50未満」「りんご、みかん、バナナのどれか」`],
+[`列レベルでの制約構文`,`列名 データ型 PRIMARY KEY,（列の定義時に、その列の属性として定義）`],
+[`制約名をつける`,`列名 データ型 CONSTRAINT 制約名 PRIMARY KEY,`],
+[`制約名とは？`,`エラーメッセージに表示されるなど、後から制約を特定するのに必要。CONSTRAINT句がないと SYS_Cxxxxx という名前が自動でつく`],
+[`ORA-00001`,`一意制約に反している → すでにあるデータを入れようとした`]],
+10:[[`参照整合性制約の効果`,`2つの表の間にデータの参照関係がある場合、その参照関係が崩れないようにする`],
+[`参照元の表`,`親表（他の表でも同じ表でもよい）`],
+[`参照される列`,`親キー列（PRIMARY KEY制約かUNIQUE制約をつける）`],
+[`参照する方の表`,`子表（依存表ともいう）`],
+[`参照する列`,`外部キー（外部にキーを持つという意味）`],
+[`表を作成するとき`,`親表から先に作成する（親キー列がないと参照整合性制約を定義できない）`],
+[`表を削除するとき`,`子表から先に削除する（参照している表がある間は親表を削除できない。CASCADE CONSTRAINTS句なら削除できる）`],
+[`外部キー列にデータを入れるとき`,`親キー列に存在しないデータを外部キー列に入力・更新できない`],
+[`親キー列を変更・削除するとき`,`外部キーに参照されている親キーの値は更新・削除できない`],
+[`列レベル制約構文`,`列名 データ型 CONSTRAINT 制約名 REFERENCES 親表名(親キー列名)`],
+[`ON DELETE（テキスト）`,`ON DELETE CASCADE＝親の行を消すと子の行も削除／ON DELETE SET NULL＝子の外部キーをNULLに`]],
+11:[[`表レベルでの定義`,`( )の中で列の定義をすべて書いた後に、制約ごとにカンマを打って定義する`],
+[`主キー制約（表レベル）`,`CONSTRAINT 制約名 PRIMARY KEY(pid)`],
+[`一意制約（表レベル）`,`CONSTRAINT 制約名 UNIQUE(pname)`],
+[`チェック制約`,`CONSTRAINT 制約名 CHECK(price >= 1000)（表レベルと列レベルで書き方に違いはない）`],
+[`外部キー制約（表レベル）`,`CONSTRAINT 制約名 FOREIGN KEY(pid) REFERENCES products(pid)（FOREIGN KEYは外部キー列、REFERENCESは親表と親キー列）`],
+[`外部キー制約（列レベル）`,`CONSTRAINT 制約名 REFERENCES products(pid)（列レベルではFOREIGN KEYは書かない）`],
+[`表レベルが必要なケース`,`複数列のグループに制約を定義する場合（複合主キー、複合一意キー、複合外部キーなど）`],
+[`複合主キーの例`,`CONSTRAINT 制約名 PRIMARY KEY(sid, did)（sidとdidの組み合わせで主キー）`],
+[`CHECK制約で他の列を参照する`,`表レベルで定義する　例）CHECK(hp >= pp)、CHECK(hp + pp <= 3000)`],
+[`NOT NULL制約`,`列レベルでのみ定義できる。DEFAULTとNOT NULLではDEFAULTが先　例）loc VARCHAR2(10) DEFAULT '東京' NOT NULL`]],
+12:[[`データの保存先`,`表（テーブル）。コンピュータが正しく管理しやすいように設計する`],
+[`ビュー（VIEW）とは`,`SELECT文に名前をつけたもの。データは参照元の表にあり、ビューの実体はSELECT文`],
+[`ビューの目的`,`セキュリティの向上、データアクセスの簡素化、データの加工、データの独立性（速くはならない）`],
+[`ビューを作成する`,`CREATE VIEW ビュー名 AS SELECT文;`],
+[`ビューの置換`,`CREATE OR REPLACE VIEW ビュー名 AS SELECT文;`],
+[`元表がなくても作成する`,`CREATE FORCE VIEW ビュー名 AS SELECT文;`],
+[`ビュー列名`,`CREATE VIEW ビュー名(列名, 列名…) AS SELECT文;（SELECT文で列別名をつけてもよい）`],
+[`ビューを削除する`,`DROP VIEW ビュー名;（元表は影響を受けない）`],
+[`元表を削除すると？`,`ビューは残るが、使うとコンパイルエラーになる`],
+[`ビューのSELECT文の確認`,`データディクショナリ USER_VIEWS の TEXT列`]],
+13:[[`ビューを通じたDML`,`元表のデータが変更される。問題なく実行できるのは単一ビュー（関数・式・グループ化を含まない）`],
+[`グループ関数・GROUP BY・DISTINCTのあるビュー`,`INSERT・UPDATE・DELETEすべてできない（結合ビューも同じ）`],
+[`関数や式で加工された列`,`その列へのINSERT・UPDATEはできない。DELETEは行全体なので可能`],
+[`元表のNOT NULL列がビューにない`,`ビューを通じたINSERTができない（制約違反）`],
+[`関数や式で加工した列を定義するとき`,`ビュー列名をつける`],
+[`複合ビュー`,`複数の表を結合したビュー、SQL関数や式を含むビュー。DML操作が制限される`],
+[`ビューを使ったセキュリティ`,`元表への権限は与えず、ビューにだけ権限を与える → ビューに含まれない列や行を隠せる`],
+[`ビューへのDMLを禁止`,`WITH READ ONLY（文の最後につける）`],
+[`行の更新・挿入に条件をつける`,`WITH CHECK OPTION　例）WHERE dno = 20 WITH CHECK OPTION`],
+[`表を読み取り専用にする／戻す`,`ALTER TABLE 表名 READ ONLY;　／　ALTER TABLE 表名 READ WRITE;`]],
+14:[[`索引（INDEX）とは？`,`目的のデータをすばやく取り出すもの。本の索引と同じ働き`],
+[`索引のない表の検索`,`全表走査（頭から順番に最後まで探す）`],
+[`索引を作成した方がよい場合`,`WHERE句でひんぱんに使われる、広い範囲の値を取る、データ量が多く該当行が2〜4%未満、NULLが多くNULL以外を検索する`],
+[`索引を作成しない方がよい場合`,`表が小さい、更新が多い、問い合わせの条件にあまり使われない、式の一部として参照される`],
+[`索引の効果と注意`,`検索は速くなるが、INSERT・UPDATE・DELETEは遅くなる`],
+[`自動的に作成される索引`,`PRIMARY KEY制約、UNIQUE制約をつけると作成される`],
+[`自動作成の索引名`,`制約名と同じ名前（制約名を省略するとSYS_Cxxxx）`],
+[`手動で索引を作成`,`CREATE INDEX 索引名 ON 表名(列名);`],
+[`手動索引を削除`,`DROP INDEX 索引名;`],
+[`自動作成の索引を削除`,`制約を削除すると索引も削除される（DROP INDEXでは削除できない）`]],
+15:[[`順序（SEQUENCE）とは？`,`重複しない一意な番号を自動生成するオブジェクト。表とは関連づけられていない`],
+[`順序の作成`,`CREATE SEQUENCE 順序名 …;`],
+[`増分・初期値`,`INCREMENT BY n（既定1、負数で降順）／START WITH n（既定1）`],
+[`最大値・最小値`,`MAXVALUE n | NOMAXVALUE（既定NOMAXVALUE）／MINVALUE n | NOMINVALUE（既定NOMINVALUE、昇順では1）`],
+[`循環・キャッシュ`,`CYCLE | NOCYCLE（既定NOCYCLE）／CACHE n | NOCACHE（既定CACHE 20）`],
+[`順序の変更`,`ALTER SEQUENCE 順序名 …;（START WITH以外のオプション値を変更できる）`],
+[`順序の削除`,`DROP SEQUENCE 順序名;`],
+[`順序の確認`,`データディクショナリ USER_SEQUENCES`],
+[`次の番号を採番`,`順序名.NEXTVAL（INSERT文の中で使う）`],
+[`最近採番された値`,`順序名.CURRVAL → SELECT 順序名.CURRVAL FROM dual;（同じセッションで先にNEXTVALが必要）`],
+[`欠番`,`複数の表で同じ順序を使うと、それぞれの表で欠番が生じることがある`]],
+16:[[`データベース管理者`,`SYSTEM（日常的な管理業務）。ユーザ作成、権限付与、表領域の作成など`],
+[`一般ユーザ`,`業務ごとに作成する。業務で使う表はSYSTEMスキーマに作ってはいけない（管理用の表へのアクセスに影響する）`],
+[`ユーザ作成の基本構文`,`CREATE USER ユーザ名 IDENTIFIED BY パスワード;（ユーザ名とパスワードは省略できない）`],
+[`ユーザ名の特徴`,`変更できない／大文字・小文字は区別されない／データベース内で一意`],
+[`パスワードの特徴`,`大文字・小文字を区別する／ユーザ自身が（接続後に）変更できる`],
+[`QUOTA`,`QUOTA サイズ ON 表領域名　例）QUOTA UNLIMITED ON USERS。設定しないとスキーマ内に表などを作れない`],
+[`ユーザの変更`,`ALTER USER ユーザ名 IDENTIFIED BY パスワード;（管理者はユーザ名以外の属性を変更できる）`],
+[`ユーザの削除`,`DROP USER ユーザ名;　オブジェクトを持つ場合は DROP USER ユーザ名 CASCADE;`],
+[`DROP USERが失敗するとき`,`CASCADEオプションを付け忘れた／接続中のユーザを削除しようとした`],
+[`なぜスキーマが必要？`,`業務ごとにアクセスするデータが異なり、データの保護や管理責任を明確にするため`]],
+17:[[`システム権限`,`データベースに対してどのような権限を持つか　例）CREATE SESSION、CREATE TABLE、DROP ANY TABLE、CREATE USER、SELECT ANY TABLE`],
+[`オブジェクト権限`,`他のスキーマオブジェクトに対する権限　例）SELECT、INSERT、UPDATE、DELETE、ALTER、INDEX、REFERENCES、EXECUTE、ALL`],
+[`ロール`,`権限をグループ化してまとめて管理するもの。CONNECT（エンドユーザ用）、RESOURCE（開発者用）、DBA（管理者用）`],
+[`ANYのつく権限`,`「データベース内のすべての」という意味。SELECT ANY TABLE＝すべての表をSELECTできる`],
+[`システム権限を与える（DCL）`,`GRANT 権限名 TO ユーザ名;`],
+[`システム権限を剥奪する（DCL）`,`REVOKE 権限名 FROM ユーザ名;`],
+[`複数の権限・複数のユーザ`,`GRANT 権限名, 権限名 TO ユーザ名, ユーザ名;（カンマで区切る）`],
+[`オブジェクト権限を与える`,`GRANT 権限名 [, 権限名] ON オブジェクト名 TO ユーザ名 [, ユーザ名];`],
+[`すべてのオブジェクト権限`,`GRANT ALL ON オブジェクト名 TO ユーザ名;（複数のオブジェクトに同時に付与はできない）`],
+[`オブジェクト権限を剥奪する`,`REVOKE 権限名, 権限名 ON オブジェクト名 FROM ユーザ名;`]],
+18:[[`定義済みロール`,`CONNECT（エンドユーザ用：CREATE SESSION権限のみ）、RESOURCE（アプリ開発者）、DBA（データベース管理者）`],
+[`新しいロールの作成`,`CREATE ROLE ロール名;`],
+[`ロールへ権限を付与`,`GRANT 権限名 TO ロール名;　／　GRANT 権限名 ON オブジェクト名 TO ロール名;`],
+[`ロールから権限を取消`,`REVOKE 権限名 FROM ロール名;　／　REVOKE 権限名 ON オブジェクト名 FROM ロール名;`],
+[`ユーザへロールを付与・取消`,`GRANT ロール名 TO ユーザ名;　／　REVOKE ロール名 FROM ユーザ名;`],
+[`混在して付与`,`GRANT システム権限名, ロール名 TO ユーザ名, ロール名;（ロールにロールも与えられる）`],
+[`システム権限・ロールを調べる`,`SESSION_PRIVS（ロール経由も含む）、USER_SYS_PRIVS（直接与えられたシステム権限）、SESSION_ROLES（与えられたロール）`],
+[`オブジェクト権限を調べる`,`USER_TAB_PRIVS_MADE（自分が与えた）、USER_TAB_PRIVS_RECD（人から与えられた）`],
+[`WITH ADMIN OPTION（システム権限）`,`行使したユーザの権限が取り消されても、それで与えられたユーザの権限は消えない`],
+[`WITH GRANT OPTION（オブジェクト権限）`,`行使したユーザの権限が取り消されると、カスケードして取り消される`]],
+19:[[`プライベートシノニム`,`作成したユーザのみアクセスできる。作成したスキーマ内に作られ、スキーマ内でユニークな名前（表と同じ名前も不可）`],
+[`プライベートシノニムの作成`,`CREATE SYNONYM シノニム名 FOR 表名;`],
+[`パブリックシノニム`,`データベースの全ユーザがアクセスできる。PUBLICスキーマ内に作られ、データベース全体でユニークな名前`],
+[`パブリックシノニムの作成`,`CREATE PUBLIC SYNONYM シノニム名 FOR 表名;`],
+[`シノニムの削除`,`DROP [PUBLIC] SYNONYM シノニム名;`],
+[`TABLE（表）`,`データを格納するための構造。格納されたデータの実体（実表）`],
+[`VIEW（ビュー）`,`仮想表。SELECT文に名前をつけて保存したもの。列の制限、問合せの簡素化、データの独立性、WITH CHECK OPTION / WITH READ ONLY`],
+[`SEQUENCE（順序）`,`一意な番号を生成する。主キー列のデータを入力するのが主な目的`],
+[`INDEX（索引）`,`表を高速に検索するためのもの（データへのポインタ）。INSERT・UPDATE・DELETEは遅くなる`],
+[`SYNONYM（シノニム）`,`表やビューにつける別名。長い名前を短くする、スキーマ名を隠してセキュリティ効果`]]
+};
+
+/* ===== 問題 =====
+  C(回, 出典, 問題, [選択肢…], 解説, 正解数)  … 選択肢は先頭から「正解数」個が正解（表示時にシャッフル）
+  W(回, 出典, 問題, '正解|別解', 解説)        … 単語記述
+  K(回, コード, 問題, '正解|別解', 解説)       … コードの穴埋め（___ が空欄）
+  D(回, 問題, '模範解答|別解', 解説)           … SQL記述                                  */
+const QS=[];
+function add(o){o.c=L2C[o.l];let h=5381;const s=(o.k==='r'||o.k==='p'?o.k:'')+o.l+o.q+(o.code||'');for(let i=0;i<s.length;i++)h=(h*33+s.charCodeAt(i))>>>0;o.id='q'+h.toString(36);QS.push(o)}
+const C=(l,src,q,o,e,n=1)=>add({l,k:'s',t:'c',src,q,o,n,e});
+const W=(l,src,q,a,e)=>add({l,k:'s',t:'w',src,q,a:a.split('|'),e});
+const K=(l,code,q,a,e)=>add({l,k:'k',t:'w',code,q,a:a.split('|'),e});
+const D=(l,q,a,e)=>add({l,k:'d',t:'d',q,a:a.split('|'),e});
+
+
+/* --- 第2回 単一行副問い合わせ --- */
+W(2,'①',`他のSQLに埋め込まれた（ネストした）SELECT文を何といいますか？`,`副問い合わせ|サブクエリ|サブクエリー`,`サブクエリーともいいます。主問い合わせの前に一度だけ実行されます。`);
+W(2,'②',`副問い合わせを使ったSQLで、外側のSELECT文を何といいますか？`,`主問い合わせ|メインクエリ`,`外側＝主問い合わせ、内側＝副問い合わせです。`);
+C(2,'①',`副問い合わせが実行されるタイミングとして正しいものはどれですか？`,[`主問い合わせの前に一度だけ実行される`,`主問い合わせの後に一度だけ実行される`,`主問い合わせの1行ごとに毎回実行される`,`主問い合わせと同時に実行される`],`( ) の中から先に実行され、その結果を主問い合わせが受け取って使います。`);
+C(2,'③',`副問い合わせを書けない場所はどれですか？`,[`DROP TABLE文の表名の部分`,`SELECT文のHAVING句`,`UPDATE文のSET句`,`INSERT文のVALUES句`],`FROM句・WHERE句・HAVING句、INSERTのVALUES句、UPDATEのSET句・WHERE句、DELETEのWHERE句などで使えます。`);
+C(2,'⑥',`副問い合わせのガイドラインとして正しいものを2つ選びなさい。`,[`副問い合わせは ( ) で囲む`,`副問い合わせは比較条件の右側に置く`,`副問い合わせは比較条件の左側に置く`,`副問い合わせには必ず ORDER BY 句をつける`],`ほかに「複数行副問い合わせには複数行条件を使う」も覚えましょう。`,2);
+W(2,'⑦',`単一行副問い合わせで使える比較演算子を1つ書きなさい。`,`=|>|>=|<|<=|<>|!=`,`=、>、>=、<、<=、<> などの単一行条件が使えます。`);
+C(2,'⑧',`WHERE job = (SELECT job FROM emp WHERE deptno = 10) で、副問い合わせが3行を返しました。結果はどうなりますか？`,[`エラーになる`,`3行が返る`,`0行が返る`,`最初の1行だけで比べる`],`単一行条件（=）なのに複数行が返るとエラーです。IN などの複数行条件を使います。`);
+C(2,'⑨',`WHERE ename IN (SELECT …) で、副問い合わせが1行だけ返しました。結果はどうなりますか？`,[`エラーにならず、普通に結果が返る`,`単一行なのに複数行条件を使っているのでエラー`,`必ず0行が返る`,`構文エラーになる`],`複数行条件で1行が返っても問題ありません。わからないときは複数行条件を使います。`);
+C(2,'⑩',`副問い合わせが1行も返さなかったとき、SELECT文全体の結果はどうなりますか？`,[`0行が返る（エラーではない）`,`エラーになる`,`主問い合わせの全行が返る`,`NULLの行が1行返る`],`副問い合わせはNULLを返し、= NULL と同じ扱いになって true になりません。エラーにはなりません。`);
+C(2,'K',`SELECT ename FROM emp WHERE sal >= (SELECT AVG(sal) FROM emp); の副問い合わせは何行返しますか？`,[`必ず1行`,`複数行`,`0行`,`構文エラーになる`],`グループ関数を使っていて GROUP BY がないので、必ず1行を返します（単一行副問い合わせ）。`);
+W(2,'T',`WHERE (job, sal) = (SELECT job, sal FROM emp WHERE ename = 'SCOTT') のように、複数の列をまとめて比べる副問い合わせを何といいますか？`,`複数列副問い合わせ`,`複数の列を一度に比べるのが複数列副問い合わせです。`);
+K(2,`SELECT ename, sal FROM emp\nWHERE sal ___ (SELECT sal FROM emp WHERE ename = 'SCOTT');`,`SCOTTさんの給与「以上」の人を出したい。空欄に入る演算子は？`,`>=`,`「以上」は >= です。単一行副問い合わせなので単一行条件を使います。`);
+K(2,`SELECT ename FROM emp\nWHERE deptno = ___ SELECT deptno FROM emp WHERE ename = 'KENJI' );`,`このSQLはエラーになります。空欄に入る記号は？`,`(`,`副問い合わせは必ず ( ) で囲みます。`);
+D(2,`emp表から、全社員の平均給与(sal)より給与が高い社員の名前(ename)と給与(sal)を表示するSELECT文を書きなさい。`,`SELECT ename, sal FROM emp WHERE sal > (SELECT AVG(sal) FROM emp);`,`副問い合わせで平均給与を求め、その結果と > で比べます。`);
+
+/* --- 第3回 複数行副問い合わせ --- */
+C(3,'①',`複数行条件を3つ選びなさい。`,[`IN`,`ANY`,`ALL`,`BETWEEN`,`AND`],`複数行条件は IN・ANY・ALL の3つです。`,3);
+W(3,'④',`複数行条件のうち、戻された値の「どれか」と比較するときに使うキーワードは？`,`ANY|SOME`,`ANY は「どれか」。比較を OR で結んだものです。`);
+W(3,'⑦',`複数行条件のうち、戻された値の「すべて」と比較するときに使うキーワードは？`,`ALL`,`ALL は「すべて」。比較を AND で結んだものです。`);
+C(3,'⑤',`> ANY (副問い合わせ) の意味として正しいものはどれですか？`,[`戻された値の最小値より大きい`,`戻された値の最大値より大きい`,`戻された値の最大値より小さい`,`戻された値の最小値より小さい`],`「どれかより大きい」＝一番小さい値より大きければよい、ということです。`);
+C(3,'⑤',`< ANY (副問い合わせ) の意味として正しいものはどれですか？`,[`戻された値の最大値より小さい`,`戻された値の最小値より小さい`,`戻された値の最大値より大きい`,`戻された値の最小値より大きい`],`「どれかより小さい」＝一番大きい値より小さければよい、ということです。`);
+C(3,'⑧',`> ALL (副問い合わせ) の意味として正しいものはどれですか？`,[`戻された値の最大値より大きい`,`戻された値の最小値より大きい`,`戻された値の平均より大きい`,`戻された値の最大値より小さい`],`「すべてより大きい」＝一番大きい値より大きい、ということです。`);
+C(3,'⑧',`< ALL (副問い合わせ) の意味として正しいものはどれですか？`,[`戻された値の最小値より小さい`,`戻された値の最大値より小さい`,`戻された値の最小値より大きい`,`戻された値の平均より小さい`],`「すべてより小さい」＝一番小さい値より小さい、ということです。`);
+W(3,'⑥',`= ANY と同じ意味になる複数行条件は何ですか？`,`IN`,`IN は = を OR で結んだもの。= ANY も同じ意味です。`);
+W(3,'⑨',`<> ALL と同じ意味になる条件は何ですか？`,`NOT IN`,`「すべてと等しくない」＝ NOT IN と同じです。`);
+C(3,'③',`NOT IN を使った副問い合わせで、副問い合わせの結果に NULL が含まれていました。結果はどうなりますか？`,[`0行が返る`,`NULL以外と比べた結果が返る`,`エラーになる`,`主問い合わせの全行が返る`],`NOT IN は比較の AND。<> NULL が1つでもあると unknown になり、決して true になりません。`);
+C(3,'①',`ANY と ALL の使い方として正しいものはどれですか？`,[`単一行条件と組み合わせて使う（単独では使えない）`,`単独で使う（WHERE job ANY (…)）`,`IN と組み合わせて使う`,`GROUP BY 句の中で使う`],`> ANY、< ALL のように単一行条件（左）と ANY/ALL（右）を組み合わせます。`);
+C(3,'⑩',`「使わない方がよい条件」の組み合わせはどれですか？`,[`<> ANY と = ALL`,`> ANY と < ALL`,`IN と NOT IN`,`= ANY と <> ALL`],`<> ANY は何でもOKになり、= ALL はありえない条件なので使いません。`);
+C(3,'K',`SELECT ename, job FROM emp WHERE sal >= (SELECT sal FROM emp WHERE job = 'SALES'); で、job が SALES の人は複数います。結果は？`,[`エラーになる`,`SALESの給与以上の人が表示される`,`0行が返る`,`SALESの人だけが表示される`],`副問い合わせが複数行を返すのに >= （単一行条件）を使っているのでエラーです。`);
+K(3,`SELECT ename FROM emp\nWHERE sal > ___ (SELECT sal FROM emp WHERE deptno = 30);`,`30番の部署の「全員より」給与が高い人を出したい。空欄は？`,`ALL`,`「すべてより大きい」は > ALL（最大値より大きい）です。`);
+K(3,`SELECT ename FROM emp\nWHERE job ___ (SELECT job FROM emp WHERE deptno = 20);`,`20番の部署の「だれかと同じ」職種の人を出したい。空欄は？（2文字）`,`IN|=ANY`,`「いずれかと等しい」は IN（= ANY でも同じ）です。`);
+D(3,`emp表から、部署番号(deptno)が10の社員のだれかと同じ職種(job)の社員の名前(ename)を表示するSELECT文を、複数行条件 IN を使って書きなさい。`,`SELECT ename FROM emp WHERE job IN (SELECT job FROM emp WHERE deptno = 10);|SELECT ename FROM emp WHERE job = ANY (SELECT job FROM emp WHERE deptno = 10);`,`副問い合わせが複数行を返すかもしれないので IN を使います。`);
+D(3,`emp表から、部署番号(deptno)30の社員全員より給与(sal)が高い社員の名前(ename)を表示するSELECT文を書きなさい。`,`SELECT ename FROM emp WHERE sal > ALL (SELECT sal FROM emp WHERE deptno = 30);`,`「全員より高い」は > ALL を使います。`);
+
+/* --- 第4回 集合演算 --- */
+W(4,'①',`列の数・データ型が一致している複数のSELECT文を組み合わせて、和・差・積を求める演算を何といいますか？`,`集合演算`,`集合演算を使った問い合わせは「複合問合せ」ともいいます。`);
+W(4,'①',`集合演算を使った問い合わせは、別名で何問合せといいますか？`,`複合問合せ|複合問い合わせ|複合`,`複数のSELECT文を組み合わせるので「複合問合せ」です。`);
+C(4,'③',`UNION の説明として正しいものはどれですか？`,[`どちらかに存在するすべての行を、重複を除いて返す`,`どちらかに存在するすべての行を、重複も含めて返す`,`両方に存在する行だけを返す`,`左の結果から右の結果を取り除いた行を返す`],`UNION＝和集合。重複は1回だけ表示します。`);
+C(4,'④',`UNION ALL の説明として正しいものはどれですか？`,[`重複するデータもすべて表示する`,`重複するデータは1回だけ表示する`,`両方に存在する行だけを表示する`,`重複したデータだけを表示する`],`UNION ALL は重複も含めて、行の数だけ表示します。`);
+W(4,'⑤',`差集合を求める集合演算子は何ですか？`,`MINUS|EXCEPT`,`MINUS は左の結果から右の結果を取り除きます（21c以降は EXCEPT も可）。`);
+W(4,'⑦',`両方の結果に存在する行（共通集合）を求める集合演算子は何ですか？`,`INTERSECT`,`INTERSECT＝共通集合（積集合）です。`);
+C(4,'⑥',`A MINUS B の結果として正しいものはどれですか？`,[`集合Aの中から、集合Bに含まれる行を取り除いた行`,`集合Bの中から、集合Aに含まれる行を取り除いた行`,`AにもBにも含まれる行`,`AとBのすべての行`],`引かれる集合を左に、引く集合を右に置きます。A MINUS B と B MINUS A は結果が違います。`);
+C(4,'⑧',`集合演算が成立する条件として正しいものを2つ選びなさい。`,[`SELECT句の列の数が同じ`,`SELECT句の列のデータ型に互換性がある`,`SELECT句の列名が同じ`,`同じ表を使っている`],`列名や表名は違ってもかまいません。`,2);
+C(4,'⑧',`2つのSELECT文で列名が違うとき、集合演算の結果の列名はどうなりますか？`,[`1つ目のSELECT文の列名になる`,`2つ目のSELECT文の列名になる`,`エラーになる`,`列名は表示されない`],`1つ目のSELECT文の列名（列別名）が使われます。`);
+C(4,'⑨',`UNION ALL 以外の集合演算で ORDER BY を書かないと、結果の並び順はどうなりますか？`,[`第1問合せの第1列でソートされる`,`表示順は決まっていない`,`第2問合せの第1列でソートされる`,`左の表の行、右の表の行の順に表示される`],`重複を調べるために第1列でソートされます。UNION ALL は第1問合せの結果のあとに第2問合せの結果が出ます。`);
+C(4,'⑩',`集合演算で ORDER BY 句を書ける場所はどれですか？`,[`最後のSELECT文の文末に1度だけ`,`最初のSELECT文の文末だけ`,`それぞれのSELECT文の文末`,`ORDER BY は書けない`],`ORDER BY の列名は1つ目のSELECT文の列名（列別名）に合わせます。`);
+C(4,'T',`Oracle の集合演算として存在しないものはどれですか？`,[`補集合`,`和集合`,`差集合`,`共通集合`],`和＝UNION、差＝MINUS、共通（積）＝INTERSECT。補集合や商はありません。`);
+K(4,`SELECT empno FROM emp\n___\nSELECT empno FROM emp_old;`,`両方の表の行を、重複も含めてすべて表示したい。空欄は？`,`UNION ALL`,`重複も含めるなら UNION ALL です。`);
+K(4,`SELECT empno FROM emp\n___\nSELECT empno FROM emp_old;`,`emp にはあって emp_old にはない社員番号を出したい。空欄は？`,`MINUS|EXCEPT`,`「左にあって右にない」は差集合の MINUS です。`);
+D(4,`emp表とemp2表の社員番号(empno)と名前(ename)を、重複を除いてすべて表示するSQLを書きなさい。`,`SELECT empno, ename FROM emp UNION SELECT empno, ename FROM emp2;`,`重複を除いた和集合は UNION です。`);
+D(4,`emp表にもemp2表にもある社員番号(empno)を表示するSQLを書きなさい。`,`SELECT empno FROM emp INTERSECT SELECT empno FROM emp2;`,`両方にある行は INTERSECT で求めます。`);
+
+/* --- 第5回 データ操作言語 --- */
+W(5,'①',`データ操作言語のことを、アルファベット3文字で何といいますか？`,`DML`,`Data Manipulation Language の略です。`);
+C(5,'①',`次のうち DML ではないものはどれですか？`,[`CREATE`,`INSERT`,`MERGE`,`SELECT`],`DML＝INSERT・UPDATE・DELETE・SELECT・MERGE。CREATE は DDL です。`);
+C(5,'②',`新しい行を追加する文はどれですか？`,[`INSERT文`,`UPDATE文`,`DELETE文`,`SELECT文`],`新規行の追加は INSERT、変更は UPDATE、削除は DELETE です。`);
+C(5,'③',`INSERT INTO emp (empno, ename) VALUES (…); で、列名リストに書かなかった列にはどんな値が入りますか？`,[`DEFAULT値（設定がなければNULL）`,`必ず0`,`必ず空白`,`エラーになる`],`DEFAULT値が設定されていればその値、なければNULLです。`);
+C(5,'④',`INSERT文で hiredate 列に NULL を入れる正しい書き方はどれですか？`,[`VALUES (10, '山崎', NULL)`,`VALUES (10, '山崎', 'NULL')`,`VALUES (10, '山崎', "NULL")`,`VALUES (10, '山崎', )`],`NULL はそのまま NULL と書きます。'NULL' だと文字列になってしまいます。`);
+C(5,'⑥',`INSERT INTO dept VALUES (50, '製造', '博多'); について正しいものを2つ選びなさい。`,[`表定義の順番（DESCの順）に値が入る`,`表定義の列数と合わないとエラーになる`,`表名の後ろに列名がないのでエラーになる`,`列数が合わないと残りの列にはNULLが入る`],`列名リストを省略したときは、すべての列の値を表定義の順に書きます。`,2);
+C(5,'⑧',`JOB列を 'MANAGER'、SAL列を 3000 に変更する SET句として正しいものはどれですか？`,[`SET job = 'MANAGER', sal = 3000`,`SET job = 'MANAGER' AND sal = 3000`,`SET job = 'MANAGER' SET sal = 3000`,`SET (job, sal) = 'MANAGER', 3000`],`複数列の更新は「列名 = 値」をカンマで区切ります。`);
+C(5,'⑩',`WHERE句をつけずに UPDATE emp SET sal = 1000; を実行するとどうなりますか？`,[`すべての行の sal が 1000 になる`,`1行目だけ変更される`,`エラーになる`,`何も変更されない`],`WHERE を忘れると全行が変更されます。`);
+C(5,'⑩',`DELETE FROM employees; を実行するとどうなりますか？`,[`すべての行が削除される`,`表の定義ごと削除される`,`エラーになる`,`1行目だけ削除される`],`WHERE句がないので全行削除です。表の定義は残ります。`);
+C(5,'⑨',`DELETE文の説明として正しいものはどれですか？`,[`常に行単位で削除し、DELETE の後に列名は書かない`,`列を指定して、その列の値だけを削除できる`,`DELETE * FROM 表名 と書く`,`ロールバックできない`],`列の値を消したいときは UPDATE で NULL にします。`);
+K(5,`INSERT ___ dept (deptno, dname) VALUES (50, '製造');`,`空欄に入るキーワードは？`,`INTO`,`INSERT 文は INSERT INTO で覚えましょう。`);
+K(5,`INSERT INTO dept (deptno, dname)\n___ (50, '製造');`,`空欄に入るキーワードは？`,`VALUES`,`VALUE の複数形なので最後に S がつきます。`);
+K(5,`UPDATE emp ___ sal = 3000 WHERE empno = 7369;`,`空欄に入るキーワードは？`,`SET`,`UPDATE 表名 SET 列名 = 値 WHERE 条件;`);
+K(5,`DELETE ___ emp WHERE empno = 7369;`,`空欄に入るキーワードは？`,`FROM`,`DELETE FROM 表名 WHERE 条件;`);
+D(5,`dept表(deptno, dname, loc)に、部署番号60、部署名'企画'、所在地'大阪'の行を、列名を指定して追加するINSERT文を書きなさい。`,`INSERT INTO dept (deptno, dname, loc) VALUES (60, '企画', '大阪');`,`INSERT INTO 表名 (列名…) VALUES (値…); の形です。`);
+D(5,`dept表(deptno, dname, loc)に、部署番号70、部署名'総務'、所在地はNULLの行を、列名を指定して追加するINSERT文を書きなさい。`,`INSERT INTO dept (deptno, dname, loc) VALUES (70, '総務', NULL);`,`NULL はそのまま NULL と書きます。`);
+D(5,`emp表で社員番号(empno)7369の人の給与(sal)を3000、職種(job)を'MANAGER'に変更するUPDATE文を書きなさい。`,`UPDATE emp SET sal = 3000, job = 'MANAGER' WHERE empno = 7369;|UPDATE emp SET job = 'MANAGER', sal = 3000 WHERE empno = 7369;`,`複数列はカンマで区切ります。WHERE を忘れないように。`);
+D(5,`emp表から部署番号(deptno)が30の行を削除するDELETE文を書きなさい。`,`DELETE FROM emp WHERE deptno = 30;|DELETE emp WHERE deptno = 30;`,`DELETE FROM 表名 WHERE 条件; の形です。`);
+
+/* --- 第6回 トランザクション --- */
+W(6,'①',`同じデータベースに複数のユーザーが同時にアクセスして処理できることを、何アクセスといいますか？`,`マルチユーザー|マルチユーザーアクセス|マルチユーザ|マルチアクセス`,`データベースはマルチユーザー・アクセスで、同じユーザーで複数のセッションを張れます。`);
+W(6,'②',`複数の接続を区別する単位（接続してから切断するまでの一連の処理）を何といいますか？`,`セッション`,`データベースサーバーがセッションIDなどを割り振って管理します。`);
+W(6,'③',`同時に確定しないと不整合が起こる、関連のあるINSERT・UPDATE・DELETEなどの処理の集まりを何といいますか？`,`トランザクション`,`関連のある処理をひとまとまりに扱うのがトランザクションです。`);
+C(6,'④',`1つのセッションとトランザクションの関係として正しいものはどれですか？`,[`トランザクションは1つずつ行われ、前のトランザクションが終わってから次が始まる`,`複数のトランザクションを並行して行える`,`トランザクションが終わるとセッションも終わる`,`トランザクションの中に別のトランザクションをネストできる`],`異なるセッションどうしなら、トランザクションは並行して実行できます。`);
+W(6,'⑤',`トランザクションを確定するSQLは何ですか？`,`COMMIT`,`COMMIT からCOMMIT までが1つのトランザクションです。`);
+W(6,'⑥',`トランザクションを取り消すSQLは何ですか？`,`ROLLBACK`,`前回のコミット時、またはセーブポイントまで戻ります。`);
+W(6,'⑦',`ロールバック時に戻る位置を保存しておくSQLは何ですか？`,`SAVEPOINT`,`SAVEPOINT 名前; で保存し、ROLLBACK TO 名前; で戻ります。`);
+C(6,'⑦',`SAVEPOINT を発行したとき、トランザクションはどうなりますか？`,[`終了しない`,`確定されて終了する`,`取り消されて終了する`,`新しいセッションが始まる`],`セーブポイントを置いても、そこまでロールバックしても、トランザクションは終わりません。`);
+C(6,'⑧',`COMMIT を実行したとき以外で、トランザクションが正常に終了するタイミングを2つ選びなさい。`,[`CREATE TABLE文などのDDLを実行したとき`,`ROLLBACKを発行したとき`,`ネットワークが切断されたとき`,`SAVEPOINTを発行したとき`],`DDL・DCLを実行すると直前のトランザクションが暗黙的にコミットされます。ROLLBACKも正常な終了です。`,2);
+C(6,'⑨',`接続中に障害が起きて異常終了したとき、確定していないトランザクションはどうなりますか？`,[`暗黙的にロールバックされる`,`暗黙的にコミットされる`,`セーブポイントまでコミットされる`,`次に接続したときに選べる`],`データの整合性を守るため、異常切断では自動的にロールバックされます。`);
+W(6,'⑩',`SELECT文の実行中に他のユーザーがデータを変更しても、SELECT文を始めた時点のデータを返すしくみを何といいますか？`,`読み取り一貫性`,`途中でCOMMITされても、実行中のSELECT文の結果は変わりません。`);
+C(6,'⑩',`ユーザXがSELECT文を実行中に、ユーザYが関連するデータをUPDATEしてCOMMITしました。正しいものはどれですか？`,[`ユーザXにはSELECT文開始時のデータが返る`,`ユーザXには変更後のデータが返る`,`ユーザXのSELECT文はエラーになる`,`ユーザYのCOMMITは失敗する`],`読み取り一貫性のしくみです。`);
+C(6,'K',`次の順にSQLを実行しました。最後に残っている変更はどれですか？\n① INSERT（Aさん）② SAVEPOINT sp1; ③ INSERT（Bさん）④ CREATE TABLE test (id NUMBER(3)); ⑤ INSERT（Cさん）⑥ ROLLBACK;`,[`AさんとBさん`,`何も残らない`,`Aさんだけ`,`Aさん、Bさん、Cさん`],`④のDDLでAさん・Bさんが暗黙的にコミットされます。⑥のROLLBACKで取り消されるのはCさんだけです。`);
+K(6,`SAVEPOINT sp1;\nINSERT INTO emp (empno, ename) VALUES (9001, 'TARO');\nROLLBACK ___ sp1;`,`sp1 の地点まで戻りたい。空欄は？`,`TO|TO SAVEPOINT`,`ROLLBACK TO セーブポイント名; で、その地点まで取り消します。`);
+
+/* --- 第7回 データベースオブジェクトと表の作成 --- */
+W(7,'①',`表、ビュー、順序、索引、シノニムなど、データベース内に格納されているモノを何といいますか？`,`データベースオブジェクト|スキーマオブジェクト|オブジェクト`,`どこかのスキーマに必ず所属するので「スキーマオブジェクト」ともいいます。`);
+W(7,'②',`オブジェクトの持ち主であり、オブジェクトが属する名前空間を何といいますか？`,`スキーマ`,`オブジェクトは必ずどこかのスキーマに所属します。`);
+W(7,'③',`データベースへのログオンや、権限などのアクセス権を管理する単位を何といいますか？`,`ユーザ|ユーザー`,`Oracleではユーザを作ると同じ名前のスキーマができます。`);
+C(7,'③',`Oracle でユーザを作成すると、どうなりますか？`,[`同じ名前のスキーマが自動的に作られる`,`SYSTEMスキーマの中に入る`,`表が1つ自動で作られる`,`スキーマは別に作成する必要がある`],`ユーザとスキーマは1対1で、同じ名前です。`);
+W(7,'⑤',`INSERTで値を指定しなかったときに、自動で入る値を設定するオプションは何ですか？`,`DEFAULT`,`例）loc VARCHAR2(10) DEFAULT '東京'`);
+W(7,'⑥',`「食品表」の定義を削除する文を書きなさい。`,`DROP TABLE 食品表|DROP TABLE`,`表の定義を削除するのは DROP TABLE（DDL）です。`);
+W(7,'⑦',`表の構造（列名やデータ型）を確認するコマンドは何ですか？`,`DESC|DESCRIBE`,`SQL*Plus のコマンドなので ; はいりません。`);
+C(7,'⑧',`アルファベットや漢字などの文字が入る列のデータ型として、最もふさわしいものはどれですか？`,[`VARCHAR2`,`VARCHAR`,`NUMBER`,`DATE`],`VARCHAR は古い型です。必ず 2 をつけます。`);
+C(7,'⑨',`0から100までの点数が入る score 列の定義として正しいものはどれですか？`,[`NUMBER(3)`,`NUMBER(0, 100)`,`NUMBER(100)`,`VARCHAR2(100)`],`( ) の中は10進数の桁数です。100は3桁なので NUMBER(3)。`);
+C(7,'⑩',`日付データが入る列のデータ型として、最もふさわしいものはどれですか？`,[`DATE`,`CHAR`,`NUMBER`,`VARCHAR2`],`日付は DATE 型に保存します。7バイト固定なので長さは指定しません。`);
+K(7,`___ 食品表 (\n  code  VARCHAR2(4),\n  price NUMBER(5)\n);`,`表を作成したい。空欄に入るキーワードは？（2語）`,`CREATE TABLE`,`CREATE TABLE 表名 ( 列名 データ型, … );`);
+K(7,`CREATE TABLE shop (\n  loc VARCHAR2(10) ___ '東京'\n);`,`何も入れなかったときは '東京' が入るようにしたい。空欄は？`,`DEFAULT`,`DEFAULT 値 で既定値を設定します。`);
+D(7,`「成績」表を作成する文を書きなさい。「学生番号」列は4桁の可変長文字型、「点数」列は3桁の整数型とします。`,`CREATE TABLE 成績 (学生番号 VARCHAR2(4), 点数 NUMBER(3));`,`文字型は VARCHAR2、整数は NUMBER(桁数) です。`);
+
+/* --- 第8回 表の作成とデータ型 --- */
+C(8,'②',`可変長文字型 VARCHAR2 に保存できる最大のサイズはどれですか？`,[`4000バイト`,`2000バイト`,`128バイト`,`255バイト`],`VARCHAR2 は最大4000バイト、CHAR は最大2000バイトです。`);
+W(8,'③',`固定長の文字列型（最大2000バイト、未使用部分は空白で埋める）は何ですか？`,`CHAR`,`ID などの桁数が決まったデータによく使います。`);
+C(8,'④',`NUMBER(6, 2) の説明として正しいものはどれですか？`,[`全体が6桁で、そのうち2桁が小数部の10進数`,`整数部が6桁、小数部が2桁の10進数`,`全体が6バイトで、そのうち2バイトが小数部`,`6から2までの数値`],`1つ目が全体の桁数、2つ目が小数部の桁数です。`);
+C(8,'⑤',`NUMBER(4) の列に保存できる値はどれですか？`,[`9999`,`10000`,`12345`,`100000`],`全体で4桁までの整数です。10000 は5桁なのでエラーになります。`);
+C(8,'⑥',`引数なしの NUMBER で定義した列は、どのデータ型になりますか？`,[`浮動小数点数（有効桁数38桁）`,`整数`,`固定小数点数`,`可変長文字列`],`ものすごく小さな数から大きな数まで保存できます。`);
+C(8,'⑦',`7バイト固定長で、日付と時刻を秒単位まで保存できる型はどれですか？`,[`DATE`,`DATA`,`DAY`,`TIME`],`DATA（データ）と間違えないように。日付型は DATE（デート）です。`);
+C(8,'⑧',`DROP TABLE で表を削除したときの説明として正しいものはどれですか？`,[`表の構造ごとデータが削除され、ROLLBACKはできない`,`データだけ削除され、表の構造は残る`,`表の構造ごと削除されるが、ROLLBACKで戻せる`,`特定の行を選んで削除できる`],`DROP TABLE は DDL なのでロールバックできません。`);
+W(8,'⑨',`表の構造は残したまま、データだけを高速に削除する文は何ですか？（ロールバックできません）`,`TRUNCATE TABLE|TRUNCATE`,`TRUNCATE TABLE 表名;（表の切り捨て）。DDLなのでロールバックできません。`);
+C(8,'⑩',`次のうち、処理をロールバックできるものを2つ選びなさい。`,[`INSERT文`,`DELETE文`,`DROP文`,`TRUNCATE文`],`ロールバックできるのは DML だけです。`,2);
+C(8,'K',`NUMBER(5, 2) の列に保存できない値はどれですか？`,[`1234.5`,`123.45`,`999.99`,`0.5`],`全体5桁・小数部2桁なので、整数部は3桁まで（最大999.99）です。`);
+C(8,'T',`オブジェクト名（表名など）の付け方として正しいものはどれですか？`,[`最初の文字は英字にする`,`最初の文字は数字でもよい`,`予約語（SELECTなど）も使える`,`大文字と小文字は区別される`],`使える文字は A〜Z・a〜z・0〜9・_・$・#。最初の文字は英字で、予約語は使えません。`);
+C(8,'T',`CREATE TABLE 新しい表 AS SELECT … で表をコピーしたとき、引き継がれる制約はどれですか？`,[`NOT NULL制約だけ`,`すべての制約`,`PRIMARY KEY制約だけ`,`制約は何も引き継がれない`],`コピーされるのは列名・データ型・NOT NULL制約・データです。`);
+K(8,`___ TABLE emp;`,`表の構造は残して、データを全部高速に削除したい。空欄は？`,`TRUNCATE`,`TRUNCATE TABLE 表名; です。`);
+D(8,`kamoku表を作成する文を書きなさい。科目コード code は3バイトの固定長文字、科目名 name は20バイトの可変長文字、単位数 tani は2桁の整数とします。`,`CREATE TABLE kamoku (code CHAR(3), name VARCHAR2(20), tani NUMBER(2));`,`固定長は CHAR、可変長は VARCHAR2、整数は NUMBER(桁数) です。`);
+
+/* --- 第9回 エンティティ整合性制約 --- */
+C(9,'①',`表に制約をつける目的として正しいものはどれですか？`,[`データの整合性を高める`,`検索スピードを高める`,`ディスク容量を節約する`,`操作性を高める`],`制約は間違ったデータが入らないようにするためのものです。`);
+W(9,'②',`ある列のデータ単体についての整合性制約（PRIMARY KEY、UNIQUE など）をまとめて何といいますか？`,`エンティティ整合性制約`,`PRIMARY KEY、UNIQUE、NOT NULL、CHECK がエンティティ整合性制約です。`);
+W(9,'③',`データとデータの関係についての整合性制約を何といいますか？`,`参照整合性制約|FOREIGN KEY制約|外部キー制約`,`FOREIGN KEY 制約ともいいます。`);
+C(9,'②',`エンティティ整合性制約に当てはまるものを2つ選びなさい。`,[`UNIQUE制約`,`CHECK制約`,`FOREIGN KEY制約`,`DEFAULT`],`FOREIGN KEY は参照整合性制約。DEFAULT は制約ではありません。`,2);
+C(9,'④',`PRIMARY KEY制約の説明として当てはまるものを3つ選びなさい。`,[`データの重複を許さない`,`NULL値を許さない`,`1つの表に1つしかつけられない`,`NULL値はあってもよい`],`主キー制約は「重複なし・NULLなし・表に1つ」です。`,3);
+C(9,'⑤',`UNIQUE制約の説明として正しいものはどれですか？`,[`重複は許さないが、NULLはあってもよく、表に複数つけられる`,`重複もNULLも許さず、表に1つだけ`,`NULLだけを許さない`,`自由な条件をつけられる`],`NULLは値ではないので重複には含まれません。`);
+C(9,'⑥',`その列に NULL 値が入るのを許さない制約を2つ選びなさい。`,[`NOT NULL`,`PRIMARY KEY`,`UNIQUE`,`CHECK`],`UNIQUE には NULL を管理する機能はありません。`,2);
+W(9,'⑦',`「20以上50未満」のように、自由な条件で制約をかけるときに使う制約は何ですか？`,`CHECK`,`CHECK (条件式) で、条件に合うデータだけを入れられます。`);
+W(9,'⑨',`制約に名前をつけるときに使うキーワードは何ですか？`,`CONSTRAINT`,`列名 データ型 CONSTRAINT 制約名 PRIMARY KEY のように書きます。`);
+W(9,'⑩',`CONSTRAINT句を省略して制約をつけたとき、自動でつく制約名は何で始まりますか？`,`SYS_C|SYS_CXXXX|SYS_CXXXXX`,`SYS_Cxxxxx という名前が自動でつきます。`);
+W(9,'⑧',`列の定義のときに、その列の属性として制約も一緒に定義することを、何レベルの定義といいますか？`,`列|列レベル`,`もう1つは「表レベル」での定義です。`);
+C(9,'K',`ORA-00001：一意制約 (SE.SYS_C00953) に反しています。このエラーの原因はどれですか？`,[`すでにあるデータを入れようとした`,`NULL値を入れようとした`,`条件に合わないデータを入れようとした`,`INSERTの権限がない`],`PRIMARY KEY や UNIQUE の列に、登録済みのデータを入れようとすると出ます。`);
+K(9,`CREATE TABLE emp2 (\n  empno NUMBER(4) ___ pk_emp2 PRIMARY KEY,\n  ename VARCHAR2(10)\n);`,`制約に pk_emp2 という名前をつけたい。空欄は？`,`CONSTRAINT`,`CONSTRAINT 制約名 で名前をつけます。`);
+K(9,`CREATE TABLE member (\n  age NUMBER(3) ___ (age >= 0)\n);`,`age に0以上という条件の制約をつけたい。空欄は？`,`CHECK`,`自由な条件をつけるのは CHECK 制約です。`);
+D(9,`member表を作成する文を書きなさい。id列は NUMBER(5) で主キー（列レベル・制約名なし）、name列は VARCHAR2(20) で NOT NULL とします。`,`CREATE TABLE member (id NUMBER(5) PRIMARY KEY, name VARCHAR2(20) NOT NULL);`,`列レベルでは、データ型のあとに制約を書きます。`);
+
+/* --- 第10回 参照整合性制約 --- */
+W(10,'②',`参照整合性制約で、参照元（参照される側）の表を何といいますか？`,`親表`,`emp表のdno列がdept表のdno列を参照しているとき、dept表が親表です。`);
+W(10,'③',`参照整合性制約で、参照される列を何といいますか？`,`親キー|親キー列`,`親キー列には PRIMARY KEY か UNIQUE 制約をつけます。`);
+W(10,'④',`参照整合性制約で、参照する方の表を何といいますか？`,`子表|依存表`,`依存表ともいいます。`);
+W(10,'⑤',`売上表の「商品コード」列が商品表の「ID」列を参照しているとき、「商品コード」列を何キーといいますか？`,`外部キー|外部キー列|FOREIGN KEY`,`外部に参照元のキーを持つ列という意味です。`);
+C(10,'③',`親キー列につけておく必要がある制約を2つ選びなさい。`,[`PRIMARY KEY`,`UNIQUE`,`NOT NULL`,`FOREIGN KEY`],`親キーは一意に識別できる値を持つ必要があります。`,2);
+C(10,'⑥',`参照整合性制約のある表を作成するとき、どちらを先に作りますか？`,[`親表から先に作成する`,`子表から先に作成する`,`どちらからでもよい`,`同時に作成しなければならない`],`親キー列がないと参照整合性制約を定義できません。`);
+C(10,'⑦',`参照整合性制約のある表を削除するとき、どちらを先に削除しますか？`,[`子表から先に削除する`,`親表から先に削除する`,`どちらからでもよい`,`削除はできない`],`参照している表がある間は親表を削除できません（CASCADE CONSTRAINTS をつければ可能）。`);
+C(10,'⑧',`参照整合性制約の効果として正しいものを2つ選びなさい。`,[`親キー列にない値を、外部キー列に入れられない`,`外部キーから参照されている親キーの値を削除・変更できない`,`外部キー列にNULLを入れられない`,`外部キー列にない値を、親キー列に入れられない`],`参照関係が崩れないようにする制約です。`,2);
+C(10,'⑨',`親キーの値について正しいものはどれですか？`,[`参照している外部キーがなければ、自由に削除・変更できる`,`参照している外部キーがなくても、削除・変更できない`,`参照されていても、変更だけはできる`,`参照されていても、削除だけはできる`],`参照しているデータがあるときだけ削除・変更できなくなります。`);
+C(10,'⑩',`Email表の mno 列が Friends表の fno 列を参照します。正しい列レベルの定義はどれですか？`,[`mno NUMBER(3) REFERENCES Friends(fno)`,`mno NUMBER(3) FOREIGN KEY`,`fno NUMBER(3) REFERENCES Email(mno)`,`mno NUMBER(3) REFERENCES Friends.fno`],`REFERENCES 親表名(親キー列名) の形です。`);
+W(10,'⑩',`次の定義の外部キー列の列名は何ですか？\nstudentNo NUMBER(6) REFERENCES Students(sno)`,`studentNo|STUDENTNO`,`定義している列が外部キー、Students表のsno列が親キーです。`);
+C(10,'T',`外部キーに ON DELETE CASCADE をつけると、親表の行を削除したときにどうなりますか？`,[`参照している子表の行も自動的に削除される`,`参照している子表の外部キーがNULLになる`,`エラーになって削除できない`,`子表は何も変わらない`],`ON DELETE SET NULL なら、子表の外部キーが NULL になります。`);
+C(10,'⑦',`子表があっても親表を削除できるようにする句はどれですか？`,[`CASCADE CONSTRAINTS`,`WITH CHECK OPTION`,`FORCE`,`ON DELETE SET NULL`],`DROP TABLE 親表 CASCADE CONSTRAINTS; で、参照している制約も一緒に削除します。`);
+K(10,`CREATE TABLE emp2 (\n  empno  NUMBER(4) PRIMARY KEY,\n  deptno NUMBER(2) ___ dept(deptno)\n);`,`deptno を dept表の deptno の外部キーにしたい（列レベル）。空欄は？`,`REFERENCES`,`列レベルでは REFERENCES 親表(親キー列) だけを書きます。`);
+D(10,`emp表の deptno 列（NUMBER(2)）が dept表の deptno 列を参照するように、列レベルで定義しなさい（制約名なし・列の定義部分だけ）。`,`deptno NUMBER(2) REFERENCES dept(deptno)`,`列レベルでは FOREIGN KEY は書きません。`);
+
+/* --- 第11回 表レベルでの制約の定義 --- */
+C(11,'①',`制約を表レベルで定義するときの書き方として正しいものを2つ選びなさい。`,[`すべての列の定義が終わった後に、カンマで区切って制約を定義する`,`複数の制約を定義するときは、制約ごとにカンマで区切る`,`すべての列の定義が終わり ) を閉じてから制約を定義する`,`複数の制約の間はスペースで区切る`],`列の定義のあと、カンマを打って制約を書きます。`,2);
+C(11,'②',`sid 列を主キーとして表レベルで定義する正しい書き方はどれですか？`,[`PRIMARY KEY (sid)`,`UNIQUE (sid)`,`CHECK (PRIMARY KEY = sid)`,`PRIMARY KEY`],`表レベルでは ( ) の中に列名を書きます。`);
+C(11,'⑦',`表レベルでしか定義できないものを2つ選びなさい。`,[`複合主キー（2つの列の組み合わせで主キー）`,`他の列と比べる CHECK 制約`,`NOT NULL 制約`,`1つの列だけの UNIQUE 制約`],`複数列のグループにつける制約や、他の列を参照する CHECK は表レベルで書きます。`,2);
+C(11,'⑩',`NOT NULL 制約の説明として正しいものはどれですか？`,[`表レベルでは定義できない`,`列レベルでは定義できない`,`制約名をつけることはできない`,`DEFAULT値より前に書く`],`NOT NULL は列レベルだけ。DEFAULT が先、NOT NULL が後です。`);
+C(11,'⑩',`DEFAULT と NOT NULL を両方つける正しい書き方はどれですか？`,[`loc VARCHAR2(10) DEFAULT '東京' NOT NULL`,`loc VARCHAR2(10) NOT NULL DEFAULT '東京'`,`loc DEFAULT '東京' VARCHAR2(10) NOT NULL`,`loc VARCHAR2(10) NOT NULL, DEFAULT '東京'`],`DEFAULT の指定は制約より前に書きます。`);
+C(11,'⑧',`pid 列と gno 列の組み合わせを主キーにする正しい書き方はどれですか？`,[`PRIMARY KEY (pid, gno)`,`PRIMARY KEY (pid & gno)`,`PRIMARY KEY (pid)(gno)`,`PRIMARY KEY (pid), PRIMARY KEY (gno)`],`( ) の中でカンマ区切りにします。`);
+C(11,'⑤',`参照整合性制約を表レベルで定義するときに使うキーワードを2つ選びなさい。`,[`FOREIGN KEY`,`REFERENCES`,`PRIMARY KEY`,`UNIQUE KEY`],`FOREIGN KEY で外部キー列、REFERENCES で親表と親キー列を指定します。`,2);
+C(11,'⑥',`参照整合性制約を列レベルで定義するときに使うキーワードはどれですか？`,[`REFERENCES だけ`,`FOREIGN KEY だけ`,`FOREIGN KEY と REFERENCES`,`PRIMARY KEY と REFERENCES`],`列レベルでは、その列自体が外部キーなので FOREIGN KEY は書きません。`);
+C(11,'④',`CHECK 制約の書き方について正しいものはどれですか？`,[`列レベルと表レベルで書き方に違いはない`,`表レベルでは書けない`,`列レベルでは書けない`,`表レベルでは列名を書かない`],`どちらでも CHECK (条件式) の形です。`);
+K(11,`CREATE TABLE orders (\n  oid NUMBER(5),\n  pid NUMBER(4),\n  CONSTRAINT pk_orders ___ (oid, pid)\n);`,`oid と pid の組み合わせを主キーにしたい。空欄は？`,`PRIMARY KEY`,`複合主キーは表レベルで PRIMARY KEY (列, 列) と書きます。`);
+K(11,`  CONSTRAINT fk_pid ___ (pid) REFERENCES products(pid)`,`表レベルで外部キー制約を書きたい。空欄は？`,`FOREIGN KEY`,`表レベルでは FOREIGN KEY (外部キー列) REFERENCES 親表(親キー列) です。`);
+K(11,`  CONSTRAINT uq_email ___ (email)`,`email 列に一意制約を表レベルで書きたい。空欄は？`,`UNIQUE`,`UNIQUE (列名) です。`);
+D(11,`email列に一意制約を表レベルで定義しなさい（制約名は省略・制約の部分だけ）。`,`UNIQUE (email)`,`表レベルでは ( ) の中に列名を書きます。`);
+D(11,`「defense列はoffense列よりも小さい」というチェック制約を定義しなさい（制約名は省略・制約の部分だけ）。`,`CHECK (defense < offense)`,`他の列と比べる CHECK は表レベルで書きます。`);
+D(11,`age列は20以上というチェック制約を表レベルで定義しなさい（制約名は省略・制約の部分だけ）。`,`CHECK (age >= 20)`,`CHECK は列レベルでも表レベルでも同じ書き方です。`);
+
+/* --- 第12回 ビューの作成 --- */
+C(12,'①',`データベースのユーザーデータが実際に保存されているオブジェクトはどれですか？`,[`テーブル（表）`,`ビュー`,`シノニム`,`順序`],`ビューやシノニムにはデータは保存されません。`);
+W(12,'②',`SELECT文に名前をつけて保存したもの（仮想表）を何といいますか？`,`ビュー|VIEW`,`ビューの実体はSELECT文で、データは元の表にあります。`);
+C(12,'②',`ビューの説明として正しいものはどれですか？`,[`ビューを通じてデータを変更すると、元表のデータが変更される`,`表の一部のデータを複製して作ったもの`,`切断して再接続すると消える一時的なもの`,`表に別名をつけただけのもの`],`ビューはSELECT文がデータディクショナリに登録されているだけです。`);
+C(12,'③',`ビューの効果（目的）としてふさわしくないものはどれですか？`,[`SELECT文が速くなる`,`アクセスできる列や行を制限してセキュリティを上げる`,`複雑なSELECT文を簡単にする`,`データを加工して表示できる`],`ビューを使うと遅くなることはあっても、速くなることはありません。`);
+W(12,'⑤',`作成済みのビューの定義を変更するとき、CREATE ___ VIEW の空欄に入るキーワードは？（2語）`,`OR REPLACE`,`CREATE OR REPLACE VIEW は、初めて作るビューに使ってもエラーになりません。`);
+W(12,'⑥',`元表がなくてもビューを強制的に作成するときに使うキーワードは？`,`FORCE`,`CREATE FORCE VIEW ビュー名 AS SELECT文;`);
+C(12,'⑦',`ビューにビュー列名をつける方法として正しいものを2つ選びなさい。`,[`ビュー名に続けて (ビュー列名, ビュー列名 …) と書く`,`元のSELECT文で列別名をつける`,`ビュー名に続けて AS COLUMNS NAME と書く`,`ビュー列名はつけられない`],`どちらの方法でもビュー列名になります。`,2);
+W(12,'⑧',`ビュー Address を削除する文を書きなさい。`,`DROP VIEW Address|DROP VIEW`,`オブジェクトを削除するのは DROP です。`);
+C(12,'⑨',`ビューを削除すると、元の表はどうなりますか？`,[`何の影響もない`,`元表も削除される`,`ビューで見えていたデータが元表から消える`,`先に元表を消さないとビューは消せない`],`ビューの実体はSELECT文なので、元表には影響しません。`);
+C(12,'⑨',`ビューの元表を削除すると、ビューはどうなりますか？`,[`ビューは残るが、使うとコンパイルエラーになる`,`ビューも自動で削除される`,`ビューに元表のデータが移る`,`元表を削除できない`],`表を削除してもビューは削除されません。`);
+C(12,'⑩',`ビューのSELECT文を確認できるデータディクショナリと列はどれですか？`,[`USER_VIEWS の TEXT列`,`USER_TABLES の SELECT列`,`USER_VIEWS の VIEW列`,`VIEW_TEXT の COMPILE列`],`ビューの情報は USER_VIEWS、SELECT文は TEXT列です。`);
+K(12,`CREATE VIEW emp20 ___\nSELECT empno, ename FROM emp WHERE deptno = 20;`,`空欄に入るキーワードは？`,`AS`,`CREATE VIEW ビュー名 AS SELECT文; です。AS を忘れないように。`);
+K(12,`CREATE ___ VIEW emp20 AS\nSELECT empno, ename FROM emp WHERE deptno = 20;`,`すでにあるビュー emp20 を作り直したい。空欄は？（2語）`,`OR REPLACE`,`CREATE OR REPLACE VIEW で置き換えます。`);
+D(12,`emp表から部署番号(deptno)20の社員の社員番号(empno)と名前(ename)だけを見せるビュー emp20 を作成しなさい。`,`CREATE VIEW emp20 AS SELECT empno, ename FROM emp WHERE deptno = 20;`,`CREATE VIEW ビュー名 AS SELECT文; の形です。`);
+
+/* --- 第13回 ビューでのデータ操作 --- */
+W(13,'①',`関数や式、データのグループ化などを含まず、基本的なDMLが問題なく実行できるビューを何といいますか？`,`単一ビュー|単純ビュー`,`関数・式・結合・グループ化を含むものは複合ビューです。`);
+W(13,'⑥',`複数の表を結合したビューや、SQL関数・式を含むビューを何といいますか？`,`複合ビュー`,`複合ビューでは DML 操作が制限されます。`);
+C(13,'②',`グループ関数を使ったビューで実行できるSQL文はどれですか？`,[`SELECT文`,`INSERT文`,`UPDATE文`,`DELETE文`],`グループ化されたビューでは、INSERT・UPDATE・DELETE はすべてできません。`);
+C(13,'③',`「従業員」ビューの年収列が「給与*12」という式で作られています。この列に対してエラーになる操作を2つ選びなさい。`,[`INSERT文`,`UPDATE文`,`SELECT文`,`DELETE文`],`式の列へのINSERT・UPDATEはできません。DELETEは行単位なのでできます。`,2);
+C(13,'④',`元表の NOT NULL 制約の列がビューに含まれていないとき、エラーになる操作はどれですか？`,[`INSERT文`,`SELECT文`,`UPDATE文`,`DELETE文`],`ビューにない列には NULL が入るので、NOT NULL 違反になります。`);
+C(13,'⑤',`ビューの列に関数や式を使うときの説明として正しいものはどれですか？`,[`ビュー列名をつけなければならない`,`関数や式は使えない`,`何の制限もなく使える`,`表レベルで定義する`],`CREATE VIEW ビュー名(列名…) か、SELECT文の列別名でつけます。`);
+C(13,'⑦',`ビューを使ったセキュリティ効果として正しいものを2つ選びなさい。`,[`特定の列や行だけを見せるビューを作れば、不要な列を隠せる`,`読み取り専用や変更の条件をつけて制限できる`,`ビューを通じてデータを変更しても元表は変わらない`,`ビューを通じたデータの変更は一切できない`],`元表には権限を与えず、ビューにだけ権限を与えるという使い方をします。`,2);
+W(13,'⑦',`ビューへの DML を禁止して、問い合わせだけできるようにするオプションは何ですか？`,`WITH READ ONLY|READ ONLY`,`文の最後に WITH READ ONLY をつけます。`);
+W(13,'⑧',`ビューを通じた操作を、WHERE句の条件に合う行だけに制限するオプションは何ですか？`,`WITH CHECK OPTION|CHECK OPTION`,`WHERE句に合わない値への変更や挿入を防げます。`);
+C(13,'⑨',`表を読み取り専用にする文はどれですか？`,[`ALTER TABLE 表名 READ ONLY;`,`ALTER TABLE 表名 WITH READ ONLY;`,`CREATE READ ONLY TABLE 表名;`,`ALTER TABLE 表名 OR READ;`],`表は ALTER TABLE で READ ONLY にします。`);
+W(13,'⑩',`読み取り専用にした表を、読み書きできる状態に戻すとき、ALTER TABLE 表名 ___ ; の空欄は？`,`READ WRITE`,`「読み取りも書き込みも可」なので READ WRITE です。`);
+K(13,`ALTER TABLE emp ___;`,`emp表を読み取り専用にしたい。空欄は？（2語）`,`READ ONLY`,`ALTER TABLE 表名 READ ONLY; です。`);
+K(13,`CREATE VIEW emp_v AS\nSELECT empno, ename FROM emp\n___;`,`このビューを通じた INSERT・UPDATE・DELETE をできなくしたい。空欄は？`,`WITH READ ONLY`,`ビューの文の最後に WITH READ ONLY をつけます。`);
+D(13,`emp表の empno・ename・deptno 列を持ち、部署番号(deptno)20の行しか挿入・変更できないビュー emp20v を作成しなさい。`,`CREATE VIEW emp20v AS SELECT empno, ename, deptno FROM emp WHERE deptno = 20 WITH CHECK OPTION;`,`WHERE句の条件で変更を制限するのが WITH CHECK OPTION です。`);
+D(13,`emp表を読み取り専用にする文を書きなさい。`,`ALTER TABLE emp READ ONLY;`,`戻すときは ALTER TABLE emp READ WRITE; です。`);
+
+/* --- 第14回 索引 --- */
+W(14,'①',`データベースでデータを素早く検索するためにつけるものを何といいますか？`,`索引|インデックス|INDEX`,`本の索引と同じで、データとそのアドレスを組にして昇順に保存しています。`);
+W(14,'②',`索引がない表を、頭から順番に最後まで探す検索方法を何といいますか？`,`全表走査|フルスキャン`,`目的のデータが見つかっても、最後まで探します。`);
+C(14,'③',`索引を作成すると効果がある列はどれですか？`,[`WHERE句でひんぱんに使われる列`,`更新が多い列`,`データ量の少ない表の列`,`検索条件にほとんど使われない列`],`ほかに「データ量が多い」「NULLが多くNULL以外を検索する」「値のばらつきが大きい」なども。`);
+C(14,'④',`索引を作成しない方がよい場合はどれですか？`,[`表が小さい`,`データ量が多い`,`WHERE句でよく使う`,`該当する行が全体の2〜4%未満`],`ほかに「更新が多い」「式の一部として使われる」なども。`);
+C(14,'⑤',`索引について正しいものを2つ選びなさい。`,[`検索は速くなるが、挿入や更新は遅くなることがある`,`データ量が少ない表ではあまり効果がない`,`なるべく多くの列に索引をつけるべき`,`主キーには手動で必ず索引をつける`],`主キーは PRIMARY KEY 制約で自動的に索引が作られます。`,2);
+C(14,'⑥',`制約をつけると自動的に索引が作成されるものを2つ選びなさい。`,[`PRIMARY KEY`,`UNIQUE`,`NOT NULL`,`FOREIGN KEY`,`CHECK`],`重複を調べる必要がある制約に、索引が自動で作られます。`,2);
+C(14,'⑦',`制約によって自動作成された索引の名前はどうなりますか？`,[`制約名と同じ名前になる`,`SYS_INDxxxx という名前になる`,`SYS_Cxxxx だが制約名とは違う番号`,`索引名はつかない`],`制約名を省略した場合は、自動でつく SYS_Cxxxx と同じ名前です。`);
+C(14,'⑩',`制約によって自動作成された索引を削除する方法はどれですか？`,[`制約を削除する`,`DROP INDEX 索引名; を実行する`,`表を TRUNCATE する`,`どうやっても削除できない`],`制約と連動しているので、制約を削除（または無効化）すると索引も消えます。DROP INDEX では消せません。`);
+K(14,`CREATE INDEX emp_idx ___ emps(tel);`,`emps表の tel列に索引を作りたい。空欄は？`,`ON`,`CREATE INDEX 索引名 ON 表名(列名);`);
+K(14,`___ emp_idx;`,`索引 emp_idx を削除したい。空欄は？（2語）`,`DROP INDEX`,`DROP INDEX 索引名; です。`);
+D(14,`emp表の ename列に、索引名 ename_idx の索引を作成しなさい。`,`CREATE INDEX ename_idx ON emp(ename);`,`「どの表の、どの列に」を ON 表名(列名) で指定します。`);
+D(14,`索引 ename_idx を削除しなさい。`,`DROP INDEX ename_idx;`,`DROP INDEX に続けて索引名を書きます。`);
+
+/* --- 第15回 順序 --- */
+W(15,'①',`重複しない一意な番号を自動生成するデータベースオブジェクトを何といいますか？`,`順序|SEQUENCE|シーケンス`,`主キーの値を作るのによく使います。`);
+C(15,'①',`順序について正しいものはどれですか？`,[`複数の表で同じ順序を使うと、ひとつの表では欠番が生じることがある`,`表ごとに作成し、欠番なしで採番できる`,`表内に同じ値があると採番できない`,`増分や最大値はあとから変更できない`],`順序は表と関連づけられていないので、表の中身は関知しません。`);
+C(15,'③',`順序の初期値（START WITH）について正しいものはどれですか？`,[`自由に指定でき、省略すると1になる`,`常に1で、変更できない`,`省略すると作成できない`,`省略すると0になる`],`START WITH 初期値 で指定します。`);
+C(15,'③',`1ずつ減る（降順の）順序を作るには、どうしますか？`,[`INCREMENT BY -1 を指定する`,`DECREMENT BY 1 を指定する`,`DESC を指定する`,`MAXVALUE -1 を指定する`],`DECREMENT BY という指定はありません。増分にマイナス値を指定します。`);
+C(15,'④',`順序のオプションの既定値として正しいものはどれですか？`,[`最小値は NOMINVALUE で、昇順では1`,`最大値は MAXVALUE 100000`,`最小値は MINVALUE 100`,`CYCLE（循環する）`],`最大値の既定は NOMAXVALUE、循環の既定は NOCYCLE、キャッシュの既定は CACHE 20 です。`);
+C(15,'⑤',`順序の CACHE の既定値はどれですか？`,[`CACHE 20`,`CACHE 10`,`NOCACHE`,`CACHE 100`],`CACHE n | NOCACHE。既定は CACHE 20 です。`);
+C(15,'⑥',`ALTER SEQUENCE で変更できないオプションはどれですか？`,[`START WITH`,`INCREMENT BY`,`MAXVALUE`,`CACHE`],`初期値を変えたいときは、順序を作り直します。`);
+W(15,'⑦',`順序を削除する文の空欄を埋めなさい。 ___ 順序名;`,`DROP SEQUENCE`,`順序を削除しても、すでに採番された番号は消えません。`);
+W(15,'⑧',`接続中のユーザが作成した順序を確認するデータディクショナリは何ですか？`,`USER_SEQUENCES`,`USER_ で始まるのは自分のオブジェクトの情報です。`);
+W(15,'⑨',`順序の次の番号を採番するときに使うキーワードは何ですか？（順序名.___）`,`NEXTVAL`,`例）INSERT INTO emp VALUES (seq_emp.NEXTVAL, …);`);
+W(15,'⑩',`順序で直近に採番された番号を参照するときに使うキーワードは何ですか？（順序名.___）`,`CURRVAL`,`同じセッションで先に NEXTVAL を使っている必要があります。`);
+K(15,`CREATE SEQUENCE seq_emp\n  ___ 10\n  START WITH 1;`,`10ずつ増える順序にしたい。空欄は？（2語）`,`INCREMENT BY`,`INCREMENT BY n で増分を指定します。`);
+K(15,`INSERT INTO emp (empno, ename)\nVALUES (seq_emp.___, 'TARO');`,`次の番号を採番して入れたい。空欄は？`,`NEXTVAL`,`順序名.NEXTVAL で次の番号を作ります。`);
+K(15,`SELECT seq_emp.CURRVAL FROM ___;`,`直近の番号を確認したい。空欄に入る表名は？`,`DUAL`,`1行だけのダミー表 dual を使います。`);
+D(15,`初期値100、増分10の順序 seq_no を作成しなさい。`,`CREATE SEQUENCE seq_no START WITH 100 INCREMENT BY 10;|CREATE SEQUENCE seq_no INCREMENT BY 10 START WITH 100;`,`START WITH と INCREMENT BY の順番はどちらでもかまいません。`);
+D(15,`順序 SeqEmp によって直近に採番された番号を調べるSELECT文を書きなさい。`,`SELECT SeqEmp.CURRVAL FROM dual;`,`dual表を使って CURRVAL を SELECT します。`);
+
+/* --- 第16回 ユーザの作成 --- */
+W(16,'①',`ユーザの作成や権限の付与など、日常的な管理業務を行うときに接続する、最初から用意されているユーザは？`,`SYSTEM`,`SYS と並ぶ管理者ユーザです。日常の管理は SYSTEM で行います。`);
+C(16,'②',`業務で使う表を SYSTEM ユーザのスキーマに作ってはいけない理由はどれですか？`,[`管理用の表へのアクセスに影響する（遅くなる）から`,`SYSTEMスキーマには表を作れないから`,`パスワードが漏れるから`,`表の名前が変えられないから`],`管理者スキーマにはデータベース管理用の表がたくさんあります。`);
+C(16,'④',`ユーザ名の特徴として正しいものを2つ選びなさい。`,[`ユーザ名はあとから変更できない`,`ユーザ名の大文字・小文字は区別されない`,`ALTER USER文でユーザ名を変更できる`,`同じ名前のユーザを作成できる`],`ユーザ名以外の属性は ALTER USER で変更できます。`,2);
+C(16,'⑤',`パスワードの特徴として正しいものを2つ選びなさい。`,[`IDENTIFIED BY 句で設定する`,`ユーザ自身による変更は、データベースに接続後に行える`,`大文字・小文字は区別されない`,`接続前でもユーザ自身が変更できる`],`パスワードは大文字・小文字を区別します。`,2);
+W(16,'⑥',`表領域内の使用量の割り当てを設定するキーワードは何ですか？`,`QUOTA`,`例）QUOTA UNLIMITED ON USERS。設定しないとスキーマ内に表などを作れません。`);
+C(16,'⑥',`QUOTA を省略してユーザを作成するとどうなりますか？`,[`このユーザのスキーマには、本人もDB管理者もオブジェクトを作成できない`,`SYSTEM表領域にオブジェクトが作られる`,`DB管理者だけはオブジェクトを作成できる`,`エラーになりユーザは作成されない`],`書き込みの割り当てがないので、どんなオブジェクトも持てません。`);
+C(16,'⑦',`GAME ユーザのパスワードを変更できるのはだれですか？（SCOTTは一般ユーザ）2つ選びなさい。`,[`SYSTEM`,`GAMEユーザ自身`,`SCOTT`,`だれも変更できない`],`パスワードを忘れたときは、SYSTEM などの管理者に再設定してもらいます。`,2);
+C(16,'⑨',`DROP USER 文が失敗する理由を2つ選びなさい。`,[`オブジェクトを持つユーザを削除するときに CASCADE を付け忘れた`,`データベースに接続中のユーザを削除しようとした`,`先にオブジェクトを削除しなかった`,`ログインしていないユーザを削除しようとした`],`CASCADE をつければオブジェクトごと削除できます。先に削除しておく必要はありません。`,2);
+W(16,'⑧',`オブジェクトを持っているユーザを、オブジェクトごと削除するときにつけるオプションは何ですか？`,`CASCADE`,`DROP USER ユーザ名 CASCADE;`);
+W(16,'⑩',`データベースオブジェクトの持ち主を明確にする概念を何といいますか？`,`スキーマ`,`データの保護や管理責任を明確にするために必要です。`);
+K(16,`CREATE USER bronze ___ pass;`,`パスワード pass のユーザ bronze を作りたい。空欄は？（2語）`,`IDENTIFIED BY`,`CREATE USER ユーザ名 IDENTIFIED BY パスワード;`);
+K(16,`___ bronze IDENTIFIED BY newpass;`,`bronze のパスワードを変更したい。空欄は？（2語）`,`ALTER USER`,`ALTER USER ユーザ名 IDENTIFIED BY 新しいパスワード;`);
+D(16,`ユーザ名 BRONZE、パスワード PASS のユーザを作成する文を書きなさい（QUOTAは省略）。`,`CREATE USER BRONZE IDENTIFIED BY PASS;`,`ユーザ名とパスワードは省略できません。`);
+D(16,`表などのオブジェクトを持っているユーザ GOLD を、オブジェクトごと削除する文を書きなさい。`,`DROP USER GOLD CASCADE;`,`CASCADE を忘れるとエラーになります。`);
+D(16,`ユーザ GOLD のパスワードを NEWPASS に変更する文を書きなさい。`,`ALTER USER GOLD IDENTIFIED BY NEWPASS;`,`ユーザ名は変更できませんが、パスワードは ALTER USER で変更できます。`);
+
+/* --- 第17回 権限の管理 --- */
+W(17,'①',`CREATE SESSION や CREATE TABLE のように、データベースに対してどんな操作ができるかを表す権限を何といいますか？`,`システム権限`,`ほかに DROP ANY TABLE、CREATE USER、SELECT ANY TABLE など。`);
+W(17,'②',`SELECT・INSERT・UPDATE のように、他のスキーマのオブジェクトに対する権限を何といいますか？`,`オブジェクト権限`,`ほかに DELETE、ALTER、INDEX、REFERENCES、EXECUTE、ALL など。`);
+C(17,'②',`次の中からオブジェクト権限を2つ選びなさい。`,[`SELECT権限`,`ALTER権限`,`CREATE TABLE権限`,`CREATE SESSION権限`],`CREATE TABLE や CREATE SESSION はシステム権限です。`,2);
+C(17,'①',`SELECT ANY TABLE 権限の説明として正しいものはどれですか？`,[`データベース内のすべての表をSELECTできる権限`,`自スキーマ内の表をすべてSELECTできる権限`,`自分の表を他のスキーマがSELECTできるようにする権限`,`そのような権限はない`],`ANY は「データベース内のすべての」という意味です。`);
+W(17,'③',`複数の権限をまとめて管理を楽にするためのものを何といいますか？`,`ロール|ROLE`,`ロール＝役割。ロールプレイングゲームのロールと同じです。`);
+C(17,'③',`定義済みロールと用途の組み合わせとして正しいものはどれですか？`,[`RESOURCE ― アプリ開発者用`,`CONNECT ― データベース管理者用`,`DBA ― エンドユーザ用`,`RESOURCE ― エンドユーザ用`],`CONNECT＝エンドユーザ用、RESOURCE＝開発者用、DBA＝管理者用です。`);
+W(17,'④',`権限を与えるSQL（DCL）は何ですか？`,`GRANT`,`GRANT 権限名 TO ユーザ名;`);
+W(17,'⑤',`権限を取り消す（剥奪する）SQL（DCL）は何ですか？`,`REVOKE`,`REVOKE 権限名 FROM ユーザ名;`);
+C(17,'⑥',`複数のシステム権限を1つの文でまとめて与えることはできますか？`,[`権限名をカンマで区切って並べればできる`,`できない`,`権限名を AND で結べばできる`,`オブジェクト権限とも一緒に与えられる`],`システム権限とロールは混ぜられますが、オブジェクト権限は書き方が違うので一緒にできません。`);
+C(17,'⑨',`複数のオブジェクトに対する権限を1つの文でまとめて与えることはできますか？`,[`できないので、1文ずつに分けて実行する`,`オブジェクト名をカンマで区切ればできる`,`ALL キーワードを使えばできる`,`オブジェクト権限というものはない`],`複数の権限・複数のユーザにはまとめて与えられますが、複数のオブジェクトにはできません。`);
+K(17,`GRANT CREATE SESSION ___ bronze;`,`bronze にシステム権限を与えたい。空欄は？`,`TO`,`GRANT 権限名 TO ユーザ名; です。`);
+K(17,`GRANT SELECT ___ emp TO bronze;`,`emp表の SELECT 権限を与えたい。空欄は？`,`ON`,`オブジェクト権限は ON オブジェクト名 が入ります。`);
+K(17,`REVOKE SELECT ON emp ___ bronze;`,`bronze から権限を取り消したい。空欄は？`,`FROM`,`取り消すときは「このユーザから」なので FROM です。`);
+K(17,`GRANT ___ ON emp TO bronze;`,`emp表に対するすべてのオブジェクト権限を与えたい。空欄は？`,`ALL|ALL PRIVILEGES`,`GRANT ALL ON オブジェクト名 TO ユーザ名;`);
+D(17,`ユーザ BRONZE に、CREATE SESSION 権限と CREATE TABLE 権限を1つの文で与えなさい。`,`GRANT CREATE SESSION, CREATE TABLE TO BRONZE;|GRANT CREATE TABLE, CREATE SESSION TO BRONZE;`,`複数のシステム権限はカンマで区切ります。`);
+D(17,`emp表の SELECT 権限と INSERT 権限を、ユーザ SILVER に与えなさい。`,`GRANT SELECT, INSERT ON emp TO SILVER;|GRANT INSERT, SELECT ON emp TO SILVER;`,`オブジェクト権限は GRANT 権限 ON オブジェクト TO ユーザ; です。`);
+D(17,`ユーザ BRONZE から、emp表の SELECT 権限を取り消しなさい。`,`REVOKE SELECT ON emp FROM BRONZE;`,`REVOKE 権限 ON オブジェクト FROM ユーザ; です。`);
+
+/* --- 第18回 ロールの管理 --- */
+C(18,'①',`定義済みロール CONNECT の説明として正しいものはどれですか？`,[`エンドユーザ向けで、CREATE SESSION権限のみ含まれている`,`CREATE TABLE や CREATE VIEW などの基本的な権限のセット`,`データベース管理者向けの権限のセット`,`アプリケーション開発者向けの権限のセット`],`古いバージョンでは CREATE TABLE なども入っていましたが、今は CREATE SESSION だけです。`);
+W(18,'②',`USER_ROLE という名前の新しいロールを作成する文を書きなさい。`,`CREATE ROLE USER_ROLE|CREATE ROLE`,`CREATE ROLE ロール名;`);
+C(18,'③',`ロール USER_ROLE に CREATE TABLE 権限を与える正しい文はどれですか？`,[`GRANT CREATE TABLE TO USER_ROLE;`,`GRANT CREATE TABLE ON USER_ROLE;`,`GRANT USER_ROLE TO CREATE TABLE;`,`REVOKE CREATE TABLE FROM USER_ROLE;`],`ユーザの代わりにロール名を TO のあとに書きます。`);
+C(18,'④',`ロール USER_ROLE から CREATE VIEW 権限を取り消す正しい文はどれですか？`,[`REVOKE CREATE VIEW FROM USER_ROLE;`,`REVOKE CREATE VIEW TO USER_ROLE;`,`GRANT CREATE VIEW FROM USER_ROLE;`,`DROP CREATE VIEW FROM USER_ROLE;`],`取り消しは REVOKE … FROM です。`);
+C(18,'⑥',`ロールや権限の付与について正しいものはどれですか？`,[`複数のロールや、ユーザとロールの両方に同時に権限を与えられる`,`複数のロールに同時に権限は与えられない`,`ロールにロールは与えられない`,`システム権限とロールは混ぜて与えられない`],`ロールにロールを与えることもできます。`);
+W(18,'⑦',`接続中のユーザが持つシステム権限を、ロール経由のものも含めて調べるデータディクショナリは何ですか？`,`SESSION_PRIVS`,`USER_SYS_PRIVS は直接与えられたシステム権限だけが表示されます。`);
+W(18,'⑧',`自分が他のユーザに与えたオブジェクト権限を確認するデータディクショナリは何ですか？`,`USER_TAB_PRIVS_MADE`,`MADE＝「与えた」。もらった権限は USER_TAB_PRIVS_RECD です。`);
+W(18,'⑧',`自分が他のユーザから与えられたオブジェクト権限を確認するデータディクショナリは何ですか？`,`USER_TAB_PRIVS_RECD`,`RECD は received（受け取った）の略です。`);
+W(18,'⑦',`自分に与えられているロールを調べるデータディクショナリは何ですか？`,`SESSION_ROLES`,`システム権限は SESSION_PRIVS、ロールは SESSION_ROLES です。`);
+C(18,'⑨',`WITH ADMIN OPTION 付きで CREATE TABLE 権限をもらったAさんが、Bさんにその権限を与えました。その後Aさんの権限が取り消されると、Bさんはどうなりますか？`,[`Bさんの権限は残る`,`カスケードして取り消される`,`Bさんが持っている間はAさんから取り消せない`,`エラーになる`],`WITH ADMIN OPTION（システム権限）はカスケードしません。`);
+C(18,'⑩',`WITH GRANT OPTION 付きで SELECT 権限をもらったXさんが、Yさんにその権限を与えました。その後Xさんの権限が取り消されると、Yさんはどうなりますか？`,[`Yさんの権限もカスケードして取り消される`,`Yさんの権限は残る`,`Yさんが持っている間はXさんから取り消せない`,`エラーになる`],`WITH GRANT OPTION（オブジェクト権限）はカスケードして取り消されます。`);
+C(18,'⑨',`WITH ADMIN OPTION と WITH GRANT OPTION の組み合わせとして正しいものはどれですか？`,[`ADMIN＝システム権限用、GRANT＝オブジェクト権限用`,`ADMIN＝オブジェクト権限用、GRANT＝システム権限用`,`どちらもシステム権限用`,`どちらもオブジェクト権限用`],`取り消したときにカスケードするのは GRANT OPTION のほうです。`);
+K(18,`GRANT CREATE TABLE TO bronze WITH ___ OPTION;`,`bronze が他のユーザにもこのシステム権限を与えられるようにしたい。空欄は？`,`ADMIN`,`システム権限は WITH ADMIN OPTION です。`);
+K(18,`GRANT SELECT ON emp TO bronze WITH ___ OPTION;`,`bronze が他のユーザにもこのオブジェクト権限を与えられるようにしたい。空欄は？`,`GRANT`,`オブジェクト権限は WITH GRANT OPTION です。`);
+D(18,`USER_ROLE という名前のロールを作成しなさい。`,`CREATE ROLE USER_ROLE;`,`CREATE ROLE ロール名; です。`);
+D(18,`ユーザ Silver に、ロール USER_ROLE を与えなさい。`,`GRANT USER_ROLE TO Silver;`,`ロールもシステム権限と同じ形で与えます。`);
+D(18,`ロール USER_ROLE に、CREATE TABLE 権限を与えなさい。`,`GRANT CREATE TABLE TO USER_ROLE;`,`ユーザの代わりにロール名を書きます。`);
+
+/* --- 第19回 シノニム --- */
+W(19,'①',`作成したユーザだけがアクセスできるシノニムを何といいますか？`,`プライベートシノニム|プライベート`,`作成したスキーマ内に作られ、スキーマ内でユニークな名前です。`);
+W(19,'③',`データベースの全ユーザがアクセスできるシノニムを何といいますか？`,`パブリックシノニム|パブリック`,`PUBLICスキーマ内に作られ、データベース全体でユニークな名前です。`);
+C(19,'①',`スキーマ内の表と同じ名前のプライベートシノニムを作成できますか？`,[`エラーが返り、作成できない`,`作成できるが、表にアクセスできなくなる`,`作成できるが、シノニムにアクセスできなくなる`,`問題なく作成できる`],`プライベートシノニムの名前はスキーマ内で一意である必要があります。`);
+C(19,'③',`すでにパブリックシノニムとして使われている名前を、他のユーザがパブリックシノニムにつけられますか？`,[`データベース内で一意なので作成できない`,`作成できるが、前のシノニムが使えなくなる`,`作成できるが、自分のシノニムが使えなくなる`,`問題なく作成できる`],`パブリックシノニムは PUBLIC スキーマに保存されるので、名前はデータベース全体で一意です。`);
+C(19,'⑤',`パブリックシノニムを削除する文はどれですか？`,[`DROP PUBLIC SYNONYM シノニム名;`,`DROP SYNONYM シノニム名;`,`DROP PRIVATE SYNONYM シノニム名;`,`DELETE PUBLIC SYNONYM シノニム名;`],`パブリックシノニムの削除にも PUBLIC をつけます。`);
+C(19,'⑩',`シノニムを使う目的として正しいものを2つ選びなさい。`,[`長いオブジェクト名を短くして入力しやすくする`,`スキーマ名を隠してセキュリティを上げる`,`検索を速くする`,`データを複製して保存する`],`シノニムは表やビューにつける別名です。`,2);
+W(19,'⑩',`オブジェクトに別名を与え、他のデータベースユーザからもアクセスしやすくするものを何といいますか？`,`シノニム|SYNONYM`,`「スキーマ名.表名」のスキーマ名を書かずにアクセスできます。`);
+C(19,'⑥',`データベース内のデータが格納されているオブジェクトはどれですか？`,[`テーブル`,`ビュー`,`シノニム`,`順序`],`ビューはSELECT文、シノニムは別名なので、データは持ちません。`);
+C(19,'⑦',`SELECT文に名前をつけて、よく使うデータに簡単にアクセスできるようにするオブジェクトはどれですか？`,[`ビュー`,`シノニム`,`テーブル`,`索引`],`ビューはセキュリティ目的でも使います。`);
+C(19,'⑧',`順序（SEQUENCE）の説明として正しいものはどれですか？`,[`表に一意な数値を登録する目的で使う`,`データの検索を速くする目的で使う`,`オブジェクトに別名をつける目的で使う`,`SELECT文に名前をつける目的で使う`],`主キーなどの一意な値を簡単に作るためのものです。`);
+C(19,'⑨',`ある列のデータと行のアドレスをセットで保存し、行を素早く検索するためのオブジェクトはどれですか？`,[`索引`,`シノニム`,`ビュー`,`テーブル`],`索引は WHERE句でよく使う列のデータを昇順に並べて保存します。`);
+K(19,`CREATE SYNONYM e ___ scott.emp;`,`scott.emp に別名 e をつけたい。空欄は？`,`FOR`,`CREATE SYNONYM シノニム名 FOR 表名;`);
+K(19,`CREATE ___ SYNONYM e FOR scott.emp;`,`全ユーザが使えるシノニムにしたい。空欄は？`,`PUBLIC`,`パブリックシノニムは SYNONYM の前に PUBLIC をつけます。`);
+K(19,`DROP ___ SYNONYM e;`,`パブリックシノニム e を削除したい。空欄は？`,`PUBLIC`,`DROP PUBLIC SYNONYM シノニム名; です。`);
+D(19,`scott.emp 表に対して、プライベートシノニム e を作成しなさい。`,`CREATE SYNONYM e FOR scott.emp;`,`最初が S、最後が M、真ん中が回文（YNONY）の SYNONYM です。`);
+D(19,`scott.emp 表に対して、パブリックシノニム emp を作成しなさい。`,`CREATE PUBLIC SYNONYM emp FOR scott.emp;`,`SYNONYM の前に PUBLIC をつけます。`);
+
+/* ===== カルテ（第2〜19回・全問を選択式に） =====
+  R(回, 問番号, 問題, [選択肢…], 解説, 正解数) … 先頭から「正解数」個が正解 */
+const R=(l,no,q,o,e,n=1)=>add({l,k:'r',t:'c',src:no,q,o,n,e});
+/* 第2回 単一行副問い合わせ */
+R(2,1,`SELECT文のWHERE句などに、他のSELECT文の結果を利用する問い合わせを何といいますか？`,[`副問い合わせ`,`主問い合わせ`,`集合演算`,`結合`],`外側を主問い合わせ、内側を副問い合わせといいます。副問い合わせはSELECT文以外でも使えます。`);
+R(2,2,`空欄に入る組み合わせはどれですか？\n・副問い合わせと主問い合わせでは【①】が先に実行される\n・【②】の結果は【③】で利用される`,[`①副問い合わせ　②副問い合わせ　③主問い合わせ`,`①主問い合わせ　②主問い合わせ　③副問い合わせ`,`①副問い合わせ　②主問い合わせ　③副問い合わせ`,`①主問い合わせ　②副問い合わせ　③主問い合わせ`],`( ) の中から先に実行され、その結果が主問い合わせに戻されて使われます。`);
+R(2,3,`次のようなSELECT文を何といいますか？\nSELECT EMPNAME, SALARY FROM EMPLOYEE\nWHERE SALARY >= (SELECT AVG(SALARY) FROM EMPLOYEE);`,[`単一行副問い合わせ`,`複数行副問い合わせ`,`複数列副問い合わせ`,`集合演算`],`演算子が >= なので単一行副問い合わせです。複数行は IN・ANY・ALL、複数列は WHERE (job, sal) = (…) の形です。`);
+R(2,4,`問3のSQLで、副問い合わせ（内側のSELECT文）は何行返りますか？`,[`1行返る`,`複数行返る`,`構文エラーになる`,`0行返る`],`グループ関数を使い GROUP BY句がない副問い合わせは、必ず1行を返します。`);
+R(2,5,`内側のSELECT文が複数行を戻す問い合わせを何といいますか？`,[`複数行副問い合わせ`,`単一行副問い合わせ`,`複数列副問い合わせ`,`主問い合わせ`],`単一行・複数行は、副問い合わせが戻す行数のことです。確実に1行という確信がなければ複数行条件を使います。`);
+R(2,6,`次の副問い合わせはエラーになります。理由を正しく説明しているものはどれですか？\nSELECT * FROM emp WHERE dept_id =\n  SELECT dept_id FROM emp WHERE ename = 'KENJI';`,[`副問い合わせ部分が ( ) で囲まれていない`,`副問い合わせで = 演算子は使えない`,`副問い合わせの中で、dept_id列ではなく ename列で条件を指定できない`,`副問い合わせと主問い合わせで同じ表は使えない`],`副問い合わせは必ず ( ) で囲み、条件の右側に置きます。`);
+R(2,7,`単一行副問い合わせで使用できる演算子を3つ選びなさい。`,[`=`,`>=`,`<>`,`IN`,`ALL`],`=、>、<、>=、<=、<> など、WHERE句で学んだ演算子が使えます。IN・ALLは複数行条件です。`,3);
+R(2,8,`内側のSELECT文は複数行を返します。このSELECT文全体の結果はどうなりますか？\nSELECT empno, ename, sal FROM emp\nWHERE job = (SELECT job FROM emp WHERE deptno = 10);`,[`エラーになる`,`何も表示されない（0行返る）`,`複数行返る`,`1行だけ返る`],`「単一行副問い合わせにより2つ以上の行が戻されます」というエラーになります。IN などの複数行条件を使います。`);
+R(2,9,`副問い合わせは「KING」を1行戻しましたが、emp表にKINGさんは2人いました。結果はどうなりますか？\nSELECT empno, ename, sal FROM emp\nWHERE ename IN (SELECT ename FROM emp WHERE job = 'PRESIDENT');`,[`エラーにならず、2人のKINGさんの情報が表示される`,`単一行副問い合わせに複数行条件を使っているのでエラー`,`当てはまる行数が複数なのでエラー`,`0行が返る`],`副問い合わせは1行だけなので問題なし。1行のときに複数行条件を使っても問題ありません。`);
+R(2,10,`副問い合わせが1行も結果を返さなかったとき、SELECT文全体の結果はどうなりますか？`,[`0行が返る（何も表示されない）`,`エラーになる`,`全行が返る`,`NULLの行が1行返る`],`副問い合わせはNULLを返し、= NULL のような条件になります。エラーにはならず、行が戻らないだけです。`);
+/* 第3回 複数行副問い合わせ */
+R(3,1,`次の中から複数行条件を3つ選びなさい。`,[`ANY`,`ALL`,`IN`,`AND`,`OR`,`BETWEEN`],`複数行条件は IN・ANY・ALL。ANYとALLは単一行条件と組み合わせます。`,3);
+R(3,2,`副問い合わせにおいて「いずれかと等しい」という意味の条件を2つ選びなさい。`,[`IN`,`=ANY`,`=`,`=ALL`],`IN は = を OR で結んだもの。ANYもORの意味なので IN と =ANY は同じです。=ALL は使わないようにします。`,2);
+R(3,3,`複数行条件に NOT IN を使った副問い合わせで、副問い合わせの結果に NULL が含まれていました。主問い合わせの結果はどうなりますか？`,[`0行が返る`,`複数行が返る`,`エラーとなる`,`1行が返る`],`NOT IN は「どれとも一致しない」＝AND条件。NULLがあると unknown になり、決して true になりません。`);
+R(3,4,`複数行条件のうち、戻された行の「どれか」と比較するときに使うキーワードはどれですか？`,[`ANY`,`ALL`,`IN`,`EXISTS`],`「どれか」と比べるときは > や < と ANY を組み合わせます。`);
+R(3,5,`複数行条件のうち、戻された行の「すべて」と比較するときに使うキーワードはどれですか？`,[`ALL`,`ANY`,`IN`,`EXISTS`],`ALLはANYより厳しい条件なので、戻される行数はANYより少なくなります。`);
+R(3,6,`次のSELECT文の結果はどうなりますか？（job列に SALES は複数行あります）\nSELECT ename, job FROM emp WHERE sal >=\n  (SELECT sal FROM emp WHERE job = 'SALES');`,[`エラーとなる`,`SALESの給与より多くもらっている人の名前と職種が返る`,`0行が返る`],`SALES の人が複数いるので複数行条件が必要です。>= は単一行条件なのでエラーです。`);
+R(3,7,`次のSELECT文はエラーになります。理由として正しいものはどれですか？\nSELECT * FROM emp WHERE job ANY\n  (SELECT job FROM emp WHERE dept_id = 30);`,[`複数行条件（ANY）を単独では使用できないため`,`副問い合わせが複数行を戻すのに単一行条件を使っているため`,`副問い合わせの結果がNULLを含むため`],`ANY・ALL は必ず単一行条件と組み合わせます。単一行条件が左、ANY・ALLが右です。`);
+R(3,8,`副問い合わせが返す複数の値のうち「最大値よりも小さい」という意味の演算子はどれですか？`,[`<ANY`,`>ANY`,`>IN`,`<ALL`],`「どれかより小さい」＝一番大きい値より小さければよい、という判定です。`);
+R(3,9,`副問い合わせが返す複数の値のうち「最大値よりも大きい」という意味の演算子はどれですか？`,[`>ALL`,`>ANY`,`>MAX`,`>=`],`「どれと比べても大きい」＝「すべてより大きい」なので >ALL です。`);
+R(3,10,`=ALL について正しく説明しているものはどれですか？`,[`戻された値の「すべてと一致する」という条件で、通常ありえない`,`IN と同じ意味で、どれかと一致するときに使う`,`この条件を使うと、主問い合わせの全行が戻される`,`この条件を使うと、エラーが戻される`],`=ALL は false になる可能性が高く意味がないので使いません。<>ANY も全行が戻りやすくバグの元です。`);
+/* 第4回 集合演算 */
+R(4,1,`集合演算について正しく説明しているものはどれですか？`,[`SELECT文の列の数・データ型が一致している複数のSELECT文を利用した演算`,`問合せの中に別の問合せをネストすること`,`SELECT文はすべて集合演算である`,`SELECT文が用いる表の構成が一致している複数のSELECT文を利用した演算`],`SELECT文の結果を1つの集合とみなし、和・差・積を求めます。Oracleには「商」は実装されていません。`);
+R(4,2,`集合Bだけに含まれる部分（Aと重なる部分を除いたB）を求める集合演算はどれですか？`,[`B MINUS A`,`A MINUS B`,`A UNION B`,`B INTERSECT A`],`BからAに含まれるデータを引くので B MINUS A。MINUSは左右を入れかえると結果が変わります。`);
+R(4,3,`A INTERSECT B を図（ベン図）で表すと、どの部分になりますか？`,[`AとBが重なっている部分`,`Aだけの部分`,`Bだけの部分`,`AとBの全体`],`INTERSECT は A と B の両方に含まれるデータだけを返します。`);
+R(4,4,`2つの集合のすべての行を、重複するデータを除いて表示する演算はどれですか？\nSELECT emp_no, empname FROM emp 【　】 SELECT emp_no, empname FROM emp2;`,[`UNION`,`UNION ALL`,`INTERSECT`,`MINUS`],`UNION は、両方に含まれる重複データを1回だけ表示します。`);
+R(4,5,`問4と同じSQLで、重複するデータも含めてすべての行を返す演算はどれですか？`,[`UNION ALL`,`UNION`,`INTERSECT`,`MINUS`],`UNION ALL は、両方に含まれるデータをデータの数だけ表示します。`);
+R(4,6,`集合演算の MINUS は、どの集合を実現しますか？`,[`差集合`,`和集合`,`共通集合`,`補集合`],`和集合＝UNION・UNION ALL、共通集合＝INTERSECT。補集合という集合演算はありません。`);
+R(4,7,`A INTERSECT B はどのような集合になりますか？`,[`集合Aにも集合Bにも含まれる行を返す`,`集合Aと集合Bの重複を除いたすべての行を返す`,`集合Aの中から集合Bに含まれる行を取り除いた行を返す`,`集合Bの中から集合Aに含まれる行を取り除いた行を返す`],`INTERSECT は共通集合（2つの集合が交差する部分）です。`);
+R(4,8,`集合演算が成立する条件として正しいものをすべて選びなさい。`,[`SELECT句で指定する列の数、データ型が一致していなければならない`,`SELECT句で指定する列名、表名は異なっていても構わない`,`SELECT句で指定する列の数、列名、データ型が一致していなければならない`,`SELECT句で指定する表が同じ表でなければならない`],`列の数とデータ型は合わせます。列名が違うときは1つ目の問合せの列名が使われます。`,2);
+R(4,9,`UNION ALL 以外の集合演算で ORDER BY句を指定しない場合、表示の順番はどうなりますか？`,[`第1の文のSELECT句の1列目のデータでソートされる`,`左側の表の行が先、次に右側の表の行が表示される`,`右側の表の行が先、次に左側の表の行が表示される`,`特に決まった順番はなく、不定である`],`重複を調べるため、1つ目のSELECT文の第1列でソートされます。`);
+R(4,10,`集合演算で ORDER BY句を指定するときの規則として正しいものはどれですか？`,[`最後の文の文末にのみ指定できる`,`それぞれのSELECT文の文末に別々に指定できる`,`第1の文の文末にのみ指定できる`,`ORDER BY句で並び順を変えることはできない`],`FROM句の副問合せ以外では、ORDER BY は文の一番最後に書くと覚えましょう。`);
+/* 第5回 データ操作言語 */
+R(5,1,`Oracleのデータ操作言語（DML）を3つ選びなさい。`,[`INSERT`,`UPDATE`,`DELETE`,`CREATE`,`GRANT`],`DMLは INSERT・UPDATE・DELETE・MERGE・SELECT。特に左の3つはしっかり覚えましょう。`,3);
+R(5,2,`新規データを追加する文はどれですか？`,[`INSERT文`,`DELETE文`,`SELECT文`,`UPDATE文`],`追加は INSERT、変更は UPDATE、削除は DELETE です。`);
+R(5,3,`空欄に入る組み合わせはどれですか？\nINSERT 【①】 emp (empno, ename, salary)\n【②】 (1000, '鈴木', 190000);`,[`①INTO　②VALUES`,`①TO　②VALUES`,`①INTO　②VALUE`,`①FROM　②SET`],`INSERT INTO で覚えます。VALUES は VALUE の複数形なので最後は S です。`);
+R(5,4,`問3のINSERT文で、emp表に定義されていてINSERT文で指定されなかった列には、どんな値が入りますか？`,[`NULL または DEFAULT値`,`必ず 0`,`必ず空白`,`エラーになり挿入できない`],`DEFAULT値が設定されていればその値、なければNULLが入ります。`);
+R(5,5,`次のINSERT文の【　】にNULL値を挿入するには、どう書きますか？\nINSERT INTO emps (e_no, ename, hiredate)\nVALUES (10, '山崎', 【　】);`,[`NULL`,`'NULL'`,`"NULL"`,`''`],`NULL値はそのまま NULL と書きます。'NULL' や "NULL" としてはいけません。`);
+R(5,6,`次のINSERT文について正しい説明を2つ選びなさい。\nINSERT INTO dept VALUES (50, '製造', '博多');`,[`表定義で定義した順番に、VALUESの後ろで指定した値が挿入される`,`表定義の列数と合わない場合はエラーが返る`,`表名「dept」の後ろに列名を指定していないのでエラーになる`,`表定義の列数と合わない場合は、最初の3列に値が入り残りはNULLになる`],`列名を省略すると表定義の順に値が入ります。列数やデータ型が合わないとエラーです。`,2);
+R(5,7,`UPDATE文の基本構文の空欄に入る組み合わせはどれですか？\n【①】 表名 【②】 列名 = 値 WHERE 条件;`,[`①UPDATE　②SET`,`①UPDATE　②VALUES`,`①MODIFY　②SET`,`①UPDATE　②TO`],`行の指定（WHERE）は省略できますが、省略すると全行が変更されます。`);
+R(5,8,`UPDATE文でJOB列を「MANAGER」に、SALARY列を「3000」に変更します。SET句として正しいものはどれですか？`,[`SET JOB = 'MANAGER', SALARY = 3000`,`SET JOB = 'MANAGER' AND SET SALARY = 3000`,`SET (JOB, SALARY) = ('MANAGER', 3000)`,`SET JOB = 'MANAGER' AND SALARY = 3000`],`複数列は「列名 = データ」をカンマで結びます。文字列の ' ' を忘れずに。`);
+R(5,9,`「TEST」表のある行を削除する文の空欄に入るものはどれですか？\n【　】 WHERE 条件;`,[`DELETE FROM TEST`,`DELETE * FROM TEST`,`DROP FROM TEST`,`DELETE TEST.*`],`DELETE文は常に行単位で削除するので、列名や * は書きません。`);
+R(5,10,`次のDELETE文を実行した結果はどうなりますか？\nDELETE FROM employees;`,[`全ての行が削除される`,`表の定義ごと削除される`,`1行目だけ削除される`,`WHERE句がないのでエラーになる`],`WHERE句を指定しないと表内の全行が削除されます。WHERE句忘れに注意しましょう。`);
+/* 第6回 トランザクション */
+R(6,1,`データベースで同じテーブルのデータを複数のユーザーが同時に処理することを、何アクセスといいますか？`,[`マルチユーザー・アクセス`,`シングルユーザー・アクセス`,`リモート・アクセス`,`ランダム・アクセス`],`同じデータベースユーザーで複数のセッションを張ることもできます。`);
+R(6,2,`問1の状態のとき、それぞれのアクセスを区別する単位を何といいますか？`,[`セッション`,`コネクション`,`ユニット`,`ステータス`],`データベースサーバーがセッションIDなどを割り振って管理しています。`);
+R(6,3,`次の文の中で正しいものはどれですか？`,[`トランザクションとは、同時に確定すべき関連のある処理のまとまりの単位である`,`トランザクションとは、INSERTやUPDATEなどひとつひとつの文の単位である`,`トランザクションとは、データベースに接続してから終了するまでの単位である`,`トランザクションとは、3つか4つくらいの処理をまとめたものである`],`接続から終了までは「セッション」です。数で分けることはありません。`);
+R(6,4,`ひとつのセッションとトランザクションの関係を正しく説明しているものはどれですか？`,[`ひとつ前のトランザクションが終了したのち、次のトランザクションを開始できる`,`複数のトランザクションを並行して行うことができる`,`ひとつのトランザクションが終了すると、セッションも終了する`,`あるトランザクションの中で、他のトランザクションをネストできる`],`1つのセッションの中ではトランザクションは1つずつ。異なるセッション間なら並行できます。`);
+R(6,5,`トランザクションを確定するSQLはどれですか？`,[`COMMIT`,`CONNECT`,`COMMAND`,`ROLLBACK`],`一連の処理をまとめて確定するには COMMIT; を実行します。`);
+R(6,6,`トランザクションを取り消すSQLはどれですか？`,[`ROLLBACK`,`SETBACK`,`RESTORE`,`COMMIT`],`前回のトランザクション終了時点まで取り消されます。`);
+R(6,7,`まだ確定したくないが、ロールバック時に戻るポイントとして保存しておきたいときに実行するSQLはどれですか？`,[`SAVEPOINT`,`ROLLBACK`,`COMMIT`,`POINT`],`SAVEPOINT 名前; で保存します。セーブポイントを置いてもトランザクションは終了しません。`);
+R(6,8,`COMMITを実行したとき以外で、トランザクションが正常に終了するタイミングを2つ選びなさい。`,[`CREATE TABLE文などのDDLが実行されたとき`,`ROLLBACKコマンドを発行したとき`,`ネットワークの接続不良で切断されたとき`,`SAVEPOINTコマンドを発行したとき`],`DDLやDCLを発行すると暗黙的にコミットされます。ROLLBACKによる取り消しも正常な終了です。`,2);
+R(6,9,`データベースと接続中に障害が起きて異常終了した場合、まだ確定されていないトランザクションはどうなりますか？`,[`ROLLBACKされる`,`COMMITされる`,`SAVEPOINTができ、COMMITされる`],`異常切断では、データの整合性を保つためにトランザクションは暗黙的にロールバックされます。`);
+R(6,10,`ユーザXがSELECT文を実行中に、ユーザYが関連するデータをUPDATEしました。正しいものはどれですか？`,[`途中でCOMMITされたとしても、ユーザXにはSELECT文開始時のデータが戻される`,`ユーザYがUPDATEした直後から、ユーザXには変更後のデータが戻される`,`ユーザYがCOMMITしてはじめて、ユーザXには変更後のデータが戻される`,`ユーザYがCOMMITするまで、ユーザXはSELECTできずエラーとなる`],`読み取り一貫性：SELECT文の実行中に参照元のデータが変わらないことを保証するしくみです。`);
+/* 第7回 データベースオブジェクトと表の作成 */
+R(7,1,`表、ビュー、シノニムなど、データベース内に格納され永続化されているモノを何といいますか？`,[`データベースオブジェクト（スキーマオブジェクト）`,`データディクショナリ`,`トランザクション`,`セッション`],`CREATE文で作って永続化するものです。必ずどこかのスキーマに所属するので、スキーマオブジェクトともいいます。`);
+R(7,2,`オブジェクトの管理の単位であり、誰の持ち物かを明確にするための概念を何といいますか？`,[`スキーマ`,`アカウント`,`ログオン`,`グループ`],`オブジェクトは必ずどこかの名前空間（スキーマ）に属します。`);
+R(7,3,`問2に対して、データベースにログオンする単位・権限管理の単位という観点から呼ぶときの名称はどれですか？`,[`ユーザ`,`スキーマ`,`ロール`,`セッション`],`Oracleではユーザを作成すると同名のスキーマが自動的に作成されます。`);
+R(7,4,`「食品表」を作成する文の空欄に入るものはどれですか？\n【　】 食品表 ( 列名 データ型, 列名 データ型 … );`,[`CREATE TABLE`,`MAKE TABLE`,`INSERT TABLE`,`NEW TABLE`],`CREATE TABLE に続けて表名、( ) の中に列名とデータ型を定義します。`);
+R(7,5,`INSERT文などで列を指定しなかったとき、自動的に指定した値を挿入するオプションはどれですか？`,[`DEFAULT`,`SYSDATE`,`DESC`,`DDL`],`列名とデータ型のあとに DEFAULT 値（式）と指定します。`);
+R(7,6,`「食品表」の定義を削除する文はどれですか？`,[`DROP TABLE 食品表;`,`DELETE TABLE 食品表;`,`TRUNCATE TABLE 食品表;`,`UPDATE TABLE 食品表;`],`DROP TABLE で表定義がデータディクショナリから削除され、データにもアクセスできなくなります。`);
+R(7,7,`表定義（列名やデータ型などの構造）を確認するコマンドはどれですか？`,[`DESC`,`SHOW`,`LIST`,`VIEW`],`DESC は SQL*Plus のコマンドなので ; はいりません。`);
+R(7,8,`sname列にはアルファベットや漢字などのデータが入ります。データ型としてふさわしいものはどれですか？`,[`VARCHAR2`,`VARCHAR`,`NUMBER`,`DATE`],`VARCHAR は古い型で現在は使いません。必ず 2 をつけます。`);
+R(7,9,`score列には0から100までの数値が入ります。データ型の正しい定義はどれですか？`,[`NUMBER(3)`,`NUMBER(0, 100)`,`NUMBER(100)`,`VARCHAR2(100)`],`NUMBER の ( ) の中は10進数の桁数です。数値の範囲ではありません。`);
+R(7,10,`実施日列には日付データが入ります。データ型としてふさわしいものはどれですか？`,[`DATE`,`NUMBER`,`CHAR`,`VARCHAR2`],`日付データはDATE型に保存します。`);
+/* 第8回 表の作成とデータ型 */
+R(8,1,`「学生番号」列（4桁の文字型）と「点数」列（3桁の整数型）を持つ「成績」表を作成する正しい文はどれですか？`,[`CREATE TABLE 成績 (学生番号 VARCHAR2(4), 点数 NUMBER(3));`,`CREATE 成績 TABLE (学生番号 VARCHAR2(4), 点数 NUMBER(3));`,`CREATE TABLE 成績 学生番号 VARCHAR2(4), 点数 NUMBER(3);`,`CREATE TABLE 成績 (学生番号 NUMBER(4), 点数 VARCHAR2(3));`],`CREATE TABLE のあとに表名、列の情報は ( ) の中で定義します。`);
+R(8,2,`固定長の文字列型で、最大2000バイトまで保存可能な型はどれですか？`,[`CHAR`,`VARCHAR2`,`CLOB`,`STRING`],`CHARはID列など桁数が固定のデータによく使います。通常の文字列は VARCHAR2 です。`);
+R(8,3,`可変長の文字列型で、4000バイトまで保存可能な型はどれですか？`,[`VARCHAR2`,`CHARVAR`,`CHAR`,`VARCHAR`],`VARCHAR は古い型で将来廃止の可能性もあるので、必ず 2 をつけます。`);
+R(8,4,`NUMBER(6, 2) について正しく説明しているものはどれですか？`,[`全体が6桁で、その内2桁が小数部となる10進数の数値型`,`全体が6バイトで、その内2バイトが小数部となる2進数の数値型`,`整数部が6桁で、小数部が2桁となる10進数の数値型`,`整数部が6バイトで、小数部が2バイトとなる2進数の数値型`],`1つ目が全体の桁数、2つ目が小数部の桁数。2つ目を省略すると整数になります。`);
+R(8,5,`NUMBER(4) に保存できる数値を2つ選びなさい。`,[`16`,`1000`,`10.7`,`10000`],`小数部は保持されません。4は全体の桁数なので1000は保存でき、10000は桁あふれでエラーです。`,2);
+R(8,6,`NUMBER（引数なし）で定義した列のデータ型はどれになりますか？`,[`浮動小数点数型`,`固定小数点数型`,`整数型`,`可変長文字列型`],`引数を省略すると最大38桁の浮動小数点数になります。`);
+R(8,7,`7バイト固定長の日付型で、日付と時刻を秒単位まで保存できる型はどれですか？`,[`DATE`,`DATA`,`DAY`,`TIMESTAMP`],`DATA（データ）と間違えないように。日付型は DATE（デート）です。`);
+R(8,8,`DROP TABLE文で表を削除したときの説明で正しいものはどれですか？`,[`表の構造ごとデータが削除され、ROLLBACKはできない`,`データはすべて削除されるが、表の構造は残る`,`表の構造ごとデータが削除されるが、ROLLBACKで元に戻る`,`特定の行を選んで、データを削除することができる`],`DROP TABLE は DDL なのでロールバックできません。`);
+R(8,9,`表構造は残し、データのみ高速に削除する文はどれですか？`,[`TRUNCATE文`,`DELETE文`,`DROP文`,`UPDATE文`],`TRUNCATE TABLE は「表の切り捨て」。ロールバックで戻せません。`);
+R(8,10,`次の命令の中で、処理をロールバックできるものをすべて選びなさい。`,[`INSERT文`,`DELETE文`,`DROP文`,`TRUNCATE文`],`ロールバックできるのは DML（INSERT・UPDATE・DELETE など）だけです。`,2);
+/* 第9回 エンティティ整合性制約の種類 */
+R(9,1,`表に制約をつけることの効果として正しいものはどれですか？`,[`データの整合性を高める`,`検索スピードを高める`,`ディスク容量を節約する`,`操作性を高める`],`制約で検索が速くなったり、容量を節約できたりはしません。`);
+R(9,2,`次の中からエンティティ整合性制約に当てはまるものをすべて選びなさい。`,[`UNIQUE制約`,`CHECK制約`,`FOREIGN KEY制約`,`DEFAULT制約`],`FOREIGN KEY は参照整合性制約、DEFAULT は制約ではありません。エンティティ整合性制約は PRIMARY KEY・UNIQUE・NOT NULL・CHECK です。`,2);
+R(9,3,`参照整合性制約について正しく説明しているものはどれですか？`,[`データとデータの関係についての制約である`,`ある列のデータ単体についての制約である`,`その表内である行を一意に特定するためにつける制約である`,`自由な条件で制約をかけることができる`],`エンティティ整合性制約は列のデータそのもの、参照整合性制約は列と別の列のデータの関連に対する制約です。`);
+R(9,4,`PRIMARY KEY制約の説明として当てはまるものをすべて選びなさい。`,[`この制約は表に1つしかつけられない`,`NULL値を許さない`,`データの重複を許可しない`,`NULL値はあっても良い`,`入力がない場合、デフォルトの値が設定される`],`主キー制約は NULL と重複を許さず、表に1つだけつけられます。`,3);
+R(9,5,`UNIQUE制約とPRIMARY KEY制約の違いについて正しいものはどれですか？`,[`どちらも列の中に同じ値があってはいけないが、PRIMARY KEYは主キーを設定する制約でNULL値を許さない`,`どちらもNULL値を許さないが、UNIQUEは列の中に同じ値があってもよい`,`どちらも同じ値があってはいけないが、UNIQUEは列の中で1つしか定義できない`],`UNIQUEは重複を許さないだけなので何列でもつけられます。NULLは値ではないので重複に含まれません。`);
+R(9,6,`その列にNULL値が設定されることを許可しない制約を2つ選びなさい。`,[`NOT NULL`,`PRIMARY KEY`,`UNIQUE`,`CHECK`],`UNIQUE制約にはNULLを管理する機能はありません。`,2);
+R(9,7,`任意の条件をもとに制約をつける場合は、どの制約を使いますか？`,[`CHECK`,`UNIQUE`,`NOT NULL`,`PRIMARY KEY`],`CHECK の ( ) の中に条件式を書き、条件に合うデータだけを格納できます。`);
+R(9,8,`次のエラーメッセージの原因はどれですか？\nORA-00001：一意制約 (SE.SYS_C00953) に反しています。`,[`すでにあるデータを入れようとした`,`NULL値を入れようとした`,`条件に合わないデータを入れようとした`,`INSERTの権限がないのでエラーになった`],`PRIMARY KEY制約やUNIQUE制約の列に、登録済みのデータを入れようとすると表示されます。`);
+R(9,9,`表の作成時、列の属性を定義するときに制約も含めて定義することを「○レベルの定義」といいます。○に当てはまる語はどれですか？`,[`列`,`表`,`行`,`スキーマ`],`制約の定義には「列レベル」と「表レベル」があります。`);
+R(9,10,`制約に制約名をつけるときのキーワードはどれですか？`,[`CONSTRAINT`,`COLUMN`,`DEFAULT`,`KEY`],`制約名はエラーコードに表示されます。PRIMARY KEY・UNIQUE はどの列かわかりにくいので名前をつけると便利です。`);
+/* 第10回 参照整合性制約 */
+R(10,1,`他表の値を参照するとき、参照元にない値を挿入しないようにする制約を何といいますか？`,[`参照整合性制約`,`一意制約`,`エンティティ整合性制約`,`削除制約`],`外部キー制約・FOREIGN KEY制約ともいいます。REFERENCES 親表名(親キー列) で設定します。`);
+R(10,2,`emp表(従業員)の dno列は、dept表(部門表)の dno列を参照しています。親表はどちらですか？`,[`dept表`,`emp表`,`両方とも親表`,`どちらも親表ではない`],`参照される側の dept表が親表です。emp表は参照する側（子表）です。`);
+R(10,3,`親キー列には一意性を保証するための制約が必要です。つけるべき制約を2つ選びなさい。`,[`UNIQUE`,`PRIMARY KEY`,`NOT NULL`,`FOREIGN KEY`],`親キー列には主キーかUNIQUE制約のどちらかをつける必要があります。`,2);
+R(10,4,`売上表の「商品コード」列が商品表の「ID」列を参照しているとき、「商品コード」列を何キーと呼びますか？`,[`外部キー`,`親キー`,`主キー`,`一意キー`],`外部に参照元となるキー値を持つ列なので「外部キー」です。`);
+R(10,5,`参照整合性制約を定義する表を作成する場合、どちらの表を先に作成しますか？`,[`親表から先に作成する`,`子表から先に作成する`,`どちらを先に作成してもよい`],`親表の親キー列に PRIMARY KEY か UNIQUE を定義してから、子表を定義します。`);
+R(10,6,`参照整合性制約が定義された表を削除する場合、どちらの表を先に削除しますか？`,[`子表から先に削除する`,`親表から先に削除する`,`どちらを先に削除してもよい`],`親表を参照する表がある間は親表を削除できません（CASCADE CONSTRAINTS句を指定すれば削除可能）。`);
+R(10,7,`参照整合性制約の効果としてふさわしいものを2つ選びなさい。`,[`親キー列に保存されていないデータを、外部キー列に挿入できない`,`外部キー列によって参照されている親キー列の値を削除できない`,`外部キー列に保存されていないデータを、親キー列に挿入できない`,`外部キー列にNULL値を格納できない`],`親キーにない値は入力できず、参照されている親キーは削除・変更できなくなります。`,2);
+R(10,8,`参照整合性制約のルールとして正しいものはどれですか？`,[`INSERTできないデータはUPDATEでもその値に変更できず、DELETEで削除できないデータは別の値に変更することもできない`,`INSERTで登録できないデータでも、UPDATEでその値に変更はできる`,`DELETEで削除できないデータでも、別の値に変更することはできる`,`参照する外部キーがなくても、親キーの値は削除も変更もできない`],`参照している外部キーがなければ、親キーの行は自由に削除・変更できます。`);
+R(10,9,`Email表の mno列は Friends表の fno列を参照しています。参照整合性制約を正しく定義する文はどれですか？`,[`mno NUMBER(3) REFERENCES Friends(fno)`,`mno NUMBER(3) FOREIGN KEY`,`fno NUMBER(3) REFERENCES Email(mno)`,`mno NUMBER(3) REFERENCES Friends.fno`],`Email表のmno列が外部キー、Friends表のfno列が親キー。列レベルでは REFERENCES に続けて親表と親キーを書きます。`);
+R(10,10,`次の定義で、外部キー列の列名はどれですか？\nstudentNo NUMBER(6) REFERENCES Students(sno)`,[`studentNo`,`Students`,`sno`,`NUMBER`],`studentNo が外部キー、Students表の sno列が親キーです。`);
+/* 第11回 表レベルでの制約の定義 */
+R(11,1,`制約の表レベルでの定義について、正しい説明を2つ選びなさい。`,[`すべての列の定義が終わった後に , で区切り、改めて制約を定義する`,`複数の制約を定義する際は、各制約ごとにカンマで区切る`,`すべての列の定義が終わった後に ) を閉じてから制約を定義する`,`複数の制約を定義する際は、各制約の間はスペースで区切る`],`列の定義が終わったらカンマを打ち、制約ごとにカンマで区切ります。`,2);
+R(11,2,`sid列を主キーとして表レベルで定義する正しい文はどれですか？`,[`PRIMARY KEY (sid)`,`UNIQUE (sid)`,`CHECK (PRIMARY KEY = sid)`,`PRIMARY KEY`],`表レベルでは列名を指定する必要があります。`);
+R(11,3,`email列に一意制約を表レベルで定義する正しい書き方はどれですか？（制約名は省略）`,[`UNIQUE (email)`,`email UNIQUE`,`UNIQUE KEY email`,`CHECK (UNIQUE email)`],`UNIQUE制約も表レベルでは ( ) の中に列名を書きます。`);
+R(11,4,`「age列は20以上」というチェック制約を表レベルで定義する正しい書き方はどれですか？（制約名は省略）`,[`CHECK (age >= 20)`,`CHECK age >= 20`,`CHECK (age > 20)`,`WHERE (age >= 20)`],`チェック制約は列レベルでも表レベルでも書き方は同じで、条件式を ( ) に書きます。`);
+R(11,5,`参照整合性制約を表レベルで定義する際に使用するキーワードをすべて選びなさい。`,[`FOREIGN KEY`,`REFERENCES`,`PRIMARY KEY`,`UNIQUE KEY`],`外部キー・親表・親キーの3つの情報が必要です。FOREIGN KEYで外部キー、REFERENCESで親表名と親キー列名を指定します。`,2);
+R(11,6,`参照整合性制約を列レベルで定義する際に使用するキーワードはどれですか？`,[`REFERENCES`,`FOREIGN KEY`,`PRIMARY KEY`,`UNIQUE KEY`],`列レベルでは、その列自体が外部キーなので FOREIGN KEY は不要。REFERENCES だけ書きます。`);
+R(11,7,`表レベルでの制約定義について、正しい説明を2つ選びなさい。`,[`複合主キーや複合一意キーなどは表レベルで定義する必要がある`,`チェック制約で他の列を条件にする場合は表レベルで定義する必要がある`,`1つでも表レベルで定義すると、すべて表レベルで定義する必要がある`,`どんな場合でも、表レベル・列レベルのどちらでも記述できる`],`複数列の組み合わせにひとつの制約を定義する場合や、CHECKで他の列を参照する場合は表レベルだけです。`,2);
+R(11,8,`pid列とgno列の組み合わせを主キーとする文として正しいものはどれですか？`,[`PRIMARY KEY (pid, gno)`,`PRIMARY KEY (pid & gno)`,`PRIMARY KEY (pid)(gno)`,`PRIMARY KEY (pid), PRIMARY KEY (gno)`],`複合主キーは ( ) の中でカンマ区切りにします。UNIQUEやFOREIGN KEYでも同じです。`);
+R(11,9,`「defense列はoffense列よりも小さい」というチェック制約として正しいものはどれですか？（制約名は省略）`,[`CHECK (defense < offense)`,`CHECK (defense > offense)`,`CHECK (offense < defense)`,`CHECK defense < offense`],`他の列と比べる条件は表制約構文で定義します。`);
+R(11,10,`NOT NULL制約の説明として正しいものはどれですか？`,[`表レベルでは定義できない`,`列レベルでは定義できない`,`制約名をつけることはできない`,`DEFAULT値より前に定義する`],`NOT NULL は表レベルでは定義できません。DEFAULT値の指定は制約定義より前にします。`);
+/* 第12回 ビューの作成 */
+R(12,1,`データベースのユーザデータが保存されているオブジェクトはどれですか？`,[`テーブル`,`ビュー`,`関数`,`ワークシート`],`データが保存される場所は表（テーブル）。ビューやシノニムにはデータは保存されません。`);
+R(12,2,`ビューについて正しく説明しているものはどれですか？`,[`SELECT文で取り出したデータを見せる機能で、ビューを通じてデータを変更すると元表のデータが変更される`,`表の一部を取り出し、そのデータを複製して作ったものである`,`SELECT文で取り出したデータを一時的に見せる機能で、切断して再接続すると無効になる`,`ビューと表はまったく同じもので、表に別の名前をつけたものである`],`ビューの実体はSELECT文で、データディクショナリに登録されているだけです。副問合せに名前をつけて保存したようなものです。`);
+R(12,3,`ビューの効果（目的）としてふさわしくないものはどれですか？`,[`ビューを使用すると、SELECT文が速くなる`,`アプリケーション開発の上でバグが生じにくくなる`,`アクセス可能な列や行を制限し、セキュリティ効果を上げることが出来る`,`データを加工して表示できる`],`ビューを使うと遅くなることはあっても、速くなることはありません。`);
+R(12,4,`「Address」という名前でビューを作成する文の空欄に入るものはどれですか？\n【　】 SELECT文;`,[`CREATE VIEW Address AS`,`CREATE VIEW Address`,`CREATE Address VIEW AS`,`MAKE VIEW Address AS`],`SELECT文の前に CREATE VIEW を追加するだけです。AS を忘れないように。`);
+R(12,5,`問4のビューの定義を変更するとき、空欄に当てはまるキーワードはどれですか？\n【　】 Address AS SELECT文;`,[`CREATE OR REPLACE VIEW`,`ALTER VIEW`,`RENAME VIEW`,`CREATE AND REPLACE VIEW`],`OR REPLACE は初めて作成するビューで使ってもエラーになりません。`);
+R(12,6,`元表がなくてもビューを強制的に作成するときに使用するキーワードはどれですか？`,[`FORCE`,`FROM`,`NO FORCE`,`REPLACE`],`FORCE＝強制。表の定義がなくてもビューを作る必要があるときに使います。`);
+R(12,7,`ビューにビュー列名をつける方法として、正しいものを2つ選びなさい。`,[`ビュー名につづけて（ビュー列名, ビュー列名…）として定義する`,`ビューの元となるSELECT文において列別名をつけて定義する`,`ビュー名につづけて AS COLUMNS NAME "ビュー列名" として定義する`,`そのようなことはできない`],`SELECT文で列別名をつけた場合も、列別名がビュー列名になります。`,2);
+R(12,8,`問4のビューを削除するSQL文の空欄に入るものはどれですか？\n【　】 Address;`,[`DROP VIEW`,`DELETE VIEW`,`REMOVE VIEW`,`TRUNCATE VIEW`],`DROP はオブジェクトを削除するときに使うキーワードです。`);
+R(12,9,`ビューを削除すると、ビューの元となる表はどうなりますか？`,[`ビューを削除しても、元表には何の影響もない`,`ビューを削除すると、同時に元表も削除される`,`元表があるときは、まず元表を消さないとビューは削除できない`,`ビューで参照されていたデータは、元表から削除される`],`表を削除してもビューは削除されませんが、そのビューを使うとコンパイルエラーになります。`);
+R(12,10,`ビューのSELECT文を確認するデータディクショナリ名と列名はどれですか？`,[`USER_VIEWS の TEXT列`,`USER_TABLES の SELECT列`,`USER_VIEWS の VIEW列`,`VIEW_TEXT の COMPILE列`],`ビューに関する情報は USER_VIEWS、元となるSELECT文は TEXT列です。`);
+/* 第13回 ビューでのデータ操作 */
+R(13,1,`次の中で正しい文はどれですか？`,[`単一行関数やグループ関数を含まないビューでは、基本的なDMLは実行できる`,`どんなビューでも、ビューを通じてデータを変更すると元表が変更される`,`単一行関数やグループ関数を含まないビューではDMLが制限される`,`単一行関数やグループ関数を含むビューは作成できない`],`関数・式・グループ化を含まないビュー（単一ビュー）ではDMLが実行できます。ただしNOT NULL列がビューにないとINSERTはエラーです。`);
+R(13,2,`グループ関数を使ったビューで実行できるSQL文はどれですか？`,[`SELECT文`,`INSERT文`,`UPDATE文`,`DELETE文`],`問い合わせはできますが、INSERT・UPDATE・DELETE・MERGE はすべてできません。`);
+R(13,3,`「従業員」ビューの年収列を「給与*12」という式で求めています。この列に対してエラーになる操作をすべて選びなさい。`,[`INSERT文`,`UPDATE文`,`SELECT文`,`DELETE文`],`式で定義された列には INSERT・UPDATE・MERGE はできません（仮想列）。DELETEは行単位なので可能です。`,2);
+R(13,4,`元表にNOT NULL制約の列があり、この列がビューに含まれていないとき、エラーになる操作はどれですか？`,[`INSERT文`,`SELECT文`,`UPDATE文`,`DELETE文`],`ビューにない列には NULL（またはDEFAULT値）が入るので、NOT NULL列があると挿入できません。`);
+R(13,5,`次の中で正しい説明はどれですか？`,[`ビューの列が関数や式を含む場合は、ビュー列名をつけなければならない`,`ビューの列には関数や式を含む列を使用できない`,`ビューの列には何の制限もなく、関数や式を含む列を使用できる`],`ビュー列名は CREATE VIEW ビュー名 の後の ( ) か、SELECT文の列別名でつけます。`);
+R(13,6,`ビューを使用することで期待できるセキュリティ効果を2つ選びなさい。`,[`特定の列や行のみ表示するビューを作成すれば、不要な列を隠せる`,`ビューに読み取り専用や変更の条件をつければ制限をかけられる`,`ビューを通じてデータを変更しても元表のデータは変わらない`,`ビューを通じたデータの変更は一切できない`],`WITH CHECK OPTION や WITH READ ONLY でデータ変更に制限をかけられます。`,2);
+R(13,7,`WITH READ ONLY オプションをつけたビューでできるSQLはどれですか？`,[`SELECT文`,`INSERT文`,`UPDATE文`,`DELETE文`],`読み取り専用なので問い合わせだけできます。`);
+R(13,8,`ビューを通じて操作するとき、WHERE句で指定された行のみ操作できるように制限するオプションはどれですか？`,[`WITH CHECK OPTION`,`DEFAULT オプション`,`WITH READ ONLY オプション`,`FORCE オプション`],`WHERE句に一致しないデータへの変更を防げます。`);
+R(13,9,`表を読み取り専用にするキーワードはどれですか？`,[`READ ONLY`,`OR REPLACE`,`OR READ`,`WRITE ONLY`],`ALTER TABLE 表名 READ ONLY; で表を読み取り専用にします。`);
+R(13,10,`表を読み書き可能に戻す文の空欄に入るものはどれですか？\nALTER TABLE 表名 【　】;`,[`READ WRITE`,`WRITE ONLY`,`READ ONLY OFF`,`NO READ ONLY`],`「読み取りも書き込みも可」なので READ WRITE です。`);
+/* 第14回 索引 */
+R(14,1,`データベースでデータを素早く検索するためにつけるものを何と呼びますか？`,[`索引（INDEX）`,`ビュー`,`シノニム`,`順序`],`本の索引と同じように、データとアドレスが組になって昇順に保存されています。`);
+R(14,2,`問1がない表の場合、どのような方法でデータを検索しますか？`,[`全表走査`,`検索できない`,`索引は必ず必要であり、索引のない表はない`],`物理的に記録された順番どおり、表のはじめから最後まで検索します。`);
+R(14,3,`問1を作成すると検索が高速になる表（列）の条件はどれですか？`,[`WHERE句でひんぱんに利用される列`,`更新が多い列`,`データ量の少ない表`,`検索条件にあまり使われない列`],`ほかに「データ量の多い表」「NULLが多くNULL以外を検索する」「データのばらつきが大きい」も正解です。`);
+R(14,4,`問1を作成しない方がよい表の条件はどれですか？`,[`データ量の少ない表`,`データ量の多い表`,`WHERE句でひんぱんに利用される列`,`NULLが多く、NULL以外を検索する列`],`ほかに「検索条件にあまり使われない」「更新が多い」「式の一部として使われることが多い」も正解です。`);
+R(14,5,`制約をつけると自動的に索引が作成されるものを2つ選びなさい。`,[`PRIMARY KEY`,`UNIQUE`,`NOT NULL`,`FOREIGN KEY`,`CHECK`],`制約名と同じ名前で索引が作成されます。`,2);
+R(14,6,`制約をつけることで自動的に作成された索引の索引名はどうなりますか？`,[`制約名と同じ索引名がつく`,`制約名に関係なく SYS_INDxxxx という名前がつく`,`SYS_Cxxxx という名前がつくが、制約名とは異なる番号になる`],`CONSTRAINTで指定した制約名、指定しなければ自動の SYS_Cxxxx と同じ名前です。`);
+R(14,7,`索引名 emp_idx、表名 emps、列名 tel で索引を作成する正しい文はどれですか？`,[`CREATE INDEX emp_idx ON emps(tel);`,`CREATE INDEX emp_idx FOR emps(tel);`,`CREATE INDEX emps(tel) AS emp_idx;`,`CREATE emp_idx INDEX ON emps(tel);`],`「どの表の、どの列に」を ON 表名(列名) で指定します。`);
+R(14,8,`問7の索引を削除する正しい文はどれですか？`,[`DROP INDEX emp_idx;`,`DELETE INDEX emp_idx;`,`DROP INDEX emps(tel);`,`ALTER INDEX emp_idx DROP;`],`作成は CREATE INDEX、削除は DROP INDEX に続けて索引名を書きます。`);
+R(14,9,`制約をつけることで自動的に作成された索引について正しいものはどれですか？`,[`制約で自動作成された索引は、制約を削除することで削除できる`,`制約で自動作成された索引は、どうやっても削除できない`,`制約で自動作成された索引でも、DROP INDEXで削除できる`,`制約で自動作成される索引というものはない`],`制約に連動しているので、制約を削除または無効化すると索引も削除されます。`);
+R(14,10,`索引について正しい説明を2つ選びなさい。`,[`索引をつけると検索は高速になるが、挿入や更新などは遅くなることがある`,`データ量が多く該当行が全データの2〜4%未満の表には効果的だが、データ量の少ない表ではあまり効果がない`,`検索が高速になるので、表にはなるべく多くの索引をつけるべきだ`,`主キーで検索することが多いので、主キーには必ず手動で索引をつけるべきだ`],`主キーは PRIMARY KEY 制約で自動的に索引が作られるので、手動でつける必要はありません。`,2);
+/* 第15回 順序 */
+R(15,1,`順序について正しく説明しているものはどれですか？`,[`採番する値は順序オブジェクトで管理されているので、複数の表から同じ順序を使うと欠番が生じることがある`,`順序は表ごとに作成し、1から順番に欠番なしで採番できる`,`順序は一意な値を挿入するものなので、表内に存在するデータと同じ値は挿入できない`,`順序の増分や最大値は、あとから変更できない`],`順序は表と関連づけられていないので、表内のデータは関知しません。`);
+R(15,2,`順序を作成する構文の空欄に入るものはどれですか？\nCREATE 【　】 順序名;`,[`SEQUENCE`,`ORDER`,`INDEX`,`NUMBER`],`シーケンス＝順番に、という意味です。`);
+R(15,3,`順序の初期値について正しいものはどれですか？`,[`初期値は自由に指定可能で、省略すると1となる`,`初期値は常に1であり、自由に指定できない`,`初期値を省略して順序を作成することはできない`],`START WITH 初期値 で指定します。最小値より小さい、最大値より大きい初期値は設定できません。`);
+R(15,4,`降順（1ずつ減る）で採番する順序を作るには、INCREMENT BY オプションに何を指定しますか？`,[`-1`,`1`,`DESC`,`0`],`増分にマイナス値を指定すると降順になります。DECREMENT BY という指定はありません。`);
+R(15,5,`順序の作成に関して正しいものはどれですか？`,[`最小値の既定値は NOMINVALUE で、昇順では1である`,`最大値は MAXVALUE n か NOMAXVALUE を選べ、NOMAXVALUEでは際限なく順序を生成できる`,`最小値の既定値は MINVALUE 100 である`,`最大値の既定値は MAXVALUE 100000 である`],`MAXVALUE の既定値は NOMAXVALUE で、昇順では 10の28乗 - 1 までです（際限なくではない）。`);
+R(15,6,`順序を変更するためのキーワードはどれですか？`,[`ALTER SEQUENCE`,`CREATE SEQUENCE`,`REUSE SEQUENCE`,`UPDATE SEQUENCE`],`ALTER文でオプション値を変更できますが、START WITH の変更は作り直しが必要です。`);
+R(15,7,`順序を削除する構文の空欄に入るものはどれですか？\n【　】 順序名;`,[`DROP SEQUENCE`,`DELETE SEQUENCE`,`REMOVE SEQUENCE`,`TRUNCATE SEQUENCE`],`順序を削除しても、すでに採番された番号が消えることはありません。`);
+R(15,8,`接続中のユーザが作成した順序を確認するデータディクショナリはどれですか？`,[`USER_SEQUENCES`,`DBA_SEQ_OBJECTS`,`SEQUENCE_USERS`,`SESSION_SEQUENCES`],`自分が作ったオブジェクトの情報は USER_ で始まるディクショナリで確認します。`);
+R(15,9,`順序の次の番号を採番するキーワードはどれですか？`,[`NEXTVAL`,`NEXT_SEQUENCE`,`VALUE_NEXT`,`CURRVAL`],`順序名.NEXTVAL で次の番号を採番します。`);
+R(15,10,`順序 SeqEmp によって直近に採番された番号を調べる正しいSELECT文はどれですか？`,[`SELECT SeqEmp.CURRVAL FROM dual;`,`SELECT SeqEmp.NEXTVAL FROM dual;`,`SELECT CURRVAL FROM SeqEmp;`,`SELECT SeqEmp.CURRVAL;`],`dual表を使ってSELECTします。同じセッションの中で先に NEXTVAL で採番している必要があります。`);
+/* 第16回 ユーザの作成 */
+R(16,1,`ユーザの作成や権限の付与、日常的な管理業務を行うときに接続するユーザはどれですか？（Oracleで最初から用意されているユーザ）`,[`SYSTEM`,`GAME`,`SCOTT`,`ORA`],`インストール直後から使える通常管理用のユーザです。`);
+R(16,2,`問1のユーザのスキーマ内に一般業務用の表を作ってはいけない理由はどれですか？`,[`管理のための表へのアクセスが遅くなるから`,`SYSTEMスキーマには表を作れないから`,`表の名前が変えられなくなるから`,`パスワードが他のユーザに見えてしまうから`],`管理者ユーザのスキーマには、データベース管理用の表がたくさん保存されています。`);
+R(16,3,`ユーザ名 BRONZE、パスワード PASS でユーザを作成する正しい文はどれですか？（QUOTAは省略）`,[`CREATE USER BRONZE IDENTIFIED BY PASS;`,`CREATE USER BRONZE PASSWORD PASS;`,`CREATE USER BRONZE IDENTIFIED PASS;`,`CREATE BRONZE USER IDENTIFIED BY PASS;`],`ユーザ名とパスワードは省略できません。パスワードはユーザが接続後に変更できます。`);
+R(16,4,`ユーザ名に関する特徴を2つ選びなさい。`,[`ユーザ名はCREATE USERのときのみ指定できる`,`ユーザ名の大文字・小文字は区別されない`,`ユーザ名はALTER USER文で変更できる`,`データベース内に同じ名前のユーザを作成できる`],`ユーザ名は変更できません。ユーザ名以外の属性は ALTER USER で変更できます。`,2);
+R(16,5,`パスワードに関する特徴を2つ選びなさい。`,[`IDENTIFIED BY句で設定することができる`,`ユーザ自身によるパスワードの変更は、データベースに接続後行うことができる`,`パスワードの大文字・小文字は区別されない`,`データベースに接続前でも、ユーザ自身はパスワードを変更できる`],`接続前に自由に変更できると不正アクセスかどうかわからなくなるので、接続前の変更は不可能です。`,2);
+R(16,6,`QUOTAを省略してユーザを作成すると、どうなりますか？`,[`このユーザもDB管理者も、このユーザのスキーマにはオブジェクトを作成できない`,`このユーザのオブジェクトはSYSTEM表領域に作成される`,`このユーザは作成できないが、DB管理者はこのユーザのスキーマに作成できる`,`QUOTAを省略するとエラーになり、ユーザは作成されない`],`書き込みの割り当てがないので、どんなオブジェクトも持てません。`);
+R(16,7,`GAMEユーザのパスワードを変更できるユーザをすべて選びなさい。（SCOTTは一般ユーザ）`,[`SYSTEM`,`ユーザ自身（GAME）`,`SCOTT`,`誰も変更できない`],`パスワードを忘れたときは、SYSTEMなどの管理者に再設定してもらいます。`,2);
+R(16,8,`ユーザ名が「BRONZE」であるとき、これを削除する正しい文はどれですか？`,[`DROP USER BRONZE;`,`DELETE USER BRONZE;`,`DROP BRONZE;`,`REMOVE USER BRONZE;`],`表などのオブジェクトを持っている場合は、エラーになり削除できません。`);
+R(16,9,`問8のようなユーザを削除する文が失敗する理由を2つ選びなさい。`,[`データベースに接続中のユーザを削除しようとした`,`オブジェクトを持つユーザを削除時に、CASCADEオプションを付け忘れた`,`あらかじめユーザの持つオブジェクトを削除せずに削除しようとした`,`データベースにログインしていないユーザを削除しようとした`],`CASCADEをつければオブジェクトも同時に削除されます。先にオブジェクトを削除する必要はありません。`,2);
+R(16,10,`データベースオブジェクトの持ち主を明確にする概念を何といいますか？`,[`スキーマ`,`ロール`,`セッション`,`表領域`],`オブジェクトは必ず誰かのスキーマに所属します。適切なスキーマに分けることが望ましいです。`);
+/* 第17回 権限の管理 */
+R(17,1,`「SELECT ANY TABLE」権限について正しいものはどれですか？`,[`データベース内のすべての表を閲覧することのできる権限`,`自スキーマ内の表をすべて閲覧することのできる権限`,`自スキーマ内の表を他のスキーマがSELECTできるようにする権限`,`このような権限はない`],`ANYがつく権限は「データベース内のすべての」という意味です。`);
+R(17,2,`次の中からオブジェクト権限を2つ選びなさい。`,[`SELECT権限`,`ALTER権限`,`CREATE TABLE権限`,`USER権限`],`SELECT・INSERT・DELETE・UPDATE のほか、ALTER・INDEX・REFERENCES・EXECUTE・ALL があります。`,2);
+R(17,3,`複数のシステム権限やオブジェクト権限をセットにして、権限管理を楽にするためのものを何といいますか？`,[`ロール`,`グループ`,`アカウント`,`パスキー`],`ロール＝役割。複数の権限をセットにしてユーザに役割を与える考え方です。`);
+R(17,4,`ユーザ BRONZE に CREATE SESSION 権限を与える正しい文はどれですか？`,[`GRANT CREATE SESSION TO BRONZE;`,`GRANT CREATE SESSION FROM BRONZE;`,`GRANT BRONZE TO CREATE SESSION;`,`REVOKE CREATE SESSION TO BRONZE;`],`GRANT に続けて権限名、TO に続けてユーザ名（またはロール名）を書きます。`);
+R(17,5,`権限を取り消す文はどれですか？`,[`REVOKE`,`CREATE`,`DELETE`,`TRUNCATE`],`REVOKE 権限名 FROM ユーザ名; で取り消します。`);
+R(17,6,`複数のシステム権限を1つの文でまとめて与えることはできますか？`,[`権限名をカンマで区切って列挙することでできる`,`できない`,`権限名を AND で結んで列挙することでできる`,`システム権限も、オブジェクト権限も、ロールもいっぺんに与えることができる`],`システム権限とロールは混ぜられますが、オブジェクト権限は書き方が違うのでまとめられません。`);
+R(17,7,`複数のユーザに対して同じ権限を与えるには、権限を与える文の中でユーザ名を何で区切って並べますか？`,[`カンマ`,`AND`,`スペース`,`セミコロン`],`ユーザ名の代わりにロール名を指定することもできます。`);
+R(17,8,`オブジェクト権限を与える構文の空欄に入る組み合わせはどれですか？\n【①】 権限名 【②】 オブジェクト名 【③】 ユーザ名;`,[`①GRANT　②ON　③TO`,`①GRANT　②TO　③ON`,`①GRANT　②FOR　③TO`,`①REVOKE　②ON　③FROM`],`ON は「オブジェクトに乗っける」と覚えます。システム権限との違いは ON オブジェクト名 が入る点です。`);
+R(17,9,`複数のオブジェクトに対するオブジェクト権限を1つの文でまとめて与えることはできますか？`,[`まとめて与えることはできず、1文ずつに分けて実行する`,`カンマで区切ってオブジェクト名を並べれば付与できる`,`ALL キーワードを使えば付与できる`,`そもそもオブジェクト権限というのはない`],`複数権限・複数ユーザにはまとめて与えられますが、複数オブジェクトにはできません。`);
+R(17,10,`オブジェクト権限を取り消す文の空欄に入るものはどれですか？\nREVOKE 権限名 ON オブジェクト名 【　】 ユーザ名;`,[`FROM`,`TO`,`ON`,`OF`],`このユーザ「から」取り消すので FROM です。`);
+/* 第18回 ロールの管理 */
+R(18,1,`デフォルトで用意されているロール CONNECT について正しいものはどれですか？`,[`エンドユーザ向けで、CREATE SESSION権限のみ付与されている`,`CREATE TABLE権限やCREATE VIEW権限などの基本的な権限のセットである`,`データベース管理者向けの権限のセットである`,`アプリケーション開発者向けの権限のセットである`],`古いバージョンでは CREATE TABLE なども含まれていましたが、現在は CREATE SESSION のみです。`);
+R(18,2,`「USER_ROLE」という名前の新しいロールを作成する正しい文はどれですか？`,[`CREATE ROLE user_role;`,`CREATE USER user_role;`,`GRANT ROLE user_role;`,`ALTER ROLE user_role;`],`ロールの作成には CREATE ROLE 文を使います。`);
+R(18,3,`「USER_ROLE」ロールに CREATE TABLE システム権限を与える文の空欄に入る組み合わせはどれですか？\n【①】 CREATE TABLE 【②】 USER_ROLE;`,[`①GRANT　②TO`,`①GRANT　②ON`,`①REVOKE　②FROM`,`①GRANT　②FROM`],`ユーザ名の代わりにロール名を TO のあとに指定します。`);
+R(18,4,`「USER_ROLE」ロールから CREATE VIEW システム権限を取り消す文の空欄に入る組み合わせはどれですか？\n【①】 CREATE VIEW 【②】 USER_ROLE;`,[`①REVOKE　②FROM`,`①REVOKE　②TO`,`①GRANT　②FROM`,`①DROP　②FROM`],`取り消しは REVOKE。ロール名の前が FROM になる点を間違えないように。`);
+R(18,5,`「Silver」ユーザに「USER_ROLE」ロールを与える正しい文はどれですか？`,[`GRANT USER_ROLE TO Silver;`,`GRANT Silver TO USER_ROLE;`,`GRANT USER_ROLE ON Silver;`,`CREATE ROLE USER_ROLE TO Silver;`],`ロールをユーザに与えるときも、システム権限と同じ構文です。`);
+R(18,6,`ロールや権限の付与に関して、正しく説明しているものはどれですか？`,[`複数のロールや、ユーザとロールの両方に同時に権限を与えることができる`,`複数のロールに対して、同時に権限を与えることはできない`,`ロールに対してロールを与えることはできない`,`ロールにシステム権限やオブジェクト権限を1つの文でまとめて与えることができる`],`ロールにロールを与えることもできます。オブジェクト権限は書き方が違うので、システム権限と1文にはまとめられません。`);
+R(18,7,`接続中のユーザの権限について調べるデータディクショナリはどれですか？`,[`SESSION_PRIVS`,`USER_TABLES`,`USER_USERS`,`USER_DICTIONARY`],`ロールを通じて与えられたシステム権限も含めて表示されます。USER_SYS_PRIVS は直接与えられたものだけです。`);
+R(18,8,`オブジェクト権限のうち、自分が他のユーザに与えた権限を確認するデータディクショナリはどれですか？`,[`USER_TAB_PRIVS_MADE`,`USER_TAB_PRIVS_RECD`,`USER_INDEXES`,`USER_TABLES`],`MADE＝与えた、RECD＝received（受け取った）です。`);
+R(18,9,`WITH ADMIN OPTION 付きで CREATE TABLE 権限を与えられたAさんが、Bさんに権限を付与しました。その後Aさんの権限が取り消されたとき、Bさんの権限はどうなりますか？`,[`Bさんの権限は残る`,`カスケードして取り消される`,`Bさんがこの権限を持っている限り、Aさんから取り消すことはできない`,`このオプションつきで与えられた権限はAさんから取り消せずエラーとなる`],`WITH ADMIN OPTION（システム権限）では、取り消しはカスケードしません。`);
+R(18,10,`WITH GRANT OPTION 付きで SELECT 権限を与えられたXさんが、Yさんに権限を付与しました。その後Xさんの権限が取り消されたとき、Yさんの権限はどうなりますか？`,[`ユーザX、ユーザYともに権限が取り消される`,`ユーザXは取り消されるが、ユーザYには権限が残る`,`ユーザYがこの権限を持っている限り、ユーザXから取り消せない`,`このオプションつきで与えられた権限はXさんから取り消せずエラーとなる`],`WITH GRANT OPTION（オブジェクト権限）で付与された権限は、カスケードして取り消されます。`);
+/* 第19回 シノニム */
+R(19,1,`スキーマ内のオブジェクトと同名のプライベートシノニムを作成できますか？`,[`エラーが返り、作成できない`,`できるが、プライベートシノニムにアクセスできなくなる`,`できるが、オブジェクトにアクセスできなくなる`],`プライベートシノニムはスキーマオブジェクトなので、名前はスキーマ内で一意である必要があります。`);
+R(19,2,`プライベートシノニムを作成する構文として正しいものはどれですか？`,[`CREATE SYNONYM シノニム名 FOR 表名;`,`CREATE SYNONYM シノニム名 ON 表名;`,`CREATE PRIVATE SYNONYM シノニム名 FOR 表名;`,`CREATE SYNONYM 表名 AS シノニム名;`],`最初が S、最後が M、真ん中は回文（YNONY）の SYNONYM です。`);
+R(19,3,`すでにパブリックシノニムとして使われている名前を、他のユーザがパブリックシノニムにつけることはできますか？`,[`パブリックシノニム名はデータベース内で一意なので作成できない`,`できるが、自分が作成したパブリックシノニムを参照できなくなる`,`できるが、他のユーザが作成したパブリックシノニムを参照できなくなる`],`パブリックシノニムはPUBLICスキーマに保存され、データベースユーザ全体で共有されます。`);
+R(19,4,`パブリックシノニムを作成する構文として正しいものはどれですか？`,[`CREATE PUBLIC SYNONYM シノニム名 FOR 表名;`,`CREATE SYNONYM PUBLIC シノニム名 FOR 表名;`,`CREATE PUBLIC SYNONYM シノニム名 ON 表名;`,`CREATE SYNONYM シノニム名 FOR PUBLIC 表名;`],`SYNONYM の前に PUBLIC キーワードを指定します。`);
+R(19,5,`パブリックシノニムを削除する構文はどれですか？`,[`DROP PUBLIC SYNONYM シノニム名;`,`DROP PRIVATE SYNONYM シノニム名;`,`DROP SYNONYM シノニム名;`],`削除にも PUBLIC を指定します。DROP PUBLIC SYNONYM 権限が必要です。`);
+R(19,6,`データベース内のデータが格納されているオブジェクトはどれですか？`,[`テーブル`,`ビュー`,`シノニム`,`順序`],`ビューは表に対するSELECT文に名前をつけたもの、シノニムは表の別名です。`);
+R(19,7,`SELECT文に名前をつけて、よく使うデータに簡単にアクセスできるようにするためのオブジェクトはどれですか？`,[`ビュー`,`シノニム`,`テーブル`,`索引`],`よく使うSELECT文を保存し、表と同じようにFROM句に指定できます。セキュリティ目的でも使います。`);
+R(19,8,`順序について正しく説明しているものはどれですか？`,[`表に一意な数値を登録する目的で使用するオブジェクトである`,`データの検索を素早くする目的のオブジェクトである`,`オブジェクトに別名をつけ、アクセスしやすくするためのオブジェクトである`,`SELECT文に名前をつけアクセスしやすくするためのオブジェクトである`],`主キーなどの一意なデータを簡単に生成するのが目的です。複数の表で同じ順序を共有できます。`);
+R(19,9,`ある列のデータと行のアドレスをセットで保存し、行を素早く検索するためのオブジェクトはどれですか？`,[`索引`,`シノニム`,`テーブル`,`ビュー`],`WHERE句などでよく使う列のデータを昇順に並べ、行のアドレスとともに保存します。`);
+R(19,10,`オブジェクトに別名を与え、他のデータベースユーザからもアクセスしやすくするものはどれですか？`,[`シノニム`,`ビュー`,`索引`,`ロール`],`長い名前を短くしたり、スキーマ名を入力せずにアクセスしたりできます。スキーマ名を隠すのでセキュリティも上がります。`);
+
+/* ===== 保存（このブラウザだけ） ===== */
+const KEY='db3drill.v1';
+let S={r:{},m:{},red:true,note:2,nr:{},intro:0,snd:1};
+try{const t=localStorage.getItem(KEY);if(t)S=Object.assign(S,JSON.parse(t))}catch(e){}
+if(!S.nr)S.nr={};if(!S.gr)S.gr={};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const isWeak=q=>{const r=S.r[q.id];return !!r&&r[2]===0};
+function record(q,ok){const r=S.r[q.id]||[0,0,0];ok?r[0]++:r[1]++;r[2]=ok?1:0;S.r[q.id]=r;save()}
+
+/* ===== 効果音（Web Audio で合成。ファイルは使わない） ===== */
+let AC=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){return null}}if(AC.state==='suspended')AC.resume();return AC}
+function tone(f,t0,d,type,v,f2){const c=ac();if(!c)return;const t=c.currentTime+t0,o=c.createOscillator(),g=c.createGain();
+  o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);
+  g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(v||.12,t+.012);g.gain.exponentialRampToValueAtTime(0.0001,t+d);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d+.03)}
+const SND={
+  tap:()=>tone(700,0,.045,'triangle',.06),
+  pick:()=>tone(560,0,.07,'triangle',.08,760),
+  ok:()=>{tone(784,0,.13,'sine',.16);tone(1175,.09,.28,'sine',.16)},
+  ng:()=>{tone(233,0,.16,'square',.05);tone(175,.13,.28,'square',.05)},
+  check:()=>{tone(1046,0,.05,'triangle',.07);tone(1568,.04,.08,'triangle',.06)},
+  uncheck:()=>tone(520,0,.05,'triangle',.05),
+  page:()=>tone(440,0,.08,'sine',.06,660),
+  done:()=>[523,659,784,1047].forEach((f,i)=>tone(f,i*.1,i===3?.5:.2,'triangle',.13)),
+  good:()=>[659,784,988].forEach((f,i)=>tone(f,i*.1,i===2?.4:.18,'triangle',.12)),
+  soft:()=>[523,440].forEach((f,i)=>tone(f,i*.14,.3,'sine',.1)),
+  open:()=>tone(520,0,.1,'sine',.06,880),
+  close:()=>tone(700,0,.08,'sine',.05,450)
+};
+function sfx(k){if(!S.snd)return;try{SND[k]()}catch(e){}}
+/* ボタン類を押したときの軽い音（答え合わせ・正誤など専用の音があるものは除く） */
+document.addEventListener('click',e=>{const b=e.target.closest('button,summary');if(!b||b.disabled||b.closest('[data-nosnd]')||b.matches('.opt,#chk,#next,#snd'))return;
+  if(b.matches('summary'))sfx(b.parentElement.open?'close':'open');else sfx('tap')},true);
+function sndIcon(){const b=document.getElementById('snd');if(!b)return;b.setAttribute('aria-pressed',S.snd?'true':'false');b.setAttribute('aria-label',S.snd?'効果音：オン':'効果音：オフ');
+  b.innerHTML=S.snd?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/></svg>'
+  :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="m16 9.5 5 5M21 9.5l-5 5"/></svg>'}
+document.getElementById('snd').onclick=()=>{S.snd=S.snd?0:1;save();sndIcon();sfx('check')};
+sndIcon();
+
+/* ===== 採点 ===== */
+function normW(s){
+  s=String(s).normalize('NFKC').toUpperCase().replace(/[‘’]/g,"'");
+  s=s.replace(/\s+/g,'').replace(/[;。、．，「」『』・ー]/g,'').replace(/問い?合わ?せ/g,'問合せ');
+  return s.replace(/(制約|オプション|コマンド|キーワード|文)$/,'');
+}
+function normS(s){return String(s).normalize('NFKC').toUpperCase().replace(/[‘’]/g,"'").replace(/\s+/g,'').replace(/;+$/,'')}
+
+/* ===== 共通 ===== */
+const app=document.getElementById('app');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const br=s=>esc(s).replace(/\n/g,'<br>');
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+/* 授業シートの全キーポイントを「内容チェック」問題に（まちがいの選択肢は同じ回の別のポイント） */
+Object.keys(NOTES).forEach(k=>{const l=+k,pts=NOTES[l];pts.forEach((p,i)=>add({l,k:'p',t:'c',src:CIRC[i]||String(i+1),pi:i,n:1,
+  q:`${l>90?`基礎${l-90}`:`第${l}回`}「${LT[l]}」\n【${p[0]}】の内容として正しいものはどれですか？`,
+  o:[p[1],...shuffle(pts.filter((_,j)=>j!==i)).slice(0,3).map(x=>x[1])],
+  e:`授業シートのキーポイントです。ノートで前後のポイントも確認しよう。`}))});
+const srcLabel=q=>q.k==='g'?'文法辞典':q.k==='r'?`第${q.l}回 カルテ 問${q.src}`:q.c===0?`基礎${q.l-90}「${LT[q.l]}」`:q.src==='T'?`第${q.l}回 テキスト`:q.src==='K'?`第${q.l}回 カルテ（応用）`:(q.k==='s'||q.k==='p')?`第${q.l}回 授業シート ${q.src}`:`第${q.l}回の内容`;
+const karteOf=l=>QS.filter(q=>q.l===l&&q.k==='r');
+const doneOk=q=>S.r[q.id]?.[2]===1;
+const catName=id=>id===0?'文法':CATS.find(c=>c.id===id).name;
+const LESSONS=Object.keys(NOTES).map(Number).sort((a,b)=>a-b);
+const lname=l=>l>90?`基礎${l-90}`:`第${l}回`;
+const chev='<span class="chev" aria-hidden="true">›</span>';
+const ICON={
+  weak:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4h4"/></svg>',
+  mock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M10 2.5h4"/></svg>',
+  list:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01"/></svg>',
+  help:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.2a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.6M12 17h.01"/></svg>',
+  set:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>',
+  card:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>',
+  code:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 7-5 5 5 5M16 7l5 5-5 5"/></svg>',
+  pen:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>',
+  base:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/></svg>'
+};
+
+/* ===== 文法辞典の例で使う表（emp・dept） ===== */
+const EC=['empno','ename','job','sal','comm','deptno'];
+const EMP=[[7369,'SMITH','CLERK',800,null,20],[7499,'ALLEN','SALESMAN',1600,300,30],[7566,'JONES','MANAGER',2975,null,20],[7698,'BLAKE','MANAGER',2850,null,30],[7839,'KING','PRESIDENT',5000,null,10],[7900,'JAMES','CLERK',950,null,30]];
+const DC=['deptno','dname','loc'];
+const DEPT=[[10,'ACCOUNTING','NEW YORK'],[20,'RESEARCH','DALLAS'],[30,'SALES','CHICAGO'],[40,'OPERATIONS','BOSTON']];
+/* emp表から列と行を取り出す（f は行オブジェクトを受け取る条件） */
+const E=(cols,f=()=>true)=>[cols,EMP.map(r=>Object.fromEntries(EC.map((c,i)=>[c,r[i]]))).filter(f).map(o=>cols.map(c=>o[c]))];
+const RES='実行結果';
+/* ===== 文法辞典 =====
+  w=単語 y=読み方 m=ひとことで s=書き方 ex=例 r=実行結果 n=注意 rel=関連する回 */
+const GLOSS=[
+{g:'SELECT文（データを取り出す）',items:[
+ {id:'select',w:'SELECT',y:'セレクト',m:'取り出す列を決める',s:'SELECT 列名, 列名 …',ex:`SELECT ename, sal FROM emp;`,r:E(['ename','sal']),n:'SELECT文はいつも SELECT から書き始めます。* で全部の列。',rel:[92]},
+ {id:'from',w:'FROM',y:'フロム',m:'どの表から取り出すかを決める',s:'FROM 表名',ex:`SELECT * FROM dept;`,r:[DC,DEPT],n:'SELECT文では SELECT と FROM は必ずセット（必須）です。',rel:[92]},
+ {id:'where',w:'WHERE',y:'ウェア',m:'条件に合う「行」だけにしぼる',s:'WHERE 条件',ex:`SELECT ename, sal FROM emp\nWHERE sal >= 2000;`,r:E(['ename','sal'],o=>o.sal>=2000),n:'FROM のすぐ後に書きます。UPDATE文・DELETE文でも使います。グループ関数（COUNTなど）の条件は書けません → HAVING へ。',rel:[93,2,5]},
+ {id:'groupby',w:'GROUP BY',y:'グループ バイ',m:'同じ値ごとにグループに分けて集計する',s:'GROUP BY 列名',ex:`SELECT deptno, COUNT(*) FROM emp\nGROUP BY deptno;`,r:[['deptno','COUNT(*)'],[[10,1],[20,2],[30,3]]],n:'SELECT に書けるのは GROUP BY の列とグループ関数だけ。',rel:[95]},
+ {id:'having',w:'HAVING',y:'ハビング',m:'グループ化した後に「グループ」をしぼる',s:'HAVING グループ関数の条件',ex:`SELECT deptno, COUNT(*) FROM emp\nGROUP BY deptno\nHAVING COUNT(*) >= 2;`,r:[['deptno','COUNT(*)'],[[20,2],[30,3]]],n:'WHERE＝行をしぼる（グループ化の前）、HAVING＝グループをしぼる（グループ化の後）。',rel:[95,2]},
+ {id:'orderby',w:'ORDER BY',y:'オーダー バイ',m:'結果を並べかえる',s:'ORDER BY 列名 [ASC | DESC]',ex:`SELECT ename, sal FROM emp\nORDER BY sal DESC;`,r:[['ename','sal'],EMP.slice().sort((a,b)=>b[3]-a[3]).map(r=>[r[1],r[3]])],n:'ASC（アセンド）＝小さい順・省略時、DESC（ディセンド）＝大きい順。必ず文の一番最後。',rel:[94,4]},
+ {id:'as',w:'AS',y:'アズ',m:'列に別名（見出し）をつける',s:'列名 AS 別名',ex:`SELECT sal * 12 AS 年収 FROM emp;`,n:'AS は省略できます。CREATE VIEW … AS SELECT のように「〜として」の意味でも使います。',rel:[92,12]},
+ {id:'distinct',w:'DISTINCT',y:'ディスティンクト',m:'重複した行を1回だけにする',s:'SELECT DISTINCT 列名',ex:`SELECT DISTINCT job FROM emp;`,r:[['job'],[['CLERK'],['SALESMAN'],['MANAGER'],['PRESIDENT']]],n:'SELECT のすぐ後に書きます。',rel:[92]}
+]},
+{g:'条件で使う言葉（WHEREの中）',items:[
+ {id:'cmp',w:'=  <>  >  >=  <  <=',y:'イコール など',m:'値を比べる（比較演算子）',s:'列名 = 値',ex:`SELECT ename FROM emp\nWHERE job = 'CLERK';`,r:E(['ename'],o=>o.job==='CLERK'),n:'<> は「等しくない」（!= も可）。文字は \' \' で囲む。',rel:[93]},
+ {id:'and',w:'AND / OR / NOT',y:'アンド / オア / ノット',m:'条件を組み合わせる',s:'条件1 AND 条件2',ex:`SELECT ename FROM emp\nWHERE deptno = 30 AND sal > 1000;`,r:E(['ename'],o=>o.deptno===30&&o.sal>1000),n:'AND＝両方、OR＝どちらか、NOT＝〜ではない。UPDATE の SET で列を並べるときは AND ではなくカンマ！',rel:[93,5]},
+ {id:'between',w:'BETWEEN … AND …',y:'ビトウィーン',m:'〜以上〜以下（範囲）',s:'列名 BETWEEN 小さい値 AND 大きい値',ex:`SELECT ename, sal FROM emp\nWHERE sal BETWEEN 800 AND 1600;`,r:E(['ename','sal'],o=>o.sal>=800&&o.sal<=1600),n:'両端の値もふくみます。',rel:[93]},
+ {id:'in',w:'IN',y:'イン',m:'( ) の中のどれかと等しい',s:'列名 IN (値, 値, …)',ex:`SELECT ename FROM emp\nWHERE deptno IN (10, 20);`,r:E(['ename'],o=>o.deptno!==30),n:'= を OR でつないだのと同じ。副問い合わせが複数行を返すときに使う（第3回）。NOT IN は「どれとも等しくない」。',rel:[93,3]},
+ {id:'like',w:'LIKE',y:'ライク',m:'あいまい検索（〜で始まる 等）',s:"列名 LIKE 'パターン'",ex:`SELECT ename FROM emp\nWHERE ename LIKE 'J%';`,r:E(['ename'],o=>o.ename[0]==='J'),n:'% ＝0文字以上の何か、_ ＝ちょうど1文字。',rel:[93]},
+ {id:'isnull',w:'IS NULL',y:'イズ ヌル',m:'値が入っていない行をさがす',s:'列名 IS NULL ／ 列名 IS NOT NULL',ex:`SELECT ename FROM emp\nWHERE comm IS NULL;`,r:E(['ename'],o=>o.comm===null),n:'= NULL と書くと0行になる（エラーにはならない）。',rel:[93,2,3]},
+ {id:'anyall',w:'ANY / ALL',y:'エニー / オール',m:'副問い合わせの「どれか」／「すべて」と比べる',s:'列名 > ANY (SELECT …)',ex:`SELECT ename FROM emp\nWHERE sal > ALL (SELECT sal FROM emp WHERE deptno = 20);`,r:E(['ename'],o=>o.sal>2975),n:'> ANY＝最小値より大きい、> ALL＝最大値より大きい。単独では使えず、> や < とセット。',rel:[3]}
+]},
+{g:'関数（値を計算する）',items:[
+ {id:'count',w:'COUNT',y:'カウント',m:'行の数を数える',s:'COUNT(*) ／ COUNT(列名)',ex:`SELECT COUNT(*), COUNT(comm) FROM emp;`,r:[['COUNT(*)','COUNT(COMM)'],[[6,1]]],n:'COUNT(列名) は NULL の行を数えません。',rel:[95]},
+ {id:'sumavg',w:'SUM / AVG / MAX / MIN',y:'サム / アベレージ / マックス / ミン',m:'合計 / 平均 / 最大 / 最小',s:'AVG(列名)',ex:`SELECT SUM(sal), AVG(sal), MAX(sal), MIN(sal)\nFROM emp;`,r:[['SUM','AVG','MAX','MIN'],[[14175,2362.5,5000,800]]],n:'グループ関数。NULLは無視されます。GROUP BY なしなら結果は必ず1行。',rel:[95,2]},
+ {id:'nvl',w:'NVL',y:'エヌブイエル',m:'NULLを別の値にかえる',s:'NVL(列名, かわりの値)',ex:`SELECT ename, sal + NVL(comm, 0) FROM emp;`,n:'NULLとの計算がNULLになるのを防げます。',rel:[94]},
+ {id:'round',w:'ROUND / TRUNC',y:'ラウンド / トランク',m:'四捨五入 / 切り捨て',s:'ROUND(数値, 桁)',ex:`SELECT ROUND(15.67, 1), TRUNC(15.67, 1) FROM dual;`,r:[['ROUND','TRUNC'],[[15.7,15.6]]],n:'表がいらない計算は dual（デュアル）表を使います。',rel:[94]},
+ {id:'sysdate',w:'SYSDATE',y:'シスデート',m:'今の日付と時刻',s:'SYSDATE',ex:`SELECT SYSDATE FROM dual;`,n:'DEFAULT SYSDATE のように、表の既定値にもよく使います。',rel:[94]}
+]},
+{g:'表をつなぐ・組み合わせる',items:[
+ {id:'join',w:'JOIN … ON',y:'ジョイン … オン',m:'2つの表をつなげる（結合）',s:'FROM 表1 別名 JOIN 表2 別名 ON つなぐ条件',ex:`SELECT e.ename, d.dname\nFROM emp e JOIN dept d\n  ON e.deptno = d.deptno;`,r:[['ename','dname'],EMP.map(r=>[r[1],DEPT.find(d=>d[0]===r[5])[1]])],n:'LEFT OUTER JOIN（外部結合）にすると、片方にしかない行も出ます。',rel:[96]},
+ {id:'union',w:'UNION / UNION ALL',y:'ユニオン / ユニオン オール',m:'2つのSELECTの結果をたす（和集合）',s:'SELECT文 UNION SELECT文',ex:`SELECT empno FROM emp\nUNION\nSELECT empno FROM emp_old;`,n:'UNION は重複を1回に、UNION ALL は重複もそのまま。列の数とデータ型をそろえる。',rel:[4]},
+ {id:'minus',w:'MINUS / INTERSECT',y:'マイナス / インターセクト',m:'差（左にあって右にない）/ 共通（両方にある）',s:'SELECT文 MINUS SELECT文',ex:`SELECT empno FROM emp\nMINUS\nSELECT empno FROM emp_old;`,n:'MINUS は左右を入れかえると結果が変わります。',rel:[4]}
+]},
+{g:'データを変える（DML）',items:[
+ {id:'insert',w:'INSERT INTO … VALUES',y:'インサート イントゥ … バリューズ',m:'行を追加する',s:'INSERT INTO 表名 (列名, …)\nVALUES (値, …);',ex:`INSERT INTO dept (deptno, dname, loc)\nVALUES (50, '製造', '博多');`,n:'列名を省略すると、表のすべての列に表の順番どおり値を書く。NULL は \'NULL\' ではなく NULL。',rel:[5]},
+ {id:'update',w:'UPDATE … SET',y:'アップデート … セット',m:'データを書きかえる',s:'UPDATE 表名\nSET 列名 = 値, 列名 = 値\nWHERE 条件;',ex:`UPDATE emp\nSET sal = 3000, job = 'MANAGER'\nWHERE empno = 7369;`,n:'複数の列はカンマで区切る（AND は×）。WHERE を忘れると全行が変わる！',rel:[5]},
+ {id:'delete',w:'DELETE FROM',y:'デリート フロム',m:'行を削除する',s:'DELETE FROM 表名\nWHERE 条件;',ex:`DELETE FROM emp\nWHERE deptno = 30;`,n:'列名や * は書かない（行ごと消える）。WHERE を忘れると全行が消える！',rel:[5]}
+]},
+{g:'確定・取り消し（トランザクション）',items:[
+ {id:'commit',w:'COMMIT',y:'コミット',m:'変更を確定する',s:'COMMIT;',ex:`UPDATE emp SET sal = 1000 WHERE empno = 7369;\nCOMMIT;`,n:'CREATE などのDDLを実行しても、自動でコミットされます。',rel:[6]},
+ {id:'rollback',w:'ROLLBACK',y:'ロールバック',m:'変更を取り消す',s:'ROLLBACK; ／ ROLLBACK TO セーブポイント名;',ex:`DELETE FROM emp;\nROLLBACK;   -- 消した行が元に戻る`,n:'もどせるのは DML（INSERT・UPDATE・DELETE）だけ。DROP や TRUNCATE はもどせない。',rel:[6,8]},
+ {id:'savepoint',w:'SAVEPOINT',y:'セーブポイント',m:'取り消すときに戻る地点を作る',s:'SAVEPOINT 名前;',ex:`SAVEPOINT sp1;\nINSERT INTO …;\nROLLBACK TO sp1;`,n:'SAVEPOINT ではトランザクションは終わりません。',rel:[6]}
+]},
+{g:'表やオブジェクトを作る（DDL）',items:[
+ {id:'create',w:'CREATE TABLE',y:'クリエイト テーブル',m:'表を作る',s:'CREATE TABLE 表名 (\n  列名 データ型 [制約],\n  …\n);',ex:`CREATE TABLE member (\n  id   NUMBER(5) PRIMARY KEY,\n  name VARCHAR2(20) NOT NULL\n);`,n:'データ型：VARCHAR2(バイト数)＝文字、NUMBER(桁)＝数値、DATE＝日付。',rel:[7,8]},
+ {id:'default',w:'DEFAULT',y:'デフォルト',m:'値を入れなかったときに入る値',s:'列名 データ型 DEFAULT 値',ex:`loc VARCHAR2(10) DEFAULT '東京' NOT NULL`,n:'DEFAULT は制約（NOT NULL など）より前に書く。',rel:[7,11]},
+ {id:'drop',w:'DROP',y:'ドロップ',m:'表などを丸ごと消す',s:'DROP TABLE 表名;（VIEW・INDEX・SEQUENCE なども同じ）',ex:`DROP TABLE member;`,n:'ROLLBACK できません。データだけ消すなら TRUNCATE TABLE（これももどせない）。',rel:[7,8]},
+ {id:'alter',w:'ALTER',y:'オルター',m:'作ったものを変更する',s:'ALTER TABLE 表名 … ／ ALTER USER …',ex:`ALTER TABLE emp READ ONLY;`,n:'ALTER SEQUENCE（順序）、ALTER USER（パスワード変更）でも使います。',rel:[13,15,16]},
+ {id:'constraint',w:'CONSTRAINT',y:'コンストレイント',m:'制約に名前をつける',s:'CONSTRAINT 制約名 制約',ex:`empno NUMBER(4) CONSTRAINT pk_emp PRIMARY KEY`,n:'制約：PRIMARY KEY（主キー）・UNIQUE（重複なし）・NOT NULL・CHECK（条件）。',rel:[9,11]},
+ {id:'references',w:'REFERENCES / FOREIGN KEY',y:'リファレンシズ / フォーリン キー',m:'ほかの表の列を参照する（外部キー）',s:'列名 データ型 REFERENCES 親表(親キー列)',ex:`deptno NUMBER(2) REFERENCES dept(deptno)`,n:'表レベルでは FOREIGN KEY (列) REFERENCES 親表(列)。',rel:[10,11]},
+ {id:'view',w:'CREATE VIEW',y:'クリエイト ビュー',m:'SELECT文に名前をつけて保存する',s:'CREATE VIEW ビュー名 AS SELECT文;',ex:`CREATE VIEW emp20 AS\nSELECT empno, ename FROM emp WHERE deptno = 20;`,n:'作り直すなら CREATE OR REPLACE VIEW。',rel:[12,13]},
+ {id:'index',w:'CREATE INDEX … ON',y:'クリエイト インデックス … オン',m:'検索を速くする索引を作る',s:'CREATE INDEX 索引名 ON 表名(列名);',ex:`CREATE INDEX ename_idx ON emp(ename);`,rel:[14]},
+ {id:'sequence',w:'CREATE SEQUENCE / NEXTVAL',y:'シーケンス / ネクストバル',m:'番号を自動で作る（順序）',s:'CREATE SEQUENCE 順序名 START WITH 1 INCREMENT BY 1;',ex:`INSERT INTO emp (empno, ename)\nVALUES (seq_emp.NEXTVAL, 'TARO');`,n:'CURRVAL（カーバル）＝さっき作った番号。',rel:[15]},
+ {id:'synonym',w:'CREATE SYNONYM … FOR',y:'シノニム … フォー',m:'表に別名をつける',s:'CREATE [PUBLIC] SYNONYM 別名 FOR 表名;',ex:`CREATE SYNONYM e FOR scott.emp;`,rel:[19]}
+]},
+{g:'ユーザーと権限（DCL）',items:[
+ {id:'user',w:'CREATE USER … IDENTIFIED BY',y:'クリエイト ユーザー … アイデンティファイド バイ',m:'ユーザーを作る',s:'CREATE USER ユーザー名 IDENTIFIED BY パスワード;',ex:`CREATE USER bronze IDENTIFIED BY pass;`,rel:[16]},
+ {id:'grant',w:'GRANT … TO',y:'グラント … トゥ',m:'権限をあたえる',s:'GRANT 権限 TO ユーザー;\nGRANT 権限 ON 表 TO ユーザー;',ex:`GRANT SELECT ON emp TO bronze;`,n:'表に対する権限（オブジェクト権限）のときだけ ON 表名 が入る。',rel:[17,18]},
+ {id:'revoke',w:'REVOKE … FROM',y:'リボーク … フロム',m:'権限を取り消す',s:'REVOKE 権限 FROM ユーザー;',ex:`REVOKE SELECT ON emp FROM bronze;`,n:'あたえる＝TO、取り消す＝FROM（〜から取り上げる）。',rel:[17,18]}
+]}
+];
+/* ===== 文法辞典：例文の説明（j＝日本語にすると／p＝[部分, 説明]） ===== */
+const EXD={
+select:{j:'emp表から、名前と給与を出して。',p:[['SELECT ename, sal','出したい列を書く。ename（名前）と sal（給与）。列はカンマで区切る'],['FROM emp','どの表から出すか。emp（社員の表）'],[';','文の終わりのしるし']]},
+from:{j:'dept表の、全部の列を出して。',p:[['SELECT *','* は「全部の列」'],['FROM dept','dept（部署の表）から']]},
+where:{j:'emp表から、給与が2000以上の人の名前と給与を出して。',p:[['SELECT ename, sal','名前と給与を出す'],['FROM emp','emp表から'],['WHERE sal >= 2000','sal が 2000 以上の行だけにしぼる。>= は「以上」']]},
+groupby:{j:'部署ごとに、何人いるか数えて。',p:[['SELECT deptno, COUNT(*)','部署番号と、行の数（人数）を出す'],['FROM emp','emp表から'],['GROUP BY deptno','deptno が同じ行を1つのグループにまとめる。だから部署ごとに1行になる']]},
+having:{j:'部署ごとに人数を数えて、2人以上いる部署だけ出して。',p:[['SELECT deptno, COUNT(*)','部署番号と人数を出す'],['FROM emp','emp表から'],['GROUP BY deptno','部署ごとにまとめる'],['HAVING COUNT(*) >= 2','まとめた後、人数が2以上のグループだけ残す。10番（1人）は消える']]},
+orderby:{j:'名前と給与を、給与の高い順に並べて出して。',p:[['SELECT ename, sal','名前と給与を出す'],['FROM emp','emp表から'],['ORDER BY sal DESC','sal で並べかえる。DESC は大きい順（降順）']]},
+as:{j:'給与を12倍した年収を、「年収」という見出しで出して。',p:[['SELECT sal * 12','給与 × 12 を計算する'],['AS 年収','その列の見出しを「年収」にする（AS は省略可）'],['FROM emp','emp表から']]},
+distinct:{j:'職種の種類を、重複なしで出して。',p:[['SELECT DISTINCT job','job を出すが、同じ値は1回だけにする。CLERK や MANAGER は2人いるが1回ずつ'],['FROM emp','emp表から']]},
+cmp:{j:'職種が CLERK の人の名前を出して。',p:[['SELECT ename','名前を出す'],['FROM emp','emp表から'],["WHERE job = 'CLERK'","job が CLERK と等しい行だけ。文字なので ' ' で囲む"]]},
+and:{j:'30番の部署で、しかも給与が1000より多い人の名前を出して。',p:[['WHERE deptno = 30','条件1：部署が30番'],['AND sal > 1000','条件2：給与が1000より多い。AND なので両方を満たす人だけ（JAMES は950なので外れる）']]},
+between:{j:'給与が800以上1600以下の人を出して。',p:[['SELECT ename, sal FROM emp','emp表から名前と給与'],['WHERE sal BETWEEN 800 AND 1600','800〜1600の範囲。800 と 1600 ちょうども含む']]},
+in:{j:'10番か20番の部署の人の名前を出して。',p:[['SELECT ename FROM emp','emp表から名前'],['WHERE deptno IN (10, 20)','deptno が 10 または 20 の行。deptno = 10 OR deptno = 20 と同じ']]},
+like:{j:'名前が J で始まる人を出して。',p:[['SELECT ename FROM emp','emp表から名前'],["WHERE ename LIKE 'J%'","J のあとに何文字続いてもよい（% は0文字以上の何か）。JONES と JAMES が当てはまる"]]},
+isnull:{j:'歩合（comm）が入っていない人の名前を出して。',p:[['SELECT ename FROM emp','emp表から名前'],['WHERE comm IS NULL','comm が NULL（値なし）の行だけ。= NULL では見つからないので IS NULL を使う']]},
+anyall:{j:'20番の部署の全員より給与が高い人の名前を出して。',p:[['(SELECT sal FROM emp WHERE deptno = 20)','先にこっちが実行される。20番の人の給与 → 800 と 2975 の2行'],['WHERE sal > ALL ( … )','その「すべて」より大きい＝一番大きい 2975 より大きい。だから KING だけ']]},
+count:{j:'全部で何行あるかと、comm が入っている行の数を出して。',p:[['COUNT(*)','全部の行を数える → 6'],['COUNT(comm)','comm が NULL でない行だけ数える → ALLEN の1行だけなので 1'],['FROM emp','emp表から']]},
+sumavg:{j:'給与の合計・平均・最大・最小を出して。',p:[['SUM(sal)','給与の合計'],['AVG(sal)','給与の平均（合計 ÷ 人数）'],['MAX(sal), MIN(sal)','いちばん高い給与と、いちばん低い給与'],['FROM emp','emp表から。GROUP BY がないので、全員まとめて1行になる']]},
+nvl:{j:'名前と、給与＋歩合（歩合がなければ0として）を出して。',p:[['SELECT ename','名前を出す'],['NVL(comm, 0)','comm が NULL なら 0 にする。ALLEN 以外は 0 になる'],['sal + NVL(comm, 0)','給与にたす。NVL がないと、comm が NULL の人は結果も NULL になってしまう']]},
+round:{j:'15.67 を小数第1位で四捨五入したものと、切り捨てたものを出して。',p:[['ROUND(15.67, 1)','小数第1位まで四捨五入 → 15.7'],['TRUNC(15.67, 1)','小数第1位まで切り捨て → 15.6'],['FROM dual','表がいらない計算なので、ダミー表 dual を使う']]},
+sysdate:{j:'今の日付と時刻を出して。',p:[['SELECT SYSDATE','今の日時を出す'],['FROM dual','表はいらないのでダミー表 dual']]},
+join:{j:'社員の名前と、その人の部署名をいっしょに出して。',p:[['SELECT e.ename, d.dname','e（emp表）の名前と、d（dept表）の部署名を出す'],['FROM emp e','emp表に e という表別名をつける'],['JOIN dept d','dept表（別名 d）をつなげる'],['ON e.deptno = d.deptno','部署番号が同じ行どうしをつなぐ。SMITH（20）なら RESEARCH']]},
+union:{j:'emp表と emp_old表の社員番号を、重複なしで全部出して。',p:[['SELECT empno FROM emp','1つ目の結果'],['UNION','2つの結果をたす。両方にある番号は1回だけ'],['SELECT empno FROM emp_old','2つ目の結果。列の数・データ型を1つ目とそろえる']]},
+minus:{j:'emp表にはあって、emp_old表にはない社員番号を出して。',p:[['SELECT empno FROM emp','引かれる側（左）'],['MINUS','左の結果から、右の結果にあるものを取り除く'],['SELECT empno FROM emp_old','引く側（右）']]},
+insert:{j:'dept表に、50番・製造・博多 の行を追加して。',p:[['INSERT INTO dept','dept表に行を入れる'],['(deptno, dname, loc)','どの列に入れるか'],["VALUES (50, '製造', '博多')",'入れる値。上の列と同じ順番で書く。文字は \' \' で囲む']]},
+update:{j:'社員番号7369の人の給与を3000、職種を MANAGER に書きかえて。',p:[['UPDATE emp','emp表のデータを書きかえる'],["SET sal = 3000, job = 'MANAGER'",'書きかえる列と新しい値。2つ以上はカンマで区切る'],['WHERE empno = 7369','書きかえる行。これがないと全員が書きかわる']]},
+delete:{j:'30番の部署の人の行を消して。',p:[['DELETE FROM emp','emp表から行を消す'],['WHERE deptno = 30','消す行。ALLEN・BLAKE・JAMES の3行が消える']]},
+commit:{j:'SMITH の給与を1000に変えて、その変更を確定して。',p:[['UPDATE emp SET sal = 1000 WHERE empno = 7369;','変更する（まだ確定していない）'],['COMMIT;','ここで確定。もう ROLLBACK では戻せない']]},
+rollback:{j:'全行を消したけど、やっぱり取り消して。',p:[['DELETE FROM emp;','全行を消す（まだ確定していない）'],['ROLLBACK;','最後の COMMIT の時点まで戻す。消した行が元に戻る']]},
+savepoint:{j:'sp1 という目印を置いてから行を追加し、目印のところまで取り消して。',p:[['SAVEPOINT sp1;','ここに「sp1」という目印を置く'],['INSERT INTO …;','行を追加する'],['ROLLBACK TO sp1;','sp1 の後の変更（この INSERT）だけ取り消す。sp1 より前の変更は残る']]},
+create:{j:'member という表を作って。id は5桁の数字で主キー、name は20バイトまでの文字で空欄禁止。',p:[['CREATE TABLE member (','member という表を作る。列の定義を ( ) の中に書く'],['id NUMBER(5) PRIMARY KEY,','id 列：5桁までの数値。主キー（重複なし・NULLなし）。列の終わりはカンマ'],['name VARCHAR2(20) NOT NULL','name 列：20バイトまでの文字。NULL は入れられない'],[');','( ) を閉じて文の終わり']]},
+default:{j:'loc 列は10バイトまでの文字。何も入れなかったら「東京」、空欄は禁止。',p:[['loc VARCHAR2(10)','列名とデータ型'],["DEFAULT '東京'",'値を入れなかったときに自動で入る値'],['NOT NULL','NULL を禁止する制約。DEFAULT より後に書く']]},
+drop:{j:'member 表を丸ごと消して。',p:[['DROP TABLE member;','表の定義もデータも全部消える。ROLLBACK では戻せない']]},
+alter:{j:'emp表を読み取り専用にして。',p:[['ALTER TABLE emp','作ってある emp表を変更する'],['READ ONLY','読み取り専用にする（INSERT・UPDATE・DELETE ができなくなる）。戻すときは READ WRITE']]},
+constraint:{j:'empno 列は4桁の数字で、pk_emp という名前の主キー制約をつけて。',p:[['empno NUMBER(4)','列名とデータ型'],['CONSTRAINT pk_emp','これからつける制約に「pk_emp」という名前をつける'],['PRIMARY KEY','つける制約の種類（主キー）。名前をつけないと SYS_Cxxxx という名前が自動でつく']]},
+references:{j:'deptno 列は2桁の数字で、dept表の deptno に存在する値しか入れられないようにして。',p:[['deptno NUMBER(2)','この表（子表）の列。これが外部キーになる'],['REFERENCES dept(deptno)','dept表（親表）の deptno 列（親キー）を参照する。dept にない部署番号は入れられない']]},
+view:{j:'20番の部署の人の社員番号と名前だけを見せる emp20 というビューを作って。',p:[['CREATE VIEW emp20 AS','emp20 というビューを、次の SELECT 文として作る'],['SELECT empno, ename FROM emp','見せる列'],['WHERE deptno = 20','見せる行。ビューを使うと、この SELECT の結果が表のように見える']]},
+index:{j:'emp表の ename 列に、ename_idx という索引を作って。',p:[['CREATE INDEX ename_idx','ename_idx という名前の索引を作る'],['ON emp(ename)','どの表の、どの列に作るか。ename で検索するのが速くなる']]},
+sequence:{j:'seq_emp で次の番号を作って、それを社員番号にして TARO を追加して。',p:[['INSERT INTO emp (empno, ename)','emp表の empno と ename に値を入れる'],['seq_emp.NEXTVAL','順序 seq_emp が次の番号を作る（1, 2, 3 …）'],["'TARO'",'名前']]},
+synonym:{j:'scott さんの emp表に、e という別名をつけて。',p:[['CREATE SYNONYM e','e という別名（シノニム）を作る'],['FOR scott.emp','scott スキーマの emp表の別名にする。これで SELECT * FROM e; と書ける']]},
+user:{j:'bronze というユーザーを、パスワード pass で作って。',p:[['CREATE USER bronze','bronze というユーザーを作る（同じ名前のスキーマもできる）'],['IDENTIFIED BY pass','パスワードを pass にする']]},
+grant:{j:'bronze さんに、emp表を SELECT してよい権限をあげて。',p:[['GRANT SELECT','あげる権限：SELECT（見ること）'],['ON emp','どの表に対しての権限か'],['TO bronze','だれにあげるか']]},
+revoke:{j:'bronze さんから、emp表を SELECT する権限を取り上げて。',p:[['REVOKE SELECT','取り上げる権限'],['ON emp','どの表についての権限か'],['FROM bronze','だれから取り上げるか（あげるときは TO、取り上げるときは FROM）']]}
+};
+const GALL=GLOSS.flatMap(g=>g.items);
+const gById=id=>GALL.find(x=>x.id===id);
+/* 書く順番（ブロック：[書くこと, 必須か, 辞典のid, 実行順]） */
+const ORDERS=[
+ {k:'SELECT',t:'データを取り出す',b:[['SELECT 列名',1,'select',5],['FROM 表名',1,'from',1],['WHERE 行の条件',0,'where',2],['GROUP BY 列名',0,'groupby',3],['HAVING グループの条件',0,'having',4],['ORDER BY 列名',0,'orderby',6]],
+  n:'上から順に書きます（使わない句はとばしてOK）。右の小さな数字は、実際に<b>実行される順番</b>です。SELECT は5番目なので、WHERE では列別名が使えません。'},
+ {k:'INSERT',t:'行を追加する',b:[['INSERT INTO 表名',1,'insert'],['(列名, 列名, …)',0,'insert'],['VALUES (値, 値, …);',1,'insert']],n:'列名を省略したら、表のすべての列の値を表の順番どおりに書きます。'},
+ {k:'UPDATE',t:'データを書きかえる',b:[['UPDATE 表名',1,'update'],['SET 列名 = 値, 列名 = 値',1,'update'],['WHERE 条件;',0,'where']],n:'WHERE を書かないと、全部の行が書きかわります。'},
+ {k:'DELETE',t:'行を消す',b:[['DELETE FROM 表名',1,'delete'],['WHERE 条件;',0,'where']],n:'WHERE を書かないと、全部の行が消えます。'},
+ {k:'CREATE TABLE',t:'表を作る',b:[['CREATE TABLE 表名 (',1,'create'],['列名 データ型',1,'create'],['DEFAULT 値',0,'default'],['制約（NOT NULL など）,',0,'constraint'],['…（列の数だけくり返す）',1,'create'],['表レベルの制約',0,'references'],[');',1,'create']],n:'1つの列は「列名 → データ型 → DEFAULT → 制約」の順。列と列の間はカンマ。'},
+ {k:'GRANT',t:'権限をあたえる',b:[['GRANT 権限名',1,'grant'],['ON オブジェクト名',0,'grant'],['TO ユーザー名;',1,'grant']],n:'ON は表などに対する権限（SELECT・INSERT など）のときだけ。取り消しは REVOKE … FROM。'}
+];
+
+/* ===== 授業回の4ステップ ===== */
+const STEPS=[
+  {id:'note',name:'ノートで覚える',desc:'授業シートの要点を赤シートでかくして暗記します。'},
+  {id:'check',name:'チェック問題',desc:'ノートの要点が覚えられたか、4択でたしかめます。'},
+  {id:'karte',name:'カルテ',desc:'授業のカルテを問1から順番に解きます。'},
+  {id:'practice',name:'練習問題',desc:'単語・コードの穴埋め・SQLを書く問題で仕上げます。'}
+];
+function stepQs(l,id){
+  if(id==='check')return QS.filter(q=>q.l===l&&q.k==='p');
+  if(id==='karte')return karteOf(l).sort((a,b)=>a.src-b.src);
+  if(id==='practice')return QS.filter(q=>q.l===l&&(q.k==='s'||q.k==='k'||q.k==='d'));
+  return [];
+}
+function stepInfo(l,id){
+  if(id==='note'){const n=NOTES[l].length,m=Object.values(S.m[l]||{}).filter(Boolean).length;return {n,a:m,done:!!S.nr[l]||m===n,label:`覚えた ${m} / ${n}`}}
+  const qs=stepQs(l,id),tried=qs.filter(q=>S.r[q.id]).length,ok=qs.filter(doneOk).length;
+  return {n:qs.length,a:ok,tried,done:qs.length>0&&tried===qs.length,label:tried?`正解 ${ok} / ${qs.length}${tried<qs.length?`（あと${qs.length-tried}問）`:''}`:`${qs.length}問`};
+}
+const lessonSteps=l=>STEPS.filter(s=>s.id==='note'||stepQs(l,s.id).length);
+function lessonProg(l){const st=lessonSteps(l);const d=st.filter(s=>stepInfo(l,s.id).done).length;return {d,n:st.length,next:st.find(s=>!stepInfo(l,s.id).done)}}
+function nextUp(){for(const l of LESSONS.filter(x=>!(S.skipB&&x>90))){const p=lessonProg(l);if(p.next)return {l,step:p.next}}return null}
+const dotsOf=l=>`<span class="dots" aria-hidden="true">${lessonSteps(l).map(s=>`<i class="${stepInfo(l,s.id).done?'on':''}"></i>`).join('')}</span>`;
+function startStep(l,id){
+  CUR=l;
+  if(id==='note'){go('note',{l});return}
+  const st=STEPS.find(s=>s.id===id),all=stepQs(l,id),inf=stepInfo(l,id);
+  let list=all;
+  if(!inf.done&&inf.tried)list=all.filter(q=>!S.r[q.id]);
+  if(id!=='karte')list=shuffle(list);
+  startQuiz(list,`${lname(l)} ${st.name}`,{ctx:{l,step:id}});
+}
+
+/* ===== 画面の切りかえ（ブラウザの「戻る」にも対応） ===== */
+let GI=0,view='home',Z=null,CUR=S.note in NOTES?S.note:2,SET={kinds:['p','r','s','k','d'],cats:[1,2,3,4,5,6,7,8],count:10,weak:false};
+const TAB={gram:'gram',home:'home',lessons:'lessons',lesson:'lessons',note:'lessons',guide:'lessons',test:'test',setup:'test',record:'record',quiz:'',result:''};
+function go(v,o={}){
+  if(o.l!=null){CUR=o.l;S.note=o.l;save()}
+  view=v;closeModal();
+  try{history[o.replace?'replaceState':'pushState']({v,l:CUR},'')}catch(e){}
+  render();window.scrollTo(0,0);
+}
+window.addEventListener('popstate',e=>{const s=e.state;if(!s)return;
+  view=((s.v==='quiz'||s.v==='result')&&!Z)?'home':s.v;if(s.l!=null)CUR=s.l;closeModal();render();window.scrollTo(0,0)});
+try{history.replaceState({v:'home',l:CUR},'')}catch(e){}
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>go(b.dataset.tab));
+document.getElementById('help').onclick=()=>showIntro(0);
+document.getElementById('back').onclick=()=>{
+  if(view==='quiz')return confirmQuit();
+  const p={lesson:'lessons',note:'lesson',guide:'lesson',setup:'test',result:Z&&Z.ctx?'lesson':'home'}[view];
+  if(p)go(p);
+};
+
+function render(){
+  document.body.dataset.view=view;
+  document.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-current',b.dataset.tab===TAB[view]?'page':'false'));
+  const T={home:'DB3 試験ドリル',lessons:'授業ごとに学ぶ',gram:'文法辞典',lesson:lname(CUR),note:`${lname(CUR)} ノート`,guide:`${lname(CUR)} 解説`,test:'テスト',setup:'条件を決めて解く',record:'記録',quiz:Z?Z.title:'',result:'結果'};
+  document.getElementById('ttl').textContent=T[view]||'';
+  const back=document.getElementById('back');
+  back.hidden=!['lesson','note','guide','setup','quiz','result'].includes(view);
+  back.setAttribute('aria-label',view==='quiz'?'やめる':'戻る');
+  back.innerHTML=view==='quiz'
+    ?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>'
+    :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>';
+  ({gram:renderGram,home:renderHome,lessons:renderLessons,lesson:renderLesson,note:renderNote,test:renderTest,setup:renderSetup,record:renderRecord,quiz:renderQuiz,result:renderResult})[view]();
+}
+
+/* ===== モーダル ===== */
+function modal(html,bind){const m=document.getElementById('modal');m.innerHTML=`<div class="ov" id="ovl"><div class="sheetm" role="dialog" aria-modal="true">${html}</div></div>`;document.getElementById('ovl').onclick=e=>{if(e.target.id==='ovl')closeModal()};bind&&bind()}
+function closeModal(){const m=document.getElementById('modal');if(m)m.innerHTML=''}
+const INTRO=[
+  {t:'ようこそ！',b:`<p>DB3（データベース技術3）の試験勉強アプリです。</p><p>授業の回ごとに<b>決まった順番で進めるだけ</b>でOK。次に何をやればいいかは、ホームの<b>「つぎにやること」</b>がいつも教えてくれます。</p>`},
+  {t:'1回分は4ステップ',b:`<ol class="ilist">${STEPS.map(s=>`<li><b>${s.name}</b><span>${s.desc}</span></li>`).join('')}</ol><p class="small muted">1つ終わると、次のステップに進むボタンが出ます。</p>`},
+  {t:'問題の答え方',b:`<ul class="ilist"><li><b>ふつうの選択問題</b><span>選んだ瞬間に答え合わせされます</span></li><li><b>「2つ選びなさい」など</b><span>全部選んでから、画面下の「答え合わせ」</span></li><li><b>書く問題</b><span>入力して「答え合わせ」。わからなければ「わからない」で答えが見られます</span></li></ul><p class="small muted">答え合わせのあとは、画面下の「次へ」で進みます。左上の × でいつでもやめられます。</p>`},
+  {t:'テスト前は「テスト」タブ',b:`<p>本番と同じ配分の<b>模擬テスト50問</b>や、間違えた問題だけの<b>苦手復習</b>ができます。</p><p>WHERE や GROUP BY などの単語の使い方は、<b>「文法」タブ</b>の辞典でいつでも調べられます。</p><p class="small muted">記録はこの端末のブラウザに保存されます（別の端末には引き継がれません）。使い方は右上の <b>?</b>、効果音のオン/オフは右上のスピーカーで切りかえられます。</p>`}
+];
+function showIntro(i){
+  const s=INTRO[i],last=i===INTRO.length-1;
+  modal(`<div class="dots big" aria-hidden="true">${INTRO.map((_,j)=>`<i class="${j===i?'on':''}"></i>`).join('')}</div>
+    <h2>${s.t}</h2><div class="ibody">${s.b}</div>
+    <div class="row between">${last?'<span></span>':'<button class="btn ghost" id="isk">スキップ</button>'}<div class="row">${i?'<button class="btn" id="ipv">戻る</button>':''}<button class="btn primary" id="inx">${last?'はじめる':'次へ'}</button></div></div>`,()=>{
+    const fin=()=>{S.intro=1;save();closeModal();sfx('good');if(view==='home')renderHome()};
+    document.getElementById('inx').onclick=()=>last?fin():showIntro(i+1);
+    const pv=document.getElementById('ipv');if(pv)pv.onclick=()=>showIntro(i-1);
+    const sk=document.getElementById('isk');if(sk)sk.onclick=fin;
+    document.getElementById('inx').focus();
+  });
+}
+function confirmQuit(){
+  const n=Z?Z.res.filter(Boolean).length:0;
+  modal(`<h2>途中でやめますか？</h2><p class="muted">${n?`ここまでの ${n}問の結果は記録されています。次はこの続きから始められます。`:'まだ1問も答えていません。'}</p>
+    <div class="row end"><button class="btn" id="qc">続ける</button><button class="btn primary" id="qq">やめる</button></div>`,()=>{
+    document.getElementById('qc').onclick=closeModal;
+    document.getElementById('qq').onclick=()=>{closeModal();if(n)go('result',{replace:true});else go(Z.ctx?'lesson':'home',{replace:true})};
+  });
+}
+
+/* ===== ホーム ===== */
+function totals(){const tried=QS.filter(q=>S.r[q.id]);let ok=0,all=0;tried.forEach(q=>{const r=S.r[q.id];ok+=r[0];all+=r[0]+r[1]});
+  return {tried:tried.length,acc:all?Math.round(ok/all*100):null,lessonsDone:LESSONS.filter(l=>l<90&&!lessonProg(l).next).length,lessonN:LESSONS.filter(l=>l<90).length}}
+function renderHome(){
+  const nx=nextUp(),t=totals(),weakN=QS.filter(isWeak).length,fresh=!t.tried&&!Object.keys(S.nr).length;
+  let next;
+  if(nx){const sts=lessonSteps(nx.l),si=sts.indexOf(nx.step),inf=stepInfo(nx.l,nx.step.id);
+    next=`<section class="card next" aria-label="つぎにやること">
+      <span class="label">${fresh?'まずはここから':'つぎにやること'}</span>
+      <div class="where"><span class="pill">${lname(nx.l)}</span><b>${LT[nx.l]}</b></div>
+      <div><div class="small muted">ステップ ${si+1} / ${sts.length}</div><div class="stepname">${nx.step.name}</div><p class="small muted" style="margin-top:2px">${nx.step.desc}${inf.tried?`（${inf.label}）`:''}</p></div>
+      <button class="btn primary big" id="go">${inf.tried?'続きからはじめる':'はじめる'} ›</button>
+      <button class="btn ghost" id="openL">${lname(nx.l)}のページを見る</button>
+    </section>`;
+  }else next=`<section class="card next"><span class="label">つぎにやること</span><div class="stepname">全部の回を一通り終えました！</div><p class="small muted">あとは模擬テストと苦手復習で仕上げましょう。</p><button class="btn primary big" id="mock1">模擬テスト 50問 ›</button></section>`;
+  app.innerHTML=`
+  ${next}
+  <section class="tiles" aria-label="進み具合">
+    <div class="tile"><b>${t.lessonsDone}<small class="muted" style="font-size:13px"> / ${t.lessonN}</small></b><span>終わった回</span></div>
+    <div class="tile"><b>${t.tried}</b><span>解いた問題<br>（全${QS.length}問）</span></div>
+    <div class="tile"><b>${t.acc==null?'—':t.acc+'%'}</b><span>正答率</span></div>
+  </section>
+  <p class="sec-t">ほかにできること</p>
+  <section class="list">
+    <button class="nrow" id="h-weak" ${weakN?'':'disabled'}><span class="ic">${ICON.weak}</span><span class="tx"><b>苦手を復習${weakN?` ${weakN}問`:''}</b><span>${weakN?'最後に間違えた問題だけをもう一度':'間違えた問題があるとここに出ます'}</span></span>${chev}</button>
+    <button class="nrow" id="h-mock"><span class="ic">${ICON.mock}</span><span class="tx"><b>模擬テスト 50問</b><span>本番と同じ分野の配分</span></span>${chev}</button>
+    <button class="nrow" id="h-gram"><span class="ic">${ICON.code}</span><span class="tx"><b>文法辞典（WHERE・GROUP BY など）</b><span>単語の読み方・使い方と、SQLを書く順番</span></span>${chev}</button>
+    <button class="nrow" id="h-ls"><span class="ic">${ICON.list}</span><span class="tx"><b>授業の回をえらぶ</b><span>好きな回から始めたいとき</span></span>${chev}</button>
+    <button class="nrow" id="h-help"><span class="ic">${ICON.help}</span><span class="tx"><b>使い方を見る</b><span>このアプリの進め方</span></span>${chev}</button>
+  </section>`;
+  const $=id=>document.getElementById(id);
+  if(nx){$('go').onclick=()=>startStep(nx.l,nx.step.id);$('openL').onclick=()=>go('lesson',{l:nx.l})}
+  else $('mock1').onclick=()=>quick('mock');
+  $('h-weak').onclick=()=>quick('weak');$('h-mock').onclick=()=>quick('mock');
+  $('h-ls').onclick=()=>go('lessons');$('h-gram').onclick=()=>go('gram');$('h-help').onclick=()=>showIntro(0);
+}
+
+/* ===== 授業の一覧 ===== */
+function renderLessons(){
+  app.innerHTML=`<p class="muted small">回をえらぶと、その回の4ステップが出ます。緑の点が終わったステップです。</p>`+
+  CATS.map(c=>`<p class="sec-t">${c.id?c.name:'基礎編（DB1・2）：データベースが初めての人はここから'}</p><section class="list">${c.ls.map(l=>{const p=lessonProg(l),done=!p.next;
+    return `<button class="nrow" data-l="${l}"><span class="ic ${done?'done':''}">${done?'✓':(l>90?'基'+(l-90):l)}</span><span class="tx"><b>${LT[l]}</b><span class="meta">${lname(l)} ${dotsOf(l)} ${p.d}/${p.n}</span></span>${chev}</button>`}).join('')}</section>`).join('');
+  app.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>go('lesson',{l:+b.dataset.l}));
+}
+
+/* ===== 授業回のページ ===== */
+function renderLesson(){
+  const l=CUR,sts=lessonSteps(l),p=lessonProg(l),i=LESSONS.indexOf(l),pv=LESSONS[i-1],nl=LESSONS[i+1];
+  app.innerHTML=`
+  <section class="phead"><span class="label">${lname(l)} ・ ${catName(L2C[l])}</span><h1>${LT[l]}</h1>
+    <div class="row" style="gap:10px"><div class="bar2 ${p.d===p.n?'ok':''}" style="flex:1"><i style="width:${p.d/p.n*100}%"></i></div><span class="small muted num">${p.d} / ${p.n} ステップ</span></div></section>
+  ${gramOf(l).length?`<section class="card pre"><span class="label">この回で使う文法（タップで使い方を見る）</span><div class="row">${gramOf(l).map(x=>`<button class="chip gchip" data-gw="${x.id}"><code>${esc(x.w)}</code></button>`).join('')}</div></section>`:''}
+  ${!p.next?`<div class="donebox">✓ この回は全部終わりました。もう一度やるのもOK！</div>`:''}
+  <ol class="steps">${sts.map((s,j)=>{const inf=stepInfo(l,s.id),cur=p.next===s;
+    return `<li class="step ${inf.done?'done':''} ${cur?'cur':''}"><span class="n">${inf.done?'✓':j+1}</span><div class="bd">
+      <div class="row between"><h3>${s.name}</h3><span class="pill ${inf.done?'ok':'plain'}">${inf.label}</span></div>
+      <p>${s.desc}</p>
+      <button class="btn ${cur?'primary big':''}" data-s="${s.id}">${cur?(inf.tried?'続きからはじめる ›':'はじめる ›'):inf.done?'もう一度':'ひらく'}</button></div></li>`}).join('')}</ol>
+  <div class="row between">${pv!=null?`<button class="btn ghost" data-go="${pv}">‹ ${lname(pv)}</button>`:'<span></span>'}${nl!=null?`<button class="btn ghost" data-go="${nl}">${lname(nl)} ›</button>`:''}</div>`;
+  app.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>startStep(l,b.dataset.s));
+  app.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go('lesson',{l:+b.dataset.go,replace:true}));
+  app.querySelectorAll('[data-gw]').forEach(b=>b.onclick=()=>goGram(b.dataset.gw));
+}
+
+/* ===== ノート（ステップ1） ===== */
+function renderNote(){
+  const l=CUR,pts=NOTES[l],memo=S.m[l]||{};
+  const cnt=()=>pts.filter((_,i)=>(S.m[l]||{})[i]).length;
+  app.innerHTML=`
+  <section class="phead"><span class="label">${lname(l)} ・ ステップ${lessonSteps(l).findIndex(s=>s.id==='note')+1} ノートで覚える</span><h1>${LT[l]}</h1></section>
+  <section class="card ${S.red?'red':''}" id="sheet">
+    <div class="row between"><span class="small muted">覚えた <b id="cnt" class="num">${cnt()}</b> / ${pts.length}</span><label class="toggle"><input type="checkbox" id="red" ${S.red?'checked':''}>赤シート</label></div>
+    <p class="hint" id="rhint" style="margin-top:8px"></p>
+    <ol class="points">${pts.map((p,i)=>`<li class="${memo[i]?'done':''}">
+      <input type="checkbox" data-i="${i}" ${memo[i]?'checked':''} aria-label="覚えた：${esc(p[0])}">
+      <span class="no">${CIRC[i]||i+1}</span>
+      <div class="qa"><span class="q">${esc(p[0])}</span><span class="a hide" data-a="${i}">${fmtA(p[1])}</span></div></li>`).join('')}</ol>
+  </section>
+  <div class="actbar"><div class="wrap"><button class="btn primary grow" id="fin">読み終わった → チェック問題へ ›</button></div></div>`;
+  const sheet=document.getElementById('sheet'),hint=document.getElementById('rhint');
+  const setHint=()=>hint.textContent=S.red?'赤い帯をタップすると答えが見えます。覚えたら左の□にチェック。':'赤シートをオンにすると答えをかくせます。';setHint();
+  document.getElementById('red').onchange=e=>{sfx('tap');S.red=e.target.checked;save();sheet.classList.toggle('red',S.red);setHint()};
+  app.querySelectorAll('[data-a]').forEach(a=>a.onclick=()=>{sfx(a.classList.contains('hide')?'open':'close');a.classList.toggle('hide')});
+  app.querySelectorAll('.points input').forEach(cb=>cb.onchange=()=>{sfx(cb.checked?'check':'uncheck');const m=S.m[l]||(S.m[l]={});m[cb.dataset.i]=cb.checked;save();cb.closest('li').classList.toggle('done',cb.checked);document.getElementById('cnt').textContent=cnt()});
+  document.getElementById('fin').onclick=()=>{S.nr[l]=1;save();startStep(l,'check')};
+}
+/* ===== 解説スライド（基礎編のステップ1） ===== */
+const cell=v=>v===null?'<span class="nul">NULL</span>':esc(v);
+function blk(x){
+  if(typeof x==='string')return `<p>${x}</p>`;
+  if(x.sql)return `<pre class="code">${esc(x.sql)}</pre>`;
+  if(x.tip)return `<p class="hint"><b>ポイント</b>　${esc(x.tip)}</p>`;
+  if(x.t)return `<div class="tblwrap">${x.cap?`<div class="tcap">${esc(x.cap)}</div>`:''}<table class="dt"><thead><tr>${x.t[0].map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${x.t[1].map(r=>`<tr>${r.map(v=>`<td>${cell(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+  return '';
+}
+/* ===== 文法辞典の画面 ===== */
+let GT=0,GQ='';
+const relName=l=>l>90?`基礎${l-90}`:`第${l}回`;
+function gEntry(x){
+  return `<details class="gi" id="g-${x.id}"><summary><span class="gw"><code>${esc(x.w)}</code><span class="gy">${esc(x.y)}</span></span><span class="gm">${esc(x.m)}</span></summary>
+  <div class="gb">
+    <div><span class="label">書き方</span><pre class="code">${esc(x.s)}</pre></div>
+    <div><span class="label">例</span><pre class="code">${esc(x.ex)}</pre></div>
+    ${EXD[x.id]?`<div class="exd"><p class="exj"><span class="label">日本語にすると</span>${esc(EXD[x.id].j)}</p><ol class="exp">${EXD[x.id].p.map(p=>`<li><code>${esc(p[0])}</code><span>${esc(p[1])}</span></li>`).join('')}</ol></div>`:''}
+    ${x.r?blk({t:x.r,cap:RES}):''}
+    ${x.n?`<p class="hint"><b>注意</b>　${esc(x.n)}</p>`:''}
+    ${x.rel&&x.rel.some(l=>l<90)?`<div class="row"><span class="label">出てくる回</span>${x.rel.filter(l=>l<90).map(l=>`<button class="mini" data-rl="${l}">${relName(l)}</button>`).join('')}</div>`:''}
+  </div></details>`;
+}
+function gList(){
+  const q=GQ.trim().toUpperCase().normalize('NFKC');
+  const hit=x=>!q||(x.w+x.y+x.m).toUpperCase().normalize('NFKC').includes(q);
+  const html=GLOSS.map(g=>{const its=g.items.filter(hit);return its.length?`<p class="sec-t">${g.g}</p><div class="list">${its.map(gEntry).join('')}</div>`:''}).join('');
+  return html||`<p class="muted">「${esc(GQ)}」に当てはまる単語はありません。</p>`;
+}
+function bindGList(){
+  app.querySelectorAll('[data-rl]').forEach(b=>b.onclick=()=>go('lesson',{l:+b.dataset.rl}));
+}
+const gramOf=l=>GALL.filter(x=>(x.rel||[]).includes(l));
+function goGram(id){GQ='';go('gram');setTimeout(()=>openEntry(id),60)}
+function openEntry(id){const d=document.getElementById('g-'+id);if(!d)return;d.open=true;d.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}
+function renderGram(){
+  const o=ORDERS[GT];
+  app.innerHTML=`
+  <section class="card ordercard">
+    <span class="label">SQLはこの順番で書く</span>
+    <div class="row ptabs">${ORDERS.map((x,i)=>`<button class="chip" data-gt="${i}" aria-pressed="${i===GT}">${x.k}</button>`).join('')}</div>
+    <p class="small muted">${o.t}ときの形です。ブロックをタップすると、下でその単語の使い方が開きます。</p>
+    <ol class="order">${o.b.map((b,i)=>{const x=gById(b[2]);return `<li><button class="ob ${b[1]?'req':''}" data-j="${b[2]}"><span class="oi">${i+1}</span><span class="ot"><code>${esc(b[0])}</code><span class="oy">${b[1]?'<b>必須</b>':'省略できる'}・${esc(x.y)}：${esc(x.m)}</span></span>${b[3]?`<span class="ex" title="実行される順番">実行${b[3]}</span>`:''}</button></li>`}).join('')}</ol>
+    <p class="hint">${o.n}</p>
+  </section>
+  <section class="row" style="gap:10px">
+    <input class="ans-input" id="gq" type="search" placeholder="単語・読み方でさがす（例：ウェア、WHERE）" value="${esc(GQ)}" style="flex:1;min-width:0">
+  </section>
+  <button class="btn primary big" id="gquiz">単語の意味クイズ 10問 ›</button>
+  <div id="glist">${gList()}</div>`;
+  app.querySelectorAll('[data-gt]').forEach(b=>b.onclick=()=>{GT=+b.dataset.gt;renderGram()});
+  app.querySelectorAll('[data-j]').forEach(b=>b.onclick=()=>{if(GQ){GQ='';document.getElementById('gq').value='';document.getElementById('glist').innerHTML=gList();bindGList()}openEntry(b.dataset.j)});
+  document.getElementById('gq').oninput=e=>{GQ=e.target.value;document.getElementById('glist').innerHTML=gList();bindGList()};
+  document.getElementById('gquiz').onclick=()=>startQuiz(glossQuiz(10),'単語の意味クイズ');
+  bindGList();
+}
+/* 辞典から「意味→単語」「単語→意味」の4択を作る */
+function glossQuiz(n){
+  return shuffle(GALL).slice(0,n).map((x,i)=>{
+    const others=shuffle(GALL.filter(y=>y!==x)).slice(0,3),dir=i%2;
+    const o=dir?[x.w,...others.map(y=>y.w)]:[x.m,...others.map(y=>y.m)];
+    const q=dir?`「${x.m}」という意味の単語はどれですか？`:`${x.w}（${x.y}）の意味はどれですか？`;
+    return {l:0,c:0,k:'g',t:'c',n:1,q,o,id:'g'+dir+x.id,gid:x.id,e:`書き方：${x.s.replace(/\n/g,' ')}${x.n?'\n'+x.n:''}`};
+  });
+}
+/* 答えの中の SQL っぽい部分を code 表示に */
+function fmtA(s){return esc(s).replace(/((?:CREATE|DROP|ALTER|INSERT|UPDATE|DELETE|SELECT|GRANT|REVOKE|TRUNCATE|ROLLBACK|SAVEPOINT|DESC)\b[^、。／（）]*?;|WHERE [^、。／）]+?\)|[A-Za-z_]+\.(?:NEXTVAL|CURRVAL))/g,'<code>$1</code>')}
+
+/* ===== テスト ===== */
+function catStats(cid){
+  const qs=QS.filter(q=>q.c===cid);let ok=0,all=0,done=0,weak=0;
+  qs.forEach(q=>{const r=S.r[q.id];if(r){ok+=r[0];all+=r[0]+r[1];done++;if(r[2]===0)weak++}});
+  return {n:qs.length,done,weak,acc:all?Math.round(ok/all*100):null};
+}
+function renderTest(){
+  const weakN=QS.filter(isWeak).length,cnt=k=>QS.filter(q=>q.k===k).length;
+  app.innerHTML=`
+  <p class="sec-t">本番の練習</p>
+  <section class="list">
+    <button class="nrow" data-q="mock"><span class="ic">${ICON.mock}</span><span class="tx"><b>模擬テスト 50問</b><span>本番と同じ分野別の問題数（選択・単語・SQL記述）</span></span>${chev}</button>
+    <button class="nrow" data-q="weak" ${weakN?'':'disabled'}><span class="ic">${ICON.weak}</span><span class="tx"><b>苦手だけ${weakN?` ${weakN}問`:''}</b><span>${weakN?'最後に間違えた問題':'間違えた問題があるとここに出ます'}</span></span>${chev}</button>
+  </section>
+  <p class="sec-t">分野ごとに10問</p>
+  <section class="list">${CATS.filter(c=>c.id).map(c=>{const s=catStats(c.id);return `<button class="nrow" data-cat="${c.id}"><span class="ic">${c.id}</span><span class="tx"><b>${c.name}</b><span>本番 ${c.n}問 ・ ${s.acc==null?'まだ解いていません':`正答率 ${s.acc}%`}</span></span>${chev}</button>`}).join('')}</section>
+  <p class="sec-t">形式でえらぶ</p>
+  <section class="list">
+    <button class="nrow" data-q="karte"><span class="ic">${ICON.card}</span><span class="tx"><b>カルテ 10問</b><span>全${cnt('r')}問からランダム</span></span>${chev}</button>
+    <button class="nrow" data-q="code"><span class="ic">${ICON.code}</span><span class="tx"><b>コードの穴埋め 10問</b><span>INTO・SET・ON・TO などのキーワード</span></span>${chev}</button>
+    <button class="nrow" data-q="write"><span class="ic">${ICON.pen}</span><span class="tx"><b>SQLを書く 5問</b><span>全${cnt('d')}問から</span></span>${chev}</button>
+    <button class="nrow" id="t-set"><span class="ic">${ICON.set}</span><span class="tx"><b>細かく条件を決めて解く</b><span>形式・分野・問題数を自分でえらぶ</span></span>${chev}</button>
+  </section>`;
+  app.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>quick(b.dataset.q));
+  app.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{const c=+b.dataset.cat;startQuiz(shuffle(QS.filter(q=>q.c===c)).slice(0,10),`${catName(c)} 10問`)});
+  document.getElementById('t-set').onclick=()=>go('setup');
+}
+function quick(t){
+  const scope=q=>q.c>0;
+  if(t==='karte')startQuiz(shuffle(QS.filter(q=>q.k==='r')).slice(0,10),'カルテ 10問');
+  if(t==='code')startQuiz(shuffle(QS.filter(q=>q.k==='k')).slice(0,10),'コードの穴埋め 10問');
+  if(t==='write')startQuiz(shuffle(QS.filter(q=>q.k==='d')).slice(0,5),'SQLを書く 5問');
+  if(t==='weak')startQuiz(shuffle(QS.filter(isWeak)),'苦手を復習');
+  if(t==='basic')startQuiz(shuffle(QS.filter(q=>q.c===0)).slice(0,10),'基礎知識 10問');
+  if(t==='mock')startQuiz(buildMock(),'模擬テスト 50問');
+}
+/* 本番の分野別問題数どおりに50問。SQL記述は3問、残りは選択6：単語4くらい */
+function buildMock(){
+  const out=[];const dCats=shuffle([1,2,3,5,6,7,8]).slice(0,3);
+  CATS.filter(c=>c.id).forEach(c=>{
+    const qs=shuffle(QS.filter(q=>q.c===c.id));
+    const d=qs.filter(q=>q.k==='d'),wd=qs.filter(q=>q.t==='w');
+    const kr=qs.filter(q=>q.k==='r'),oc=qs.filter(q=>q.t==='c'&&q.k!=='r');
+    const ch=[];while(kr.length||oc.length){if(kr.length)ch.push(kr.shift());if(kr.length)ch.push(kr.shift());if(oc.length)ch.push(oc.shift())}
+    let need=c.n;const pick=[];
+    if(dCats.includes(c.id)&&d.length){pick.push(d[0]);need--}
+    const nc=Math.round(need*0.58);
+    pick.push(...ch.slice(0,nc));pick.push(...wd.slice(0,need-Math.min(nc,ch.length)));
+    const rest=qs.filter(q=>q.k!=='d'&&!pick.includes(q));
+    while(pick.length<c.n&&rest.length)pick.push(rest.shift());
+    out.push(...pick.slice(0,c.n));
+  });
+  return out;
+}
+function renderSetup(){
+  const pool=QS.filter(q=>SET.kinds.includes(q.k)&&SET.cats.includes(q.c)&&(!SET.weak||isWeak(q)));
+  app.innerHTML=`
+  <section class="card" style="display:flex;flex-direction:column;gap:20px">
+    <fieldset><legend class="label">① 形式（いくつでも）</legend><div class="row">${Object.entries(KINDS).map(([k,n])=>`<button class="chip" data-k="${k}" aria-pressed="${SET.kinds.includes(k)}">${n}（${QS.filter(q=>q.k===k).length}）</button>`).join('')}</div>
+      <p class="small muted">シート内容チェック＝ノートの要点の4択／カルテ＝授業のカルテ／授業シート問題＝選択・単語／コードの単語＝穴埋め／記述＝SQL文を書く</p></fieldset>
+    <fieldset><legend class="label">② 分野（いくつでも）</legend><div class="row">${CATS.map(c=>`<button class="chip" data-c="${c.id}" aria-pressed="${SET.cats.includes(c.id)}">${c.name}</button>`).join('')}</div>
+      <div class="row"><button class="mini" id="allc">すべて</button><button class="mini" id="nonec">試験範囲だけ</button></div></fieldset>
+    <fieldset><legend class="label">③ 問題数</legend><div class="row">${[10,20,30,0].map(n=>`<button class="chip" data-n="${n}" aria-pressed="${SET.count===n}">${n?n+'問':'全部'}</button>`).join('')}</div></fieldset>
+    <label class="toggle"><input type="checkbox" id="weak" ${SET.weak?'checked':''}>苦手（最後に間違えた問題）だけにする</label>
+  </section>
+  <div class="actbar"><div class="wrap"><span class="note">対象 <b class="num" style="color:var(--ink)">${pool.length}</b> 問</span><button class="btn primary grow" id="go" ${pool.length?'':'disabled'}>スタート ›</button></div></div>`;
+  const tog=(arr,v)=>arr.includes(v)?arr.filter(x=>x!==v):[...arr,v];
+  app.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{SET.kinds=tog(SET.kinds,b.dataset.k);renderSetup()});
+  app.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{SET.cats=tog(SET.cats,+b.dataset.c);renderSetup()});
+  app.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{SET.count=+b.dataset.n;renderSetup()});
+  document.getElementById('allc').onclick=()=>{SET.cats=CATS.map(c=>c.id);renderSetup()};
+  document.getElementById('nonec').onclick=()=>{SET.cats=[1,2,3,4,5,6,7,8];renderSetup()};
+  document.getElementById('weak').onchange=e=>{SET.weak=e.target.checked;renderSetup()};
+  document.getElementById('go').onclick=()=>{const l=shuffle(pool);startQuiz(SET.count?l.slice(0,SET.count):l,'えらんだ問題')};
+}
+
+/* ===== 記録 ===== */
+function renderRecord(){
+  const t=totals();
+  app.innerHTML=`
+  <section class="tiles">
+    <div class="tile"><b>${t.lessonsDone}<small class="muted" style="font-size:13px"> / ${t.lessonN}</small></b><span>終わった回</span></div>
+    <div class="tile"><b>${t.tried}</b><span>解いた問題</span></div>
+    <div class="tile"><b>${t.acc==null?'—':t.acc+'%'}</b><span>正答率</span></div>
+  </section>
+  <section class="card"><h2 style="margin-bottom:12px">分野ごとの正答率</h2><div class="catrows">${CATS.map(c=>{const s=catStats(c.id);
+    return `<div class="catrow"><span>${c.name}</span><div class="bar2"><i style="width:${s.acc??0}%"></i></div><span class="small muted num">${s.acc==null?'—':s.acc+'%'}${s.weak?` <span style="color:var(--ng)">苦手${s.weak}</span>`:''}</span></div>`}).join('')}</div>
+    <p class="small muted" style="margin-top:12px">本番の出題数：${CATS.filter(c=>c.id).map(c=>`${c.name} ${c.n}`).join('・')}（計50問）</p></section>
+  <section class="card"><h2 style="margin-bottom:6px">記録を消す</h2><p class="small muted" style="margin-bottom:10px">解いた結果・覚えたチェックをすべて消して、最初からやり直します。</p><button class="btn" id="rs">記録をリセット</button></section>`;
+  document.getElementById('rs').onclick=()=>modal(`<h2>記録をすべて消しますか？</h2><p class="muted">元には戻せません。</p><div class="row end"><button class="btn" id="rn">やめる</button><button class="btn primary" id="ry">消す</button></div>`,()=>{
+    document.getElementById('rn').onclick=closeModal;
+    document.getElementById('ry').onclick=()=>{S.r={};S.m={};S.nr={};save();closeModal();renderRecord()};
+  });
+}
+
+/* ===== 問題を解く ===== */
+function startQuiz(list,title,o={}){if(!list.length)return;Z={list,i:0,res:[],title,ctx:o.ctx||null};prep();go('quiz',{replace:view==='result'||view==='quiz'})}
+function prep(){const q=Z.list[Z.i];Z.cur={done:false,sel:new Set(),order:q.t==='c'?shuffle(q.o.map((_,i)=>i)):null}}
+
+function renderQuiz(){
+  if(!Z){go('home',{replace:true});return}
+  const q=Z.list[Z.i],cur=Z.cur,n=Z.list.length;
+  const kind=q.k==='g'?'単語の意味':((q.k==='r'?`カルテ 問${q.src}・`:q.k==='p'?'ノートの要点・':'')+(q.t==='d'?'SQLを書く':q.k==='k'?'コードの穴埋め':q.t==='c'?(q.n>1?`${q.n}つ選ぶ`:'選択'):'単語を書く'));
+  let body='',hint='',acts='';
+  if(q.code)body+=`<pre class="code">${esc(q.code).replace(/___/g,'<span class="blank">？</span>')}</pre>`;
+  if(q.t==='c'){
+    body+=`<div class="opts">${cur.order.map((oi,j)=>{
+      let cls='';if(cur.done){if(oi<q.n)cls='right';else if(cur.sel.has(oi))cls='wrong'}
+      return `<button class="opt ${cls}" data-o="${oi}" aria-pressed="${cur.sel.has(oi)}" ${cur.done?'disabled':''}><span class="k">${'アイウエオカ'[j]}</span><span>${br(q.o[oi])}</span></button>`}).join('')}</div>`;
+    if(!cur.done){
+      if(q.n>1){hint=`正しいものを <b>${q.n}つ</b> 選んでから、下の「答え合わせ」を押してください。`;acts=`<button class="btn primary grow" id="chk" ${cur.sel.size?'':'disabled'}>答え合わせ（${cur.sel.size} / ${q.n} 選択中）</button>`}
+      else{hint='答えをタップすると、すぐに答え合わせします。';acts='<span class="note">答えをタップしてください</span>'}
+    }
+  }else if(q.t==='w'){
+    body+=`<input class="ans-input" id="inp" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${q.k==='k'?'空欄に入る言葉':'答えを入力'}" value="${esc(cur.given||'')}" ${cur.done?'disabled':''}>`;
+    if(!cur.done){hint='入力して「答え合わせ」（Enterキーでも可）。大文字・小文字はどちらでもOK。';acts='<button class="btn" id="skip">わからない</button><button class="btn primary grow" id="chk">答え合わせ</button>'}
+  }else{
+    body+=`<textarea class="ans-input" id="inp" spellcheck="false" autocapitalize="off" placeholder="SQL文を入力" ${cur.done?'disabled':''}>${esc(cur.given||'')}</textarea>`;
+    if(!cur.done){hint='大文字・小文字、改行、最後の ; はどちらでもOK（Ctrl+Enterでも答え合わせ）。';acts='<button class="btn" id="skip">わからない</button><button class="btn primary grow" id="chk">答え合わせ</button>'}
+  }
+  if(cur.done){const ov=!cur.ok&&q.t==='d'&&!cur.skipped;
+    acts=`${ov?'<button class="btn" id="ov">自分の答えも正解</button>':''}<button class="btn primary grow" id="next">${Z.i+1<n?'次へ ›':'結果を見る ›'}</button>`}
+  app.innerHTML=`
+  <div class="qprog"><div class="progress" aria-hidden="true"><i style="width:${(Z.i+(cur.done?1:0))/n*100}%"></i></div><span class="small num"><b>${Z.i+1}</b> / ${n}</span></div>
+  <section class="card qbody">
+    <div class="row"><span class="pill">${q.k==='g'?'文法':catName(q.c)}</span><span class="pill plain">${kind}</span></div>
+    <div class="qtext">${br(q.q)}</div>
+    ${body}
+    ${hint?`<p class="hint">${hint}</p>`:''}
+  </section>
+  ${cur.done?feedback(q,cur):''}
+  <div class="actbar"><div class="wrap">${acts}</div></div>`;
+  if(!cur.done){
+    if(q.t==='c'){
+      app.querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>{const oi=+b.dataset.o;
+        if(q.n===1){cur.sel=new Set([oi]);judge(oi<q.n)}
+        else{sfx(cur.sel.has(oi)?'uncheck':'pick');cur.sel.has(oi)?cur.sel.delete(oi):cur.sel.add(oi);renderQuiz()}});
+      const ck=document.getElementById('chk');if(ck)ck.onclick=()=>{const ok=cur.sel.size===q.n&&[...cur.sel].every(x=>x<q.n);judge(ok)};
+    }else{
+      const inp=document.getElementById('inp');
+      if(matchMedia('(hover:hover)').matches)inp.focus();
+      inp.oninput=()=>cur.given=inp.value;
+      const check=()=>{cur.given=inp.value;if(!inp.value.trim()){inp.focus();return}const f=q.t==='w'?normW:normS;judge(q.a.map(f).includes(f(inp.value)))};
+      document.getElementById('chk').onclick=check;
+      document.getElementById('skip').onclick=()=>{cur.given=inp.value;cur.skipped=true;judge(false)};
+      inp.onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing&&e.keyCode!==229&&(q.t==='w'||e.ctrlKey||e.metaKey)){e.preventDefault();e.stopPropagation();check()}};
+    }
+  }else{
+    const nx=document.getElementById('next');nx.onclick=next;if(matchMedia('(hover:hover)').matches)nx.focus();
+    const ov=document.getElementById('ov');if(ov)ov.onclick=()=>{const r=S.r[q.id];r[1]--;r[0]++;r[2]=1;save();Z.res[Z.i].ok=true;cur.ok=true;cur.over=true;renderQuiz()};
+  }
+}
+function judge(ok){sfx(ok?'ok':'ng');const q=Z.list[Z.i];Z.cur.done=true;Z.cur.ok=ok;record(q,ok);Z.res[Z.i]={q,ok,given:Z.cur.given};renderQuiz();
+  const fb=document.querySelector('.fb');if(fb&&fb.getBoundingClientRect().bottom>window.innerHeight-80)fb.scrollIntoView({block:'end',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}
+function next(){sfx('page');if(Z.i+1<Z.list.length){Z.i++;prep();renderQuiz();window.scrollTo(0,0)}else go('result',{replace:true})}
+function answerText(q){
+  if(q.t==='c')return q.o.slice(0,q.n).map(o=>`<div>${br(o)}</div>`).join('');
+  if(q.t==='w')return `<code>${esc(q.a[0])}</code>${q.a.length>1?`<span class="small muted">（${q.a.slice(1).map(esc).join('・')} もOK）</span>`:''}`;
+  return `<pre class="code">${esc(q.a[0])}</pre>${q.a.length>1?`<div class="small muted">別解：<code>${esc(q.a[1])}</code></div>`:''}`;
+}
+function feedback(q,cur){
+  const ok=cur.ok;
+  return `<div class="fb ${ok?'ok':'ng'}" role="status">
+    <div class="verdict"><span class="mark">${ok?'○':'×'}</span>${ok?(cur.over?'正解にしました':'正解！'):(cur.skipped?'答えを確認しよう':'不正解')}</div>
+    ${ok&&q.t==='c'?'':`<div><span class="label">正解</span>${answerText(q)}</div>`}
+    <p>${br(q.e)}</p>
+    <span class="src">出典：${srcLabel(q)}</span>
+    ${q.k==='g'?`<pre class="code">${esc(gById(q.gid).ex)}</pre>`:''}
+    ${!ok&&q.t==='d'&&!cur.skipped?`<p class="small muted">書き方が少し違うだけ（列の順番、制約名をつけた など）なら、下の「自分の答えも正解」で正解にできます。</p>`:''}
+  </div>`;
+}
+document.addEventListener('keydown',e=>{
+  if(view!=='quiz'||!Z||!Z.cur||document.querySelector('.ov'))return;
+  const q=Z.list[Z.i];
+  if(Z.cur.done&&e.key==='Enter'&&document.activeElement?.id!=='ov'){e.preventDefault();next();return}
+  if(!Z.cur.done&&q.t==='c'&&q.n===1&&/^[1-6]$/.test(e.key)){const j=+e.key-1;if(j<Z.cur.order.length){const oi=Z.cur.order[j];Z.cur.sel=new Set([oi]);judge(oi<q.n)}}
+});
+
+/* ===== 結果 ===== */
+function renderResult(){
+  if(!Z){go('home',{replace:true});return}
+  const res=Z.res.filter(Boolean),ok=res.filter(r=>r.ok).length,n=res.length,pct=n?Math.round(ok/n*100):0;
+  const by={};res.forEach(r=>{const b=by[r.q.c]||(by[r.q.c]={ok:0,n:0});b.n++;if(r.ok)b.ok++});
+  const wrong=res.filter(r=>!r.ok),ctx=Z.ctx;
+  if(!Z.played){Z.played=1;const fin=Z.ctx&&!lessonProg(Z.ctx.l).next;setTimeout(()=>sfx(fin||pct>=90?'done':pct>=60?'good':'soft'),150)}
+  const msg=pct>=90?'すばらしい！':pct>=70?'いい調子！':pct>=50?'あと少し！':'間違えたところを見直そう';
+  const C=2*Math.PI*42;
+  let main='';
+  if(ctx){const p=lessonProg(ctx.l);
+    if(p.next){const same=p.next.id===ctx.step;main=`<button class="btn primary big" id="nx">${same?'この続きをやる':`次のステップへ：${p.next.name}`} ›</button>`}
+    else{const nl=LESSONS[LESSONS.indexOf(ctx.l)+1];main=`<div class="donebox">✓ ${lname(ctx.l)}は全ステップ完了！</div>${nl!=null?`<button class="btn primary big" id="nl">次の回へ：${lname(nl)} ${LT[nl]} ›</button>`:''}`}}
+  app.innerHTML=`
+  <section class="card" style="display:flex;flex-direction:column;gap:16px">
+    <span class="label">${esc(Z.title)}${n<Z.list.length?`（${Z.list.length}問中 ${n}問で終了）`:''}</span>
+    <div class="score">
+      <svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle class="bg" cx="50" cy="50" r="42"/><circle class="fg" cx="50" cy="50" r="42" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct/100)}"/><text x="50" y="58" text-anchor="middle">${pct}%</text></svg>
+      <div class="msg"><b>${msg}</b><span class="muted"><b class="num" style="font-size:18px;color:var(--ink)">${ok}</b> / ${n} 問正解</span></div>
+    </div>
+    ${main}
+    <div class="row">${wrong.length?`<button class="btn ${main?'':'primary'}" id="again" style="flex:1">間違えた ${wrong.length}問をやり直す</button>`:''}<button class="btn" id="home" style="flex:1">ホームへ</button></div>
+  </section>
+  ${Object.keys(by).length>1?`<section class="card"><h2 style="margin-bottom:12px">分野ごと</h2><div class="catrows">${Object.entries(by).map(([c,b])=>`<div class="catrow"><span>${catName(+c)}</span><div class="bar2"><i style="width:${b.ok/b.n*100}%"></i></div><span class="small muted num">${b.ok} / ${b.n}</span></div>`).join('')}</div></section>`:''}
+  ${wrong.length?`<section class="card"><h2 style="margin-bottom:12px">間違えた問題の答え</h2><ol class="wronglist">${wrong.map(r=>`<li>
+    <span class="small muted">${catName(r.q.c)}・${srcLabel(r.q)}</span>
+    <b>${br(r.q.q)}</b>${r.q.code?`<pre class="code">${esc(r.q.code).replace(/___/g,'<span class="blank">？</span>')}</pre>`:''}
+    ${r.given&&r.q.t!=='c'?`<div class="small">あなたの答え：<code>${esc(r.given)}</code></div>`:''}
+    <div><span class="label">正解 </span>${answerText(r.q)}</div></li>`).join('')}</ol></section>`:''}`;
+  const $=id=>document.getElementById(id);
+  if($('nx'))$('nx').onclick=()=>startStep(ctx.l,lessonProg(ctx.l).next.id);
+  if($('nl'))$('nl').onclick=()=>go('lesson',{l:LESSONS[LESSONS.indexOf(ctx.l)+1]});
+  if($('again'))$('again').onclick=()=>startQuiz(shuffle(wrong.map(r=>r.q)),'間違えた問題',{ctx});
+  $('home').onclick=()=>go('home');
+}
+
+render();
+if(!S.intro)showIntro(0);
+</script>
+
+</body></html>

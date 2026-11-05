@@ -929,6 +929,82 @@ K(19,`DROP ___ SYNONYM e;`,`パブリックシノニム e を削除したい。�
 D(19,`scott.emp 表に対して、プライベートシノニム e を作成しなさい。`,`CREATE SYNONYM e FOR scott.emp;`,`最初が S、最後が M、真ん中が回文（YNONY）の SYNONYM です。`);
 D(19,`scott.emp 表に対して、パブリックシノニム emp を作成しなさい。`,`CREATE PUBLIC SYNONYM emp FOR scott.emp;`,`SYNONYM の前に PUBLIC をつけます。`);
 
+/* --- SQL記述問題（追加分） --- */
+D(2,`emp表から、社員番号(empno)7369の社員と同じ職種(job)の社員の名前(ename)を表示するSELECT文を書きなさい。`,`SELECT ename FROM emp WHERE job = (SELECT job FROM emp WHERE empno = 7369);`,`副問い合わせで7369の人の職種を求め、= で比べます（1行だけ返るので単一行副問い合わせ）。`);
+D(2,`emp表から、給与(sal)が一番高い社員の名前(ename)と給与(sal)を表示するSELECT文を書きなさい。`,`SELECT ename, sal FROM emp WHERE sal = (SELECT MAX(sal) FROM emp);`,`MAX(sal) を副問い合わせで求めて、それと等しい人を出します。`);
+D(2,`emp表から、社員番号(empno)7499の社員より給与(sal)が低い社員の名前(ename)と給与(sal)を表示するSELECT文を書きなさい。`,`SELECT ename, sal FROM emp WHERE sal < (SELECT sal FROM emp WHERE empno = 7499);`,`「より低い」は < です。`);
+D(2,`emp表から、部署番号(deptno)ごとの平均給与(sal)を求め、全社員の平均給与より高い部署だけを、部署番号といっしょに表示するSELECT文を書きなさい。`,`SELECT deptno, AVG(sal) FROM emp GROUP BY deptno HAVING AVG(sal) > (SELECT AVG(sal) FROM emp);`,`グループの条件は HAVING に書きます。HAVING 句にも副問い合わせが使えます。`);
+D(2,`emp表から、名前(ename)が'SCOTT'の社員と部署番号(deptno)も職種(job)も同じ社員の名前(ename)を、複数列副問い合わせを使って表示するSELECT文を書きなさい。`,`SELECT ename FROM emp WHERE (deptno, job) = (SELECT deptno, job FROM emp WHERE ename = 'SCOTT');|SELECT ename FROM emp WHERE (job, deptno) = (SELECT job, deptno FROM emp WHERE ename = 'SCOTT');`,`(列, 列) = (SELECT 列, 列 …) のように、複数の列をまとめて比べます。`);
+D(3,`emp表から、部署番号(deptno)20の社員のだれかより給与(sal)が高い社員の名前(ename)を表示するSELECT文を書きなさい。`,`SELECT ename FROM emp WHERE sal > ANY (SELECT sal FROM emp WHERE deptno = 20);|SELECT ename FROM emp WHERE sal > SOME (SELECT sal FROM emp WHERE deptno = 20);`,`「だれかより高い」は > ANY（最小値より大きい）です。`);
+D(3,`emp表から、部署番号(deptno)10の社員のだれとも職種(job)が同じでない社員の名前(ename)を表示するSELECT文を書きなさい。`,`SELECT ename FROM emp WHERE job NOT IN (SELECT job FROM emp WHERE deptno = 10);|SELECT ename FROM emp WHERE job <> ALL (SELECT job FROM emp WHERE deptno = 10);`,`「どれとも等しくない」は NOT IN（<> ALL でも同じ）です。`);
+D(3,`emp表から、職種(job)が'MANAGER'の社員全員より給与(sal)が低い社員の名前(ename)と給与(sal)を表示するSELECT文を書きなさい。`,`SELECT ename, sal FROM emp WHERE sal < ALL (SELECT sal FROM emp WHERE job = 'MANAGER');`,`「全員より低い」は < ALL（最小値より小さい）です。`);
+D(3,`dept表で所在地(loc)が'DALLAS'の部署に所属している社員の名前(ename)を、emp表から副問い合わせと IN を使って表示するSELECT文を書きなさい。`,`SELECT ename FROM emp WHERE deptno IN (SELECT deptno FROM dept WHERE loc = 'DALLAS');|SELECT ename FROM emp WHERE deptno = ANY (SELECT deptno FROM dept WHERE loc = 'DALLAS');`,`副問い合わせでは別の表（dept）も使えます。`);
+D(4,`emp表とemp2表の社員番号(empno)を、重複も含めてすべて表示するSQLを書きなさい。`,`SELECT empno FROM emp UNION ALL SELECT empno FROM emp2;`,`重複も含めるなら UNION ALL です。`);
+D(4,`emp表にはあって、emp2表にはない社員番号(empno)を表示するSQLを書きなさい。`,`SELECT empno FROM emp MINUS SELECT empno FROM emp2;|SELECT empno FROM emp EXCEPT SELECT empno FROM emp2;`,`引かれる表（emp）を左、引く表（emp2）を右に書きます。`);
+D(4,`emp2表にはあって、emp表にはない社員番号(empno)を表示するSQLを書きなさい。`,`SELECT empno FROM emp2 MINUS SELECT empno FROM emp;|SELECT empno FROM emp2 EXCEPT SELECT empno FROM emp;`,`MINUS は左右を入れかえると結果が変わります。今回は emp2 が左です。`);
+D(4,`emp表とemp2表の社員番号(empno)と名前(ename)を、重複を除いてすべて、社員番号の小さい順に表示するSQLを書きなさい。`,`SELECT empno, ename FROM emp UNION SELECT empno, ename FROM emp2 ORDER BY empno;|SELECT empno, ename FROM emp UNION SELECT empno, ename FROM emp2 ORDER BY 1;|SELECT empno, ename FROM emp UNION SELECT empno, ename FROM emp2 ORDER BY empno ASC;`,`ORDER BY は最後の SELECT 文の後ろに1回だけ書きます。`);
+D(5,`dept表(deptno, dname, loc)に、部署番号80、部署名'営業'、所在地'東京'の行を、列名を省略して追加するINSERT文を書きなさい。`,`INSERT INTO dept VALUES (80, '営業', '東京');`,`列名を省略するときは、表の列の順番どおりに全部の値を書きます。`);
+D(5,`dept表(deptno, dname, loc)に、部署番号90、部署名'広報'、所在地は既定値(DEFAULT)の行を、列名を指定して追加するINSERT文を書きなさい。`,`INSERT INTO dept (deptno, dname, loc) VALUES (90, '広報', DEFAULT);`,`既定値を明示するときは、値のところに DEFAULT と書きます。`);
+D(5,`emp表から、社員番号(empno)7900の社員の行を削除するDELETE文を書きなさい。`,`DELETE FROM emp WHERE empno = 7900;|DELETE emp WHERE empno = 7900;`,`DELETE FROM 表名 WHERE 条件; です。WHERE を忘れると全行が消えます。`);
+D(5,`emp表で、部署番号(deptno)10の社員全員の給与(sal)を1.1倍にするUPDATE文を書きなさい。`,`UPDATE emp SET sal = sal * 1.1 WHERE deptno = 10;|UPDATE emp SET sal = 1.1 * sal WHERE deptno = 10;`,`SET の右側には、今の値を使った計算も書けます。`);
+D(5,`emp表の全社員の歩合(comm)をNULLにするUPDATE文を書きなさい。`,`UPDATE emp SET comm = NULL;`,`全員なので WHERE は書きません。NULL は ' ' で囲みません。`);
+D(5,`emp表で、社員番号(empno)7369の社員の給与(sal)を、社員番号7499の社員と同じ給与に変更するUPDATE文を書きなさい。`,`UPDATE emp SET sal = (SELECT sal FROM emp WHERE empno = 7499) WHERE empno = 7369;`,`UPDATE の SET 句にも副問い合わせが使えます。`);
+D(6,`まだ確定していない変更をすべて確定するSQLを書きなさい。`,`COMMIT;|COMMIT WORK;`,`確定は COMMIT です。`);
+D(6,`sp1 という名前のセーブポイントを作るSQLを書きなさい。`,`SAVEPOINT sp1;`,`SAVEPOINT 名前; で、戻る地点に目印をつけます。`);
+D(6,`セーブポイント sp1 の地点まで変更を取り消すSQLを書きなさい。`,`ROLLBACK TO sp1;|ROLLBACK TO SAVEPOINT sp1;`,`ROLLBACK だけだと最後の COMMIT まで全部戻ります。sp1 までなら TO をつけます。`);
+D(6,`emp表の社員番号(empno)7369の行を、ほかの人が変更できないようにロックしながら取り出すSELECT文を書きなさい（全列を表示）。`,`SELECT * FROM emp WHERE empno = 7369 FOR UPDATE;`,`SELECT … FOR UPDATE で、取り出した行をロックします。`);
+D(7,`「商品」表を作成する文を書きなさい。「商品コード」列は4バイトの可変長文字型、「商品名」列は20バイトの可変長文字型、「価格」列は6桁の整数型とします。`,`CREATE TABLE 商品 (商品コード VARCHAR2(4), 商品名 VARCHAR2(20), 価格 NUMBER(6));`,`文字は VARCHAR2(バイト数)、整数は NUMBER(桁数) です。`);
+D(7,`「会員」表を作成する文を書きなさい。「会員番号」列は5桁の整数型、「入会日」列は日付型、「地域」列は10バイトの可変長文字型で、値を入れなかったときは'東京'が入るようにします。`,`CREATE TABLE 会員 (会員番号 NUMBER(5), 入会日 DATE, 地域 VARCHAR2(10) DEFAULT '東京');`,`既定値はデータ型のあとに DEFAULT 値 と書きます。DATE には長さを書きません。`);
+D(7,`「会員」表を削除する文を書きなさい。`,`DROP TABLE 会員;`,`表を削除するのは DROP TABLE です（ロールバックできません）。`);
+D(7,`「会員」表の構造（列名やデータ型）を確認するコマンドを書きなさい。`,`DESC 会員|DESCRIBE 会員`,`DESC は SQL*Plus のコマンドなので ; はいりません（つけても正解にしています）。`);
+D(8,`「成績」表の構造は残して、データだけを高速に全部削除する文を書きなさい。`,`TRUNCATE TABLE 成績;`,`TRUNCATE TABLE は DDL なのでロールバックできません。`);
+D(8,`goods表を作成する文を書きなさい。code列は5バイトの固定長文字型、price列は全体7桁・小数部2桁の数値型、created列は日付型とします。`,`CREATE TABLE goods (code CHAR(5), price NUMBER(7, 2), created DATE);`,`固定長は CHAR、NUMBER(全体の桁数, 小数部の桁数) です。`);
+D(8,`emp表のすべての列とデータをコピーして、emp_copy 表を作成する文を書きなさい。`,`CREATE TABLE emp_copy AS SELECT * FROM emp;`,`CREATE TABLE 新しい表 AS SELECT 文; でコピーできます（引き継がれる制約は NOT NULL だけ）。`);
+D(8,`emp表から部署番号(deptno)10の社員の社員番号(empno)と名前(ename)だけを持つ emp10 表を作成する文を書きなさい。`,`CREATE TABLE emp10 AS SELECT empno, ename FROM emp WHERE deptno = 10;`,`AS のあとの SELECT 文に、列や WHERE を書けば一部だけコピーできます。`);
+D(9,`item表を作成する文を書きなさい。id列は NUMBER(4) で、pk_item という名前の主キー制約をつけます。name列は VARCHAR2(20) で一意制約（制約名なし）をつけます。すべて列レベルで定義します。`,`CREATE TABLE item (id NUMBER(4) CONSTRAINT pk_item PRIMARY KEY, name VARCHAR2(20) UNIQUE);`,`制約名は CONSTRAINT 名前 のあとに制約を書きます。`);
+D(9,`student表を作成する文を書きなさい。sno列は CHAR(6) で主キー、age列は NUMBER(3) で0以上というチェック制約をつけます（列レベル・制約名なし）。`,`CREATE TABLE student (sno CHAR(6) PRIMARY KEY, age NUMBER(3) CHECK (age >= 0));`,`CHECK (条件) で、自由な条件の制約をつけます。`);
+D(9,`score列（NUMBER(3)）に、0以上100以下というチェック制約をつけて定義しなさい（制約名なし・列の定義部分だけ）。`,`score NUMBER(3) CHECK (score BETWEEN 0 AND 100)|score NUMBER(3) CHECK (score >= 0 AND score <= 100)`,`BETWEEN を使っても、>= と <= を AND でつないでもかまいません。`);
+D(9,`email列（VARCHAR2(50)）に、uq_email という名前の一意制約をつけて定義しなさい（列の定義部分だけ）。`,`email VARCHAR2(50) CONSTRAINT uq_email UNIQUE`,`一意制約は UNIQUE です。重複は許しませんが NULL は入れられます。`);
+D(10,`orders表を作成する文を書きなさい。ono列は NUMBER(5) で主キー、cno列は NUMBER(4) で customer表の cno列を参照します（列レベル・制約名なし）。`,`CREATE TABLE orders (ono NUMBER(5) PRIMARY KEY, cno NUMBER(4) REFERENCES customer(cno));`,`列レベルの外部キーは REFERENCES 親表(親キー列) だけを書きます。`);
+D(10,`deptno列（NUMBER(2)）が dept表の deptno列を参照するように、fk_dept という制約名をつけて列レベルで定義しなさい（列の定義部分だけ）。`,`deptno NUMBER(2) CONSTRAINT fk_dept REFERENCES dept(deptno)`,`CONSTRAINT 制約名 のあとに REFERENCES を書きます。`);
+D(10,`deptno列（NUMBER(2)）が dept表の deptno列を参照し、親の行が削除されたら子の行も削除されるように定義しなさい（制約名なし・列の定義部分だけ）。`,`deptno NUMBER(2) REFERENCES dept(deptno) ON DELETE CASCADE`,`親の行といっしょに子の行も消すのは ON DELETE CASCADE です。`);
+D(10,`ほかの表から参照されていても、dept表を削除できるようにする文を書きなさい。`,`DROP TABLE dept CASCADE CONSTRAINTS;`,`CASCADE CONSTRAINTS をつけると、参照している制約もいっしょに削除されます。`);
+D(11,`pid列と gno列の組み合わせを主キーにする制約を、pk_pg という制約名で表レベルで定義しなさい（制約の部分だけ）。`,`CONSTRAINT pk_pg PRIMARY KEY (pid, gno)`,`複合主キーは表レベルで PRIMARY KEY (列, 列) と書きます。`);
+D(11,`pid列が products表の pid列を参照する外部キー制約を、fk_pid という制約名で表レベルで定義しなさい（制約の部分だけ）。`,`CONSTRAINT fk_pid FOREIGN KEY (pid) REFERENCES products(pid)`,`表レベルでは FOREIGN KEY (外部キー列) REFERENCES 親表(親キー列) です。`);
+D(11,`「hp列は pp列以上」というチェック制約を定義しなさい（制約名なし・制約の部分だけ）。`,`CHECK (hp >= pp)|CHECK (pp <= hp)`,`ほかの列と比べる CHECK は表レベルで書きます。`);
+D(11,`sales表を作成する文を書きなさい。sid列は NUMBER(5)、did列は NUMBER(3)、qty列は NUMBER(4) とし、sid列と did列の組み合わせを主キーにします（表レベル・制約名なし）。`,`CREATE TABLE sales (sid NUMBER(5), did NUMBER(3), qty NUMBER(4), PRIMARY KEY (sid, did));`,`列の定義をすべて書いたあとに、カンマで区切って表レベルの制約を書きます。`);
+D(12,`emp表から、職種(job)が'CLERK'の社員の社員番号(empno)・名前(ename)・給与(sal)を見せるビュー clerk_v を作成しなさい。`,`CREATE VIEW clerk_v AS SELECT empno, ename, sal FROM emp WHERE job = 'CLERK';`,`CREATE VIEW ビュー名 AS SELECT 文; です。`);
+D(12,`すでにあるビュー emp20 を、emp表から部署番号(deptno)20の社員の社員番号(empno)・名前(ename)・給与(sal)を見せるビューに作り直しなさい。`,`CREATE OR REPLACE VIEW emp20 AS SELECT empno, ename, sal FROM emp WHERE deptno = 20;`,`作り直すときは CREATE OR REPLACE VIEW です。`);
+D(12,`emp表の empno列と ename列を、ビュー列名「番号」「名前」で見せるビュー emp_v を作成しなさい（ビュー名のあとにビュー列名を書く）。`,`CREATE VIEW emp_v (番号, 名前) AS SELECT empno, ename FROM emp;`,`ビュー名のあとの ( ) にビュー列名を書きます。`);
+D(12,`emp表から、部署番号(deptno)ごとの平均給与(sal)を見せるビュー dept_avg を、ビュー列名 deptno, avg_sal で作成しなさい（ビュー名のあとにビュー列名を書く）。`,`CREATE VIEW dept_avg (deptno, avg_sal) AS SELECT deptno, AVG(sal) FROM emp GROUP BY deptno;`,`関数や式を使った列には、ビュー列名が必要です。`);
+D(12,`ビュー emp20 を削除する文を書きなさい。`,`DROP VIEW emp20;`,`ビューを消しても元の表は消えません。`);
+D(13,`emp表の empno列と ename列を見せる、読み取り専用のビュー emp_ro を作成しなさい。`,`CREATE VIEW emp_ro AS SELECT empno, ename FROM emp WITH READ ONLY;`,`文の最後に WITH READ ONLY をつけます。`);
+D(13,`emp表から empno・ename・deptno 列を持ち、部署番号(deptno)30の行しか挿入・変更できないビュー emp30v を作成しなさい。`,`CREATE VIEW emp30v AS SELECT empno, ename, deptno FROM emp WHERE deptno = 30 WITH CHECK OPTION;`,`WHERE 句の条件で変更を制限するのが WITH CHECK OPTION です。`);
+D(13,`読み取り専用にしてある emp表を、読み書きできる状態に戻す文を書きなさい。`,`ALTER TABLE emp READ WRITE;`,`読み取り専用にするのは READ ONLY、戻すのは READ WRITE です。`);
+D(13,`ビュー emp20 を通じて、社員番号(empno)7369の社員の給与(sal)を2000に変更するUPDATE文を書きなさい。`,`UPDATE emp20 SET sal = 2000 WHERE empno = 7369;`,`ビューを通じて変更すると、元の表（emp）のデータが変わります。`);
+D(14,`emp表の job列に、索引名 job_idx の索引を作成しなさい。`,`CREATE INDEX job_idx ON emp(job);`,`CREATE INDEX 索引名 ON 表名(列名); です。`);
+D(14,`emp表の deptno列と job列の2つの列に、索引名 dj_idx の索引を作成しなさい（deptno, job の順）。`,`CREATE INDEX dj_idx ON emp(deptno, job);`,`複数の列は ( ) の中にカンマで並べます。`);
+D(14,`索引 job_idx を削除する文を書きなさい。`,`DROP INDEX job_idx;`,`制約で自動作成された索引は DROP INDEX では消せません（制約を消します）。`);
+D(15,`初期値1、増分1、最大値9999の順序 seq_emp を作成しなさい。`,`CREATE SEQUENCE seq_emp START WITH 1 INCREMENT BY 1 MAXVALUE 9999;|CREATE SEQUENCE seq_emp INCREMENT BY 1 START WITH 1 MAXVALUE 9999;|CREATE SEQUENCE seq_emp START WITH 1 MAXVALUE 9999 INCREMENT BY 1;|CREATE SEQUENCE seq_emp INCREMENT BY 1 MAXVALUE 9999 START WITH 1;`,`オプションの順番は自由です。`);
+D(15,`順序 seq_emp の増分を5に変更する文を書きなさい。`,`ALTER SEQUENCE seq_emp INCREMENT BY 5;`,`ALTER SEQUENCE で START WITH 以外は変更できます。`);
+D(15,`順序 seq_emp を削除する文を書きなさい。`,`DROP SEQUENCE seq_emp;`,`削除しても、すでに採番された番号は消えません。`);
+D(15,`順序 seq_dept の次の番号を部署番号(deptno)にして、部署名(dname)が'企画'の行を dept表に追加するINSERT文を書きなさい（列名を指定する）。`,`INSERT INTO dept (deptno, dname) VALUES (seq_dept.NEXTVAL, '企画');`,`順序名.NEXTVAL で次の番号を作ります。`);
+D(16,`ユーザ名 silver、パスワード tiger で、USERS表領域を無制限に使えるユーザを作成する文を書きなさい。`,`CREATE USER silver IDENTIFIED BY tiger QUOTA UNLIMITED ON USERS;`,`QUOTA UNLIMITED ON 表領域名 で、使える量を無制限にします。`);
+D(16,`ユーザ silver のパスワードを lion に変更する文を書きなさい。`,`ALTER USER silver IDENTIFIED BY lion;`,`ユーザ名は変えられませんが、パスワードは ALTER USER で変えられます。`);
+D(16,`オブジェクトを持っていないユーザ silver を削除する文を書きなさい。`,`DROP USER silver;|DROP USER silver CASCADE;`,`オブジェクトを持っていなければ CASCADE はいりません（つけても削除できます）。`);
+D(17,`ユーザ gold に、CREATE TABLE 権限と CREATE VIEW 権限を1つの文で与えなさい。`,`GRANT CREATE TABLE, CREATE VIEW TO gold;|GRANT CREATE VIEW, CREATE TABLE TO gold;`,`複数のシステム権限はカンマで区切ります。`);
+D(17,`ユーザ gold から、CREATE VIEW 権限を取り消しなさい。`,`REVOKE CREATE VIEW FROM gold;`,`取り消すときは REVOKE … FROM です。`);
+D(17,`emp表に対するすべてのオブジェクト権限を、ユーザ gold と silver に1つの文で与えなさい。`,`GRANT ALL ON emp TO gold, silver;|GRANT ALL ON emp TO silver, gold;|GRANT ALL PRIVILEGES ON emp TO gold, silver;`,`すべての権限は ALL、複数のユーザはカンマで区切ります。`);
+D(17,`ユーザ gold から、dept表の UPDATE 権限を取り消しなさい。`,`REVOKE UPDATE ON dept FROM gold;`,`オブジェクト権限の取り消しは REVOKE 権限 ON オブジェクト FROM ユーザ; です。`);
+D(18,`ロール dev_role に、CREATE TABLE 権限と CREATE VIEW 権限を1つの文で与えなさい。`,`GRANT CREATE TABLE, CREATE VIEW TO dev_role;|GRANT CREATE VIEW, CREATE TABLE TO dev_role;`,`ユーザの代わりにロール名を TO のあとに書きます。`);
+D(18,`ユーザ gold から、ロール dev_role を取り消しなさい。`,`REVOKE dev_role FROM gold;`,`ロールの取り消しも REVOKE … FROM です。`);
+D(18,`ユーザ gold に CREATE TABLE 権限を、gold がほかのユーザにも与えられるように付与しなさい。`,`GRANT CREATE TABLE TO gold WITH ADMIN OPTION;`,`システム権限は WITH ADMIN OPTION です。`);
+D(18,`ユーザ gold に emp表の SELECT 権限を、gold がほかのユーザにも与えられるように付与しなさい。`,`GRANT SELECT ON emp TO gold WITH GRANT OPTION;`,`オブジェクト権限は WITH GRANT OPTION です。`);
+D(18,`今接続しているユーザが持っているシステム権限を、ロール経由のものも含めてすべて表示するSELECT文を書きなさい。`,`SELECT * FROM SESSION_PRIVS;`,`ロール経由も含めて見るのは SESSION_PRIVS です。`);
+D(19,`scott.dept 表に対して、パブリックシノニム dept を作成しなさい。`,`CREATE PUBLIC SYNONYM dept FOR scott.dept;`,`パブリックシノニムは SYNONYM の前に PUBLIC をつけます。`);
+D(19,`プライベートシノニム e を削除する文を書きなさい。`,`DROP SYNONYM e;`,`プライベートシノニムの削除に PUBLIC はいりません。`);
+D(19,`パブリックシノニム emp を削除する文を書きなさい。`,`DROP PUBLIC SYNONYM emp;`,`パブリックシノニムの削除にも PUBLIC が必要です。`);
+
 /* ===== カルテ（第2〜19回・全問を選択式に） =====
   R(回, 問番号, 問題, [選択肢…], 解説, 正解数) … 先頭から「正解数」個が正解 */
 const R=(l,no,q,o,e,n=1)=>add({l,k:'r',t:'c',src:no,q,o,n,e});
@@ -1135,7 +1211,7 @@ R(19,10,`オブジェクトに別名を与え、他のデータベースユー�
   公開ページ（github.io）では version.json を見て、新しい版があれば
   問題を解いていないタイミングでローディング画面を出して自動で読み直す。
   版を上げるときは APP_VER と version.json を同じ値にする。 */
-const APP_VER='2026-11-05.16';
+const APP_VER='2026-11-05.17';
 let UPD=null;
 const SAFE_VIEWS=['home','lessons','lesson','gram','test','record','setup'];
 const isPages=/\.github\.io$/.test(location.hostname);
@@ -1162,6 +1238,7 @@ setInterval(checkUpdate,5*60*1000);
 
 /* ===== お知らせ（アップデート内容）。新しいものを上に足す ===== */
 const NEWS=[
+ {v:'2026-11-05.17',d:'11月5日',t:'SQLを書く問題を74問ふやしました',items:['第2回〜第19回の各回に、SQLを書く問題を3〜6問ずつ追加しました（全部で108問）','授業回の「練習問題」や、テストタブの「SQLを書く」で出てきます','問題がふえたので、全部で714問になりました']},
  {v:'2026-11-05.16',d:'11月5日',t:'文法辞典の例題をテストの形にしました',items:['文法辞典の例題を、SQLを書く問題と同じ「〜を表示するSELECT文を書きなさい」の形にそろえました','列名も（ ）で書いてあるので、そのままテストの練習になります']},
  {v:'2026-11-05.15',d:'11月5日',t:'ノートの項目名をわかりやすくしました',items:['「(2)の値リストのルール」のように、前の項目を見ないと意味がわからなかった項目名を、それだけで意味がわかる名前に直しました（12か所）','正答率などの記録はそのまま引き継がれます']},
  {v:'2026-11-05.14',d:'11月5日',t:'お知らせの不具合を直しました',items:['お知らせを読んでも、ベルの赤い数字が消えないことがあったのを直しました']},
@@ -1295,7 +1372,7 @@ async function rankCard(el,compact){
     <ol class="rk-list">${row(st.above,'up','1つ上')}${row(st.me,'me','あなた')}${row(st.below,'down','1つ下')}</ol>
     ${st.below?`<p class="small muted">後ろの人（${esc(st.below.name)}）とは ${gapDn}問差です。</p>`:''}
     <div class="row" style="gap:8px"><button class="btn" id="rkre">ニックネームを変える</button><button class="btn ghost" id="rkl">ランキングをやめる</button></div>
-    <p class="small muted">正解した問題＝640問のうち、最後に解いたとき正解だった問題の数です。問題を解き終わるたびに自動で送られます。</p></section>`;
+    <p class="small muted">正解した問題＝${QS.length}問のうち、最後に解いたとき正解だった問題の数です。問題を解き終わるたびに自動で送られます。</p></section>`;
   document.getElementById('rkre').onclick=()=>modal(`<h2>ニックネームを変える</h2><input class="ans-input" id="rkn2" maxlength="12" value="${esc(S.rank.name)}"><div class="row end"><button class="btn" id="rkc">やめる</button><button class="btn primary" id="rks">変える</button></div>`,()=>{
     document.getElementById('rkc').onclick=closeModal;
     document.getElementById('rks').onclick=async()=>{const n=rkName(document.getElementById('rkn2').value);if(!n)return;const old=S.rank.name;S.rank.name=n;save();closeModal();try{await rkPush(true)}catch(e){S.rank.name=old;save()}rankCard(el,compact)};

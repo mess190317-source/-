@@ -237,11 +237,12 @@ p{margin:0}
 .points .a .al{display:flex;flex-direction:column;gap:4px}
 .points .a .al.sub{font-size:14px;color:var(--sub)}
 .points .a code.nb{display:block;font-family:var(--f-code);font-size:13.5px;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--code-bg);border:1px solid var(--line);border-radius:6px;padding:6px 10px;line-height:1.6}
-.alist{margin:0;padding-left:1.15em;display:flex;flex-direction:column;gap:6px}
-.alist li::marker{color:var(--accent)}
+.alist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.alist>li{position:relative;padding-left:1.1em}
+.alist>li::before{content:"";position:absolute;left:.15em;top:.72em;width:.38em;height:.38em;border-radius:50%;background:var(--accent)}
 .points>li.done .q{color:var(--sub)}
 .red .a.hide{color:transparent;background:var(--sheet);cursor:pointer;user-select:none;opacity:.8}
-.red .a.hide *{color:transparent!important;background:transparent!important;border-color:transparent!important}
+.red .a.hide *,.red .a.hide *::before,.red .a.hide *::after,.red .a.hide *::marker{color:transparent!important;background:transparent!important;border-color:transparent!important;box-shadow:none!important}
 .toggle{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--sub);cursor:pointer;min-height:36px}
 .toggle input{accent-color:var(--sheet);width:18px;height:18px}
 code,.code{font-family:var(--f-code);font-size:.92em}
@@ -1088,7 +1089,7 @@ R(19,10,`オブジェクトに別名を与え、他のデータベースユー�
   公開ページ（github.io）では version.json を見て、新しい版があれば
   問題を解いていないタイミングでローディング画面を出して自動で読み直す。
   版を上げるときは APP_VER と version.json を同じ値にする。 */
-const APP_VER='2026-11-05.6';
+const APP_VER='2026-11-05.7';
 let UPD=null;
 const SAFE_VIEWS=['home','lessons','lesson','gram','test','record','setup'];
 const isPages=/\.github\.io$/.test(location.hostname);
@@ -1115,6 +1116,7 @@ setInterval(checkUpdate,5*60*1000);
 
 /* ===== お知らせ（アップデート内容）。新しいものを上に足す ===== */
 const NEWS=[
+ {v:'2026-11-05.7',d:'11月5日',t:'赤シートの不具合を直しました',items:['ノートの赤シートで、箇条書きの印（○）だけが見えてしまうことがあったのを直しました']},
  {v:'2026-11-05.6',d:'11月5日',t:'文章の改行が読みやすくなりました',items:['「1 / 行でもよい」のように言葉の途中で改行されないように、言葉のまとまり（文節）で改行するようにしました','iPhone・Android・PCのどれでも同じように効きます']},
  {v:'2026-11-05.5',d:'11月5日',t:'ノートなどが読みやすくなりました',items:['ノート（赤シート）の答えを、区切りごとに改行し、SQLはコード用の枠で表示するようにしました','結果画面・記録・条件を決めて解く画面で、文字が変なところで折り返されないようにしました']},
  {v:'2026-11-05.4',d:'11月5日',t:'SQLが読みやすくなりました',items:['問題文の中のSQLを、文章と分けてコード用の枠で表示するようにしました','長いSQLは FROM・WHERE などの区切りで改行し、副問い合わせは字下げして表示します','スマホでもPCでも、横にスクロールせずに読めるようにしました']},

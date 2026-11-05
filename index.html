@@ -260,6 +260,17 @@ code.wd{font-size:15px;padding:3px 8px;align-self:flex-start;letter-spacing:.02e
 mark.ex{background:var(--ng-soft);color:var(--ng);border:1px solid var(--ng);border-radius:4px;padding:0 3px;text-decoration:line-through;text-decoration-thickness:1px}
 mark.ms{background:var(--ok-soft);color:var(--ok);border:1px solid var(--ok);border-radius:4px;padding:0 3px;font-weight:700}
 .why mark{font-family:inherit}
+.gsheet{max-width:640px;padding-top:14px;gap:10px}
+.gs-head{position:sticky;top:-14px;z-index:1;background:var(--card);margin:-14px -20px 0;padding:14px 20px 10px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+.gs-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.gs-tabs::-webkit-scrollbar{display:none}
+.gs-tabs .chip{flex:none}
+.gs-tabs .chip code{background:transparent;padding:0;font-weight:700;color:inherit}
+.gs-body .gi{border:0}
+.gs-body .gi summary{padding:4px 0 10px;cursor:default}
+.gs-body .gi summary::after{display:none}
+.gs-body .gi summary:hover{background:transparent}
+.gs-body .gb{padding:0}
 /* notes */
 .points{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column}
 .points>li{display:grid;grid-template-columns:auto auto minmax(0,1fr);gap:4px 10px;padding:12px 0;border-top:1px dashed var(--line);align-items:start}
@@ -1124,7 +1135,7 @@ R(19,10,`オブジェクトに別名を与え、他のデータベースユー�
   公開ページ（github.io）では version.json を見て、新しい版があれば
   問題を解いていないタイミングでローディング画面を出して自動で読み直す。
   版を上げるときは APP_VER と version.json を同じ値にする。 */
-const APP_VER='2026-11-05.12';
+const APP_VER='2026-11-05.13';
 let UPD=null;
 const SAFE_VIEWS=['home','lessons','lesson','gram','test','record','setup'];
 const isPages=/\.github\.io$/.test(location.hostname);
@@ -1151,6 +1162,7 @@ setInterval(checkUpdate,5*60*1000);
 
 /* ===== お知らせ（アップデート内容）。新しいものを上に足す ===== */
 const NEWS=[
+ {v:'2026-11-05.13',d:'11月5日',t:'授業回の文法がその場で見られるようになりました',items:['授業回のページの「この回で使う文法」をタップすると、その場で説明が出るようになりました','上のタブで、その回のほかの文法にすぐ切りかえられます']},
  {v:'2026-11-05.12',d:'11月5日',t:'SQLの言葉が途中で改行されないようにしました',items:['「UNION ALL」「GROUP BY」「PRIMARY KEY」「NOT NULL」のように2語以上でひとつの言葉になるSQLが、途中で改行されないようにしました','「> ANY」「<> ALL」なども、ひとまとまりで表示します']},
  {v:'2026-11-05.11',d:'11月5日',t:'改行の細かい不具合を直しました',items:['「）」や「】」などのかっこや句読点だけが、次の行の先頭に来てしまうことがあったのを直しました']},
  {v:'2026-11-05.10',d:'11月5日',t:'4択で「なぜ違うか」がわかるようになりました',items:['カルテと授業シートの4択（307問）で、間違えた選択肢を選ぶと、その選択肢がなぜ違うのかが表示されるようになりました']},
@@ -1710,7 +1722,7 @@ function renderLesson(){
   <div class="row between">${pv!=null?`<button class="btn ghost" data-go="${pv}">‹ ${lname(pv)}</button>`:'<span></span>'}${nl!=null?`<button class="btn ghost" data-go="${nl}">${lname(nl)} ›</button>`:''}</div>`;
   app.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>startStep(l,b.dataset.s));
   app.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go('lesson',{l:+b.dataset.go,replace:true}));
-  app.querySelectorAll('[data-gw]').forEach(b=>b.onclick=()=>goGram(b.dataset.gw));
+  app.querySelectorAll('[data-gw]').forEach(b=>b.onclick=()=>gramSheet(l,b.dataset.gw));
 }
 
 /* ===== ノート（ステップ1） ===== */
@@ -1770,6 +1782,21 @@ function bindGList(){
   app.querySelectorAll('[data-rl]').forEach(b=>b.onclick=()=>go('lesson',{l:+b.dataset.rl}));
 }
 const gramOf=l=>GALL.filter(x=>(x.rel||[]).includes(l));
+/* 授業回のページから開く文法シート。上のタブでその回の文法を切りかえられる */
+function gramSheet(l,id){
+  const list=gramOf(l),x=gById(id);if(!x)return;
+  modal(`<div class="gs-head"><div class="row between"><span class="label">${lname(l)}で使う文法</span><button class="btn ghost" id="gsx">とじる</button></div>
+      <div class="gs-tabs" role="tablist">${list.map(g=>`<button class="chip" role="tab" data-gs="${g.id}" aria-pressed="${g.id===id}"><code>${esc(g.w)}</code></button>`).join('')}</div></div>
+    <div class="gs-body">${gEntry(x).replace('<details class="gi"','<details class="gi gs" open')}</div>
+    <button class="btn" id="gsd">文法辞典で開く ›</button>`,()=>{
+    const sh=document.querySelector('.sheetm');sh.classList.add('gsheet');
+    document.getElementById('gsx').onclick=closeModal;
+    document.getElementById('gsd').onclick=()=>goGram(id);
+    sh.querySelectorAll('[data-gs]').forEach(b=>b.onclick=()=>{const keep=sh.querySelector('.gs-tabs').scrollLeft;gramSheet(l,b.dataset.gs);const t=document.querySelector('.gs-tabs');if(t){t.scrollLeft=keep;const a=t.querySelector('[aria-pressed="true"]');if(a&&a.scrollIntoView)a.scrollIntoView({block:'nearest',inline:'nearest'})}});
+    sh.querySelectorAll('[data-rl]').forEach(b=>b.onclick=()=>go('lesson',{l:+b.dataset.rl}));
+    const sm=sh.querySelector('summary');if(sm)sm.onclick=e=>e.preventDefault();
+  });
+}
 function goGram(id){GQ='';go('gram');setTimeout(()=>openEntry(id),60)}
 function openEntry(id){const d=document.getElementById('g-'+id);if(!d)return;d.open=true;d.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}
 function renderGram(){

@@ -1135,7 +1135,7 @@ R(19,10,`オブジェクトに別名を与え、他のデータベースユー�
   公開ページ（github.io）では version.json を見て、新しい版があれば
   問題を解いていないタイミングでローディング画面を出して自動で読み直す。
   版を上げるときは APP_VER と version.json を同じ値にする。 */
-const APP_VER='2026-11-05.15';
+const APP_VER='2026-11-05.16';
 let UPD=null;
 const SAFE_VIEWS=['home','lessons','lesson','gram','test','record','setup'];
 const isPages=/\.github\.io$/.test(location.hostname);
@@ -1162,6 +1162,7 @@ setInterval(checkUpdate,5*60*1000);
 
 /* ===== お知らせ（アップデート内容）。新しいものを上に足す ===== */
 const NEWS=[
+ {v:'2026-11-05.16',d:'11月5日',t:'文法辞典の例題をテストの形にしました',items:['文法辞典の例題を、SQLを書く問題と同じ「〜を表示するSELECT文を書きなさい」の形にそろえました','列名も（ ）で書いてあるので、そのままテストの練習になります']},
  {v:'2026-11-05.15',d:'11月5日',t:'ノートの項目名をわかりやすくしました',items:['「(2)の値リストのルール」のように、前の項目を見ないと意味がわからなかった項目名を、それだけで意味がわかる名前に直しました（12か所）','正答率などの記録はそのまま引き継がれます']},
  {v:'2026-11-05.14',d:'11月5日',t:'お知らせの不具合を直しました',items:['お知らせを読んでも、ベルの赤い数字が消えないことがあったのを直しました']},
  {v:'2026-11-05.13',d:'11月5日',t:'授業回の文法がその場で見られるようになりました',items:['授業回のページの「この回で使う文法」をタップすると、その場で説明が出るようになりました','上のタブで、その回のほかの文法にすぐ切りかえられます']},
@@ -1511,48 +1512,48 @@ const GLOSS=[
 ];
 /* ===== 文法辞典：例文の説明（j＝日本語にすると／p＝[部分, 説明]） ===== */
 const EXD={
-select:{j:'emp表から、名前と給与を出して。',p:[['SELECT ename, sal','出したい列を書く。ename（名前）と sal（給与）。列はカンマで区切る'],['FROM emp','どの表から出すか。emp（社員の表）'],[';','文の終わりのしるし']]},
-from:{j:'dept表の、全部の列を出して。',p:[['SELECT *','* は「全部の列」'],['FROM dept','dept（部署の表）から']]},
-where:{j:'emp表から、給与が2000以上の人の名前と給与を出して。',p:[['SELECT ename, sal','名前と給与を出す'],['FROM emp','emp表から'],['WHERE sal >= 2000','sal が 2000 以上の行だけにしぼる。>= は「以上」']]},
-groupby:{j:'部署ごとに、何人いるか数えて。',p:[['SELECT deptno, COUNT(*)','部署番号と、行の数（人数）を出す'],['FROM emp','emp表から'],['GROUP BY deptno','deptno が同じ行を1つのグループにまとめる。だから部署ごとに1行になる']]},
-having:{j:'部署ごとに人数を数えて、2人以上いる部署だけ出して。',p:[['SELECT deptno, COUNT(*)','部署番号と人数を出す'],['FROM emp','emp表から'],['GROUP BY deptno','部署ごとにまとめる'],['HAVING COUNT(*) >= 2','まとめた後、人数が2以上のグループだけ残す。10番（1人）は消える']]},
-orderby:{j:'名前と給与を、給与の高い順に並べて出して。',p:[['SELECT ename, sal','名前と給与を出す'],['FROM emp','emp表から'],['ORDER BY sal DESC','sal で並べかえる。DESC は大きい順（降順）']]},
-as:{j:'給与を12倍した年収を、「年収」という見出しで出して。',p:[['SELECT sal * 12','給与 × 12 を計算する'],['AS 年収','その列の見出しを「年収」にする（AS は省略可）'],['FROM emp','emp表から']]},
-distinct:{j:'職種の種類を、重複なしで出して。',p:[['SELECT DISTINCT job','job を出すが、同じ値は1回だけにする。CLERK や MANAGER は2人いるが1回ずつ'],['FROM emp','emp表から']]},
-cmp:{j:'職種が CLERK の人の名前を出して。',p:[['SELECT ename','名前を出す'],['FROM emp','emp表から'],["WHERE job = 'CLERK'","job が CLERK と等しい行だけ。文字なので ' ' で囲む"]]},
-and:{j:'30番の部署で、しかも給与が1000より多い人の名前を出して。',p:[['WHERE deptno = 30','条件1：部署が30番'],['AND sal > 1000','条件2：給与が1000より多い。AND なので両方を満たす人だけ（JAMES は950なので外れる）']]},
-between:{j:'給与が800以上1600以下の人を出して。',p:[['SELECT ename, sal FROM emp','emp表から名前と給与'],['WHERE sal BETWEEN 800 AND 1600','800〜1600の範囲。800 と 1600 ちょうども含む']]},
-in:{j:'10番か20番の部署の人の名前を出して。',p:[['SELECT ename FROM emp','emp表から名前'],['WHERE deptno IN (10, 20)','deptno が 10 または 20 の行。deptno = 10 OR deptno = 20 と同じ']]},
-like:{j:'名前が J で始まる人を出して。',p:[['SELECT ename FROM emp','emp表から名前'],["WHERE ename LIKE 'J%'","J のあとに何文字続いてもよい（% は0文字以上の何か）。JONES と JAMES が当てはまる"]]},
-isnull:{j:'歩合（comm）が入っていない人の名前を出して。',p:[['SELECT ename FROM emp','emp表から名前'],['WHERE comm IS NULL','comm が NULL（値なし）の行だけ。= NULL では見つからないので IS NULL を使う']]},
-anyall:{j:'20番の部署の全員より給与が高い人の名前を出して。',p:[['(SELECT sal FROM emp WHERE deptno = 20)','先にこっちが実行される。20番の人の給与 → 800 と 2975 の2行'],['WHERE sal > ALL ( … )','その「すべて」より大きい＝一番大きい 2975 より大きい。だから KING だけ']]},
-count:{j:'全部で何行あるかと、comm が入っている行の数を出して。',p:[['COUNT(*)','全部の行を数える → 6'],['COUNT(comm)','comm が NULL でない行だけ数える → ALLEN の1行だけなので 1'],['FROM emp','emp表から']]},
-sumavg:{j:'給与の合計・平均・最大・最小を出して。',p:[['SUM(sal)','給与の合計'],['AVG(sal)','給与の平均（合計 ÷ 人数）'],['MAX(sal), MIN(sal)','いちばん高い給与と、いちばん低い給与'],['FROM emp','emp表から。GROUP BY がないので、全員まとめて1行になる']]},
-nvl:{j:'名前と、給与＋歩合（歩合がなければ0として）を出して。',p:[['SELECT ename','名前を出す'],['NVL(comm, 0)','comm が NULL なら 0 にする。ALLEN 以外は 0 になる'],['sal + NVL(comm, 0)','給与にたす。NVL がないと、comm が NULL の人は結果も NULL になってしまう']]},
-round:{j:'15.67 を小数第1位で四捨五入したものと、切り捨てたものを出して。',p:[['ROUND(15.67, 1)','小数第1位まで四捨五入 → 15.7'],['TRUNC(15.67, 1)','小数第1位まで切り捨て → 15.6'],['FROM dual','表がいらない計算なので、ダミー表 dual を使う']]},
-sysdate:{j:'今の日付と時刻を出して。',p:[['SELECT SYSDATE','今の日時を出す'],['FROM dual','表はいらないのでダミー表 dual']]},
-join:{j:'社員の名前と、その人の部署名をいっしょに出して。',p:[['SELECT e.ename, d.dname','e（emp表）の名前と、d（dept表）の部署名を出す'],['FROM emp e','emp表に e という表別名をつける'],['JOIN dept d','dept表（別名 d）をつなげる'],['ON e.deptno = d.deptno','部署番号が同じ行どうしをつなぐ。SMITH（20）なら RESEARCH']]},
-union:{j:'emp表と emp_old表の社員番号を、重複なしで全部出して。',p:[['SELECT empno FROM emp','1つ目の結果'],['UNION','2つの結果をたす。両方にある番号は1回だけ'],['SELECT empno FROM emp_old','2つ目の結果。列の数・データ型を1つ目とそろえる']]},
-minus:{j:'emp表にはあって、emp_old表にはない社員番号を出して。',p:[['SELECT empno FROM emp','引かれる側（左）'],['MINUS','左の結果から、右の結果にあるものを取り除く'],['SELECT empno FROM emp_old','引く側（右）']]},
-insert:{j:'dept表に、50番・製造・博多 の行を追加して。',p:[['INSERT INTO dept','dept表に行を入れる'],['(deptno, dname, loc)','どの列に入れるか'],["VALUES (50, '製造', '博多')",'入れる値。上の列と同じ順番で書く。文字は \' \' で囲む']]},
-update:{j:'社員番号7369の人の給与を3000、職種を MANAGER に書きかえて。',p:[['UPDATE emp','emp表のデータを書きかえる'],["SET sal = 3000, job = 'MANAGER'",'書きかえる列と新しい値。2つ以上はカンマで区切る'],['WHERE empno = 7369','書きかえる行。これがないと全員が書きかわる']]},
-delete:{j:'30番の部署の人の行を消して。',p:[['DELETE FROM emp','emp表から行を消す'],['WHERE deptno = 30','消す行。ALLEN・BLAKE・JAMES の3行が消える']]},
-commit:{j:'SMITH の給与を1000に変えて、その変更を確定して。',p:[['UPDATE emp SET sal = 1000 WHERE empno = 7369;','変更する（まだ確定していない）'],['COMMIT;','ここで確定。もう ROLLBACK では戻せない']]},
-rollback:{j:'全行を消したけど、やっぱり取り消して。',p:[['DELETE FROM emp;','全行を消す（まだ確定していない）'],['ROLLBACK;','最後の COMMIT の時点まで戻す。消した行が元に戻る']]},
-savepoint:{j:'sp1 という目印を置いてから行を追加し、目印のところまで取り消して。',p:[['SAVEPOINT sp1;','ここに「sp1」という目印を置く'],['INSERT INTO …;','行を追加する'],['ROLLBACK TO sp1;','sp1 の後の変更（この INSERT）だけ取り消す。sp1 より前の変更は残る']]},
-create:{j:'member という表を作って。id は5桁の数字で主キー、name は20バイトまでの文字で空欄禁止。',p:[['CREATE TABLE member (','member という表を作る。列の定義を ( ) の中に書く'],['id NUMBER(5) PRIMARY KEY,','id 列：5桁までの数値。主キー（重複なし・NULLなし）。列の終わりはカンマ'],['name VARCHAR2(20) NOT NULL','name 列：20バイトまでの文字。NULL は入れられない'],[');','( ) を閉じて文の終わり']]},
-default:{j:'loc 列は10バイトまでの文字。何も入れなかったら「東京」、空欄は禁止。',p:[['loc VARCHAR2(10)','列名とデータ型'],["DEFAULT '東京'",'値を入れなかったときに自動で入る値'],['NOT NULL','NULL を禁止する制約。DEFAULT より後に書く']]},
-drop:{j:'member 表を丸ごと消して。',p:[['DROP TABLE member;','表の定義もデータも全部消える。ROLLBACK では戻せない']]},
-alter:{j:'emp表を読み取り専用にして。',p:[['ALTER TABLE emp','作ってある emp表を変更する'],['READ ONLY','読み取り専用にする（INSERT・UPDATE・DELETE ができなくなる）。戻すときは READ WRITE']]},
-constraint:{j:'empno 列は4桁の数字で、pk_emp という名前の主キー制約をつけて。',p:[['empno NUMBER(4)','列名とデータ型'],['CONSTRAINT pk_emp','これからつける制約に「pk_emp」という名前をつける'],['PRIMARY KEY','つける制約の種類（主キー）。名前をつけないと SYS_Cxxxx という名前が自動でつく']]},
-references:{j:'deptno 列は2桁の数字で、dept表の deptno に存在する値しか入れられないようにして。',p:[['deptno NUMBER(2)','この表（子表）の列。これが外部キーになる'],['REFERENCES dept(deptno)','dept表（親表）の deptno 列（親キー）を参照する。dept にない部署番号は入れられない']]},
-view:{j:'20番の部署の人の社員番号と名前だけを見せる emp20 というビューを作って。',p:[['CREATE VIEW emp20 AS','emp20 というビューを、次の SELECT 文として作る'],['SELECT empno, ename FROM emp','見せる列'],['WHERE deptno = 20','見せる行。ビューを使うと、この SELECT の結果が表のように見える']]},
-index:{j:'emp表の ename 列に、ename_idx という索引を作って。',p:[['CREATE INDEX ename_idx','ename_idx という名前の索引を作る'],['ON emp(ename)','どの表の、どの列に作るか。ename で検索するのが速くなる']]},
-sequence:{j:'seq_emp で次の番号を作って、それを社員番号にして TARO を追加して。',p:[['INSERT INTO emp (empno, ename)','emp表の empno と ename に値を入れる'],['seq_emp.NEXTVAL','順序 seq_emp が次の番号を作る（1, 2, 3 …）'],["'TARO'",'名前']]},
-synonym:{j:'scott さんの emp表に、e という別名をつけて。',p:[['CREATE SYNONYM e','e という別名（シノニム）を作る'],['FOR scott.emp','scott スキーマの emp表の別名にする。これで SELECT * FROM e; と書ける']]},
-user:{j:'bronze というユーザーを、パスワード pass で作って。',p:[['CREATE USER bronze','bronze というユーザーを作る（同じ名前のスキーマもできる）'],['IDENTIFIED BY pass','パスワードを pass にする']]},
-grant:{j:'bronze さんに、emp表を SELECT してよい権限をあげて。',p:[['GRANT SELECT','あげる権限：SELECT（見ること）'],['ON emp','どの表に対しての権限か'],['TO bronze','だれにあげるか']]},
-revoke:{j:'bronze さんから、emp表を SELECT する権限を取り上げて。',p:[['REVOKE SELECT','取り上げる権限'],['ON emp','どの表についての権限か'],['FROM bronze','だれから取り上げるか（あげるときは TO、取り上げるときは FROM）']]}
+select:{j:"emp表から、社員の名前(ename)と給与(sal)を表示するSELECT文を書きなさい。",p:[['SELECT ename, sal','出したい列を書く。ename（名前）と sal（給与）。列はカンマで区切る'],['FROM emp','どの表から出すか。emp（社員の表）'],[';','文の終わりのしるし']]},
+from:{j:"dept表のすべての列を表示するSELECT文を書きなさい。",p:[['SELECT *','* は「全部の列」'],['FROM dept','dept（部署の表）から']]},
+where:{j:"emp表から、給与(sal)が2000以上の社員の名前(ename)と給与(sal)を表示するSELECT文を書きなさい。",p:[['SELECT ename, sal','名前と給与を出す'],['FROM emp','emp表から'],['WHERE sal >= 2000','sal が 2000 以上の行だけにしぼる。>= は「以上」']]},
+groupby:{j:"emp表から、部署番号(deptno)ごとの人数を、部署番号といっしょに表示するSELECT文を書きなさい。",p:[['SELECT deptno, COUNT(*)','部署番号と、行の数（人数）を出す'],['FROM emp','emp表から'],['GROUP BY deptno','deptno が同じ行を1つのグループにまとめる。だから部署ごとに1行になる']]},
+having:{j:"emp表から、部署番号(deptno)ごとの人数を求め、人数が2人以上の部署だけを部署番号といっしょに表示するSELECT文を書きなさい。",p:[['SELECT deptno, COUNT(*)','部署番号と人数を出す'],['FROM emp','emp表から'],['GROUP BY deptno','部署ごとにまとめる'],['HAVING COUNT(*) >= 2','まとめた後、人数が2以上のグループだけ残す。10番（1人）は消える']]},
+orderby:{j:"emp表から、社員の名前(ename)と給与(sal)を、給与の高い順に表示するSELECT文を書きなさい。",p:[['SELECT ename, sal','名前と給与を出す'],['FROM emp','emp表から'],['ORDER BY sal DESC','sal で並べかえる。DESC は大きい順（降順）']]},
+as:{j:"emp表から、給与(sal)を12倍した年収を「年収」という列別名で表示するSELECT文を書きなさい。",p:[['SELECT sal * 12','給与 × 12 を計算する'],['AS 年収','その列の見出しを「年収」にする（AS は省略可）'],['FROM emp','emp表から']]},
+distinct:{j:"emp表から、職種(job)の種類を、重複を除いて表示するSELECT文を書きなさい。",p:[['SELECT DISTINCT job','job を出すが、同じ値は1回だけにする。CLERK や MANAGER は2人いるが1回ずつ'],['FROM emp','emp表から']]},
+cmp:{j:"emp表から、職種(job)が'CLERK'の社員の名前(ename)を表示するSELECT文を書きなさい。",p:[['SELECT ename','名前を出す'],['FROM emp','emp表から'],["WHERE job = 'CLERK'","job が CLERK と等しい行だけ。文字なので ' ' で囲む"]]},
+and:{j:"emp表から、部署番号(deptno)が30で、かつ給与(sal)が1000より多い社員の名前(ename)を表示するSELECT文を書きなさい。",p:[['WHERE deptno = 30','条件1：部署が30番'],['AND sal > 1000','条件2：給与が1000より多い。AND なので両方を満たす人だけ（JAMES は950なので外れる）']]},
+between:{j:"emp表から、給与(sal)が800以上1600以下の社員の名前(ename)と給与(sal)を、BETWEENを使って表示するSELECT文を書きなさい。",p:[['SELECT ename, sal FROM emp','emp表から名前と給与'],['WHERE sal BETWEEN 800 AND 1600','800〜1600の範囲。800 と 1600 ちょうども含む']]},
+in:{j:"emp表から、部署番号(deptno)が10または20の社員の名前(ename)を、INを使って表示するSELECT文を書きなさい。",p:[['SELECT ename FROM emp','emp表から名前'],['WHERE deptno IN (10, 20)','deptno が 10 または 20 の行。deptno = 10 OR deptno = 20 と同じ']]},
+like:{j:"emp表から、名前(ename)が'J'で始まる社員の名前を表示するSELECT文を書きなさい。",p:[['SELECT ename FROM emp','emp表から名前'],["WHERE ename LIKE 'J%'","J のあとに何文字続いてもよい（% は0文字以上の何か）。JONES と JAMES が当てはまる"]]},
+isnull:{j:"emp表から、歩合(comm)がNULLの社員の名前(ename)を表示するSELECT文を書きなさい。",p:[['SELECT ename FROM emp','emp表から名前'],['WHERE comm IS NULL','comm が NULL（値なし）の行だけ。= NULL では見つからないので IS NULL を使う']]},
+anyall:{j:"emp表から、部署番号(deptno)20の社員全員より給与(sal)が高い社員の名前(ename)を表示するSELECT文を書きなさい。",p:[['(SELECT sal FROM emp WHERE deptno = 20)','先にこっちが実行される。20番の人の給与 → 800 と 2975 の2行'],['WHERE sal > ALL ( … )','その「すべて」より大きい＝一番大きい 2975 より大きい。だから KING だけ']]},
+count:{j:"emp表の全体の行数と、歩合(comm)がNULLでない行の数を表示するSELECT文を書きなさい。",p:[['COUNT(*)','全部の行を数える → 6'],['COUNT(comm)','comm が NULL でない行だけ数える → ALLEN の1行だけなので 1'],['FROM emp','emp表から']]},
+sumavg:{j:"emp表から、給与(sal)の合計・平均・最大値・最小値を表示するSELECT文を書きなさい。",p:[['SUM(sal)','給与の合計'],['AVG(sal)','給与の平均（合計 ÷ 人数）'],['MAX(sal), MIN(sal)','いちばん高い給与と、いちばん低い給与'],['FROM emp','emp表から。GROUP BY がないので、全員まとめて1行になる']]},
+nvl:{j:"emp表から、社員の名前(ename)と、給与(sal)に歩合(comm)を足した金額を表示するSELECT文を書きなさい。歩合がNULLのときは0として計算すること。",p:[['SELECT ename','名前を出す'],['NVL(comm, 0)','comm が NULL なら 0 にする。ALLEN 以外は 0 になる'],['sal + NVL(comm, 0)','給与にたす。NVL がないと、comm が NULL の人は結果も NULL になってしまう']]},
+round:{j:"15.67を小数第1位で四捨五入した値と、小数第1位で切り捨てた値を、dual表を使って表示するSELECT文を書きなさい。",p:[['ROUND(15.67, 1)','小数第1位まで四捨五入 → 15.7'],['TRUNC(15.67, 1)','小数第1位まで切り捨て → 15.6'],['FROM dual','表がいらない計算なので、ダミー表 dual を使う']]},
+sysdate:{j:"今の日付と時刻を、dual表を使って表示するSELECT文を書きなさい。",p:[['SELECT SYSDATE','今の日時を出す'],['FROM dual','表はいらないのでダミー表 dual']]},
+join:{j:"emp表とdept表を部署番号(deptno)で結合して、社員の名前(ename)と部署名(dname)を表示するSELECT文を書きなさい（表別名 e, d と JOIN … ON を使う）。",p:[['SELECT e.ename, d.dname','e（emp表）の名前と、d（dept表）の部署名を出す'],['FROM emp e','emp表に e という表別名をつける'],['JOIN dept d','dept表（別名 d）をつなげる'],['ON e.deptno = d.deptno','部署番号が同じ行どうしをつなぐ。SMITH（20）なら RESEARCH']]},
+union:{j:"emp表とemp_old表の社員番号(empno)を、重複を除いてすべて表示するSQLを書きなさい。",p:[['SELECT empno FROM emp','1つ目の結果'],['UNION','2つの結果をたす。両方にある番号は1回だけ'],['SELECT empno FROM emp_old','2つ目の結果。列の数・データ型を1つ目とそろえる']]},
+minus:{j:"emp表にはあって、emp_old表にはない社員番号(empno)を表示するSQLを書きなさい。",p:[['SELECT empno FROM emp','引かれる側（左）'],['MINUS','左の結果から、右の結果にあるものを取り除く'],['SELECT empno FROM emp_old','引く側（右）']]},
+insert:{j:"dept表(deptno, dname, loc)に、部署番号50、部署名'製造'、所在地'博多'の行を、列名を指定して追加するINSERT文を書きなさい。",p:[['INSERT INTO dept','dept表に行を入れる'],['(deptno, dname, loc)','どの列に入れるか'],["VALUES (50, '製造', '博多')",'入れる値。上の列と同じ順番で書く。文字は \' \' で囲む']]},
+update:{j:"emp表で社員番号(empno)7369の社員の給与(sal)を3000、職種(job)を'MANAGER'に変更するUPDATE文を書きなさい。",p:[['UPDATE emp','emp表のデータを書きかえる'],["SET sal = 3000, job = 'MANAGER'",'書きかえる列と新しい値。2つ以上はカンマで区切る'],['WHERE empno = 7369','書きかえる行。これがないと全員が書きかわる']]},
+delete:{j:"emp表から、部署番号(deptno)が30の行を削除するDELETE文を書きなさい。",p:[['DELETE FROM emp','emp表から行を消す'],['WHERE deptno = 30','消す行。ALLEN・BLAKE・JAMES の3行が消える']]},
+commit:{j:"emp表で社員番号(empno)7369の社員の給与(sal)を1000に変更し、その変更を確定するSQLを書きなさい。",p:[['UPDATE emp SET sal = 1000 WHERE empno = 7369;','変更する（まだ確定していない）'],['COMMIT;','ここで確定。もう ROLLBACK では戻せない']]},
+rollback:{j:"emp表の全行を削除したあと、その削除を取り消すSQLを書きなさい。",p:[['DELETE FROM emp;','全行を消す（まだ確定していない）'],['ROLLBACK;','最後の COMMIT の時点まで戻す。消した行が元に戻る']]},
+savepoint:{j:"セーブポイント sp1 を設定してから行を追加し、sp1 の地点まで取り消すSQLを書きなさい。",p:[['SAVEPOINT sp1;','ここに「sp1」という目印を置く'],['INSERT INTO …;','行を追加する'],['ROLLBACK TO sp1;','sp1 の後の変更（この INSERT）だけ取り消す。sp1 より前の変更は残る']]},
+create:{j:"member表を作成する文を書きなさい。id列はNUMBER(5)で主キー、name列はVARCHAR2(20)でNOT NULLとします。",p:[['CREATE TABLE member (','member という表を作る。列の定義を ( ) の中に書く'],['id NUMBER(5) PRIMARY KEY,','id 列：5桁までの数値。主キー（重複なし・NULLなし）。列の終わりはカンマ'],['name VARCHAR2(20) NOT NULL','name 列：20バイトまでの文字。NULL は入れられない'],[');','( ) を閉じて文の終わり']]},
+default:{j:"loc列を、10バイトの可変長文字型で、値を入れなかったときは'東京'が入り、NULLは入れられないように定義しなさい（列の定義部分だけ）。",p:[['loc VARCHAR2(10)','列名とデータ型'],["DEFAULT '東京'",'値を入れなかったときに自動で入る値'],['NOT NULL','NULL を禁止する制約。DEFAULT より後に書く']]},
+drop:{j:"member表を削除する文を書きなさい。",p:[['DROP TABLE member;','表の定義もデータも全部消える。ROLLBACK では戻せない']]},
+alter:{j:"emp表を読み取り専用にする文を書きなさい。",p:[['ALTER TABLE emp','作ってある emp表を変更する'],['READ ONLY','読み取り専用にする（INSERT・UPDATE・DELETE ができなくなる）。戻すときは READ WRITE']]},
+constraint:{j:"empno列を4桁の数値型で定義し、pk_emp という名前の主キー制約をつけなさい（列の定義部分だけ）。",p:[['empno NUMBER(4)','列名とデータ型'],['CONSTRAINT pk_emp','これからつける制約に「pk_emp」という名前をつける'],['PRIMARY KEY','つける制約の種類（主キー）。名前をつけないと SYS_Cxxxx という名前が自動でつく']]},
+references:{j:"deptno列（NUMBER(2)）が、dept表のdeptno列を参照するように列レベルで定義しなさい（制約名なし・列の定義部分だけ）。",p:[['deptno NUMBER(2)','この表（子表）の列。これが外部キーになる'],['REFERENCES dept(deptno)','dept表（親表）の deptno 列（親キー）を参照する。dept にない部署番号は入れられない']]},
+view:{j:"emp表から、部署番号(deptno)20の社員の社員番号(empno)と名前(ename)だけを見せるビュー emp20 を作成しなさい。",p:[['CREATE VIEW emp20 AS','emp20 というビューを、次の SELECT 文として作る'],['SELECT empno, ename FROM emp','見せる列'],['WHERE deptno = 20','見せる行。ビューを使うと、この SELECT の結果が表のように見える']]},
+index:{j:"emp表のename列に、索引名 ename_idx の索引を作成しなさい。",p:[['CREATE INDEX ename_idx','ename_idx という名前の索引を作る'],['ON emp(ename)','どの表の、どの列に作るか。ename で検索するのが速くなる']]},
+sequence:{j:"順序 seq_emp の次の番号を社員番号(empno)にして、名前(ename)が'TARO'の行をemp表に追加するINSERT文を書きなさい。",p:[['INSERT INTO emp (empno, ename)','emp表の empno と ename に値を入れる'],['seq_emp.NEXTVAL','順序 seq_emp が次の番号を作る（1, 2, 3 …）'],["'TARO'",'名前']]},
+synonym:{j:"scott.emp表に対して、プライベートシノニム e を作成しなさい。",p:[['CREATE SYNONYM e','e という別名（シノニム）を作る'],['FOR scott.emp','scott スキーマの emp表の別名にする。これで SELECT * FROM e; と書ける']]},
+user:{j:"ユーザ名 bronze、パスワード pass のユーザを作成する文を書きなさい。",p:[['CREATE USER bronze','bronze というユーザーを作る（同じ名前のスキーマもできる）'],['IDENTIFIED BY pass','パスワードを pass にする']]},
+grant:{j:"ユーザ bronze に、emp表の SELECT 権限を与えなさい。",p:[['GRANT SELECT','あげる権限：SELECT（見ること）'],['ON emp','どの表に対しての権限か'],['TO bronze','だれにあげるか']]},
+revoke:{j:"ユーザ bronze から、emp表の SELECT 権限を取り消しなさい。",p:[['REVOKE SELECT','取り上げる権限'],['ON emp','どの表についての権限か'],['FROM bronze','だれから取り上げるか（あげるときは TO、取り上げるときは FROM）']]}
 };
 const GALL=GLOSS.flatMap(g=>g.items);
 const gById=id=>GALL.find(x=>x.id===id);

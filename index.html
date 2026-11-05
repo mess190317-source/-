@@ -1135,7 +1135,7 @@ R(19,10,`オブジェクトに別名を与え、他のデータベースユー�
   公開ページ（github.io）では version.json を見て、新しい版があれば
   問題を解いていないタイミングでローディング画面を出して自動で読み直す。
   版を上げるときは APP_VER と version.json を同じ値にする。 */
-const APP_VER='2026-11-05.13';
+const APP_VER='2026-11-05.14';
 let UPD=null;
 const SAFE_VIEWS=['home','lessons','lesson','gram','test','record','setup'];
 const isPages=/\.github\.io$/.test(location.hostname);
@@ -1162,6 +1162,7 @@ setInterval(checkUpdate,5*60*1000);
 
 /* ===== お知らせ（アップデート内容）。新しいものを上に足す ===== */
 const NEWS=[
+ {v:'2026-11-05.14',d:'11月5日',t:'お知らせの不具合を直しました',items:['お知らせを読んでも、ベルの赤い数字が消えないことがあったのを直しました']},
  {v:'2026-11-05.13',d:'11月5日',t:'授業回の文法がその場で見られるようになりました',items:['授業回のページの「この回で使う文法」をタップすると、その場で説明が出るようになりました','上のタブで、その回のほかの文法にすぐ切りかえられます']},
  {v:'2026-11-05.12',d:'11月5日',t:'SQLの言葉が途中で改行されないようにしました',items:['「UNION ALL」「GROUP BY」「PRIMARY KEY」「NOT NULL」のように2語以上でひとつの言葉になるSQLが、途中で改行されないようにしました','「> ANY」「<> ALL」なども、ひとまとまりで表示します']},
  {v:'2026-11-05.11',d:'11月5日',t:'改行の細かい不具合を直しました',items:['「）」や「】」などのかっこや句読点だけが、次の行の先頭に来てしまうことがあったのを直しました']},
@@ -1177,12 +1178,15 @@ const NEWS=[
  {v:'2026-11-05.1',d:'11月5日',t:'カルテの問題を修正・自動更新',items:['「問3のSQLで」のように前の問題を前提にしていたカルテ13問を、1問だけでも解ける問題文に直しました（正答率などの記録はそのままです）','新しい版が出ると、自動で最新版に切りかわるようになりました（問題を解いている途中は切りかわりません）','起動時にローディング画面が出るようになりました']},
  {v:'2026-11-04.1',d:'11月4日',t:'DB3 試験ドリルを公開しました',items:['授業回ごとの4ステップ（ノート → チェック問題 → カルテ → 練習問題）','文法辞典、模擬テスト50問、苦手復習、効果音']}
 ];
-const unreadNews=()=>NEWS.filter(n=>!S.news||n.v>S.news).length;
+/* 版番号は「2026-11-05.10」のような形。文字のまま比べると .10 が .9 より小さくなるので、数字として比べる */
+const verCmp=(a,b)=>{const x=String(a).split(/[-.]/).map(Number),y=String(b).split(/[-.]/).map(Number);for(let i=0;i<Math.max(x.length,y.length);i++){const d=(x[i]||0)-(y[i]||0);if(d)return d}return 0};
+const isNewNews=(n,last)=>!last||verCmp(n.v,last)>0;
+const unreadNews=()=>NEWS.filter(n=>isNewNews(n,S.news)).length;
 function setBadge(){const b=document.getElementById('badge');if(!b)return;const n=unreadNews();b.hidden=!n;b.textContent=n>9?'9+':n;document.getElementById('bell').setAttribute('aria-label',n?`お知らせ（未読${n}件）`:'お知らせ')}
 function showNews(){
   document.querySelectorAll('.toast').forEach(t=>t.remove());
   const last=S.news;
-  modal(`<h2>お知らせ</h2><ul class="news">${NEWS.map(n=>`<li class="${!last||n.v>last?'new':''}"><div class="nh">${!last||n.v>last?'<span class="pill">NEW</span>':''}<span class="nd">${n.d}</span></div><span class="nt">${esc(n.t)}</span><ul>${n.items.map(i=>`<li>${esc(i)}</li>`).join('')}</ul></li>`).join('')}</ul>
+  modal(`<h2>お知らせ</h2><ul class="news">${NEWS.map(n=>`<li class="${isNewNews(n,last)?'new':''}"><div class="nh">${isNewNews(n,last)?'<span class="pill">NEW</span>':''}<span class="nd">${n.d}</span></div><span class="nt">${esc(n.t)}</span><ul>${n.items.map(i=>`<li>${esc(i)}</li>`).join('')}</ul></li>`).join('')}</ul>
     <div class="row end"><button class="btn primary" id="nclose">とじる</button></div>`,()=>{document.getElementById('nclose').onclick=closeModal});
   S.news=NEWS[0].v;save();setBadge();
 }

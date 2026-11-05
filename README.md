@@ -9,3 +9,7 @@
 - `icon-512.png` / `apple-touch-icon.png` … アイコン
 
 解いた記録は、それぞれの人のブラウザに保存されます。
+
+## 使っているもの
+
+- [BudouX](https://github.com/google/budoux)（Copyright 2021 Google LLC, Apache License 2.0）… 日本語を文節で改行するために、日本語モデルとアルゴリズムを index.html に組み込んでいます。

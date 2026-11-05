@@ -65,7 +65,7 @@ header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var
 #bell{position:relative}
 .badge{position:absolute;top:3px;right:2px;min-width:17px;height:17px;border-radius:9px;background:var(--ng);color:#fff;font-size:10.5px;font-weight:700;display:grid;place-items:center;padding:0 4px;line-height:1;border:2px solid var(--card)}
 .badge[hidden]{display:none!important}
-.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 62px);transform:translateX(-50%);z-index:15;background:var(--ink);color:var(--paper);border-radius:12px;padding:10px 10px 10px 16px;display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.25);width:max-content;max-width:calc(100% - 32px);transition:opacity .3s}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 84px);transform:translateX(-50%);z-index:15;background:var(--ink);color:var(--paper);border-radius:12px;padding:10px 10px 10px 16px;display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.25);width:max-content;max-width:calc(100% - 32px);transition:opacity .3s}
 .toast button{border:0;background:var(--accent);color:var(--accent-ink);border-radius:8px;padding:6px 12px;font-weight:700;font-size:13px;white-space:nowrap}
 .toast.hide{opacity:0;pointer-events:none}
 .news{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
@@ -271,6 +271,48 @@ mark.ms{background:var(--ok-soft);color:var(--ok);border:1px solid var(--ok);bor
 .gs-body .gi summary::after{display:none}
 .gs-body .gi summary:hover{background:transparent}
 .gs-body .gb{padding:0}
+/* fun: animations / level / badges */
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.035)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+@keyframes stamp{0%{transform:scale(1.9) rotate(-14deg);opacity:0}60%{transform:scale(.9) rotate(0);opacity:1}100%{transform:scale(1)}}
+@keyframes rise{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
+@keyframes bump{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.12);opacity:1}100%{transform:scale(1)}}
+.opt.right.anim{animation:pop .35s ease}
+.opt.wrong.anim{animation:shake .38s ease}
+.fb.anim{animation:rise .25s ease}
+.fb.anim .mark{display:inline-block;animation:stamp .42s cubic-bezier(.2,.8,.3,1.2)}
+.xpgain{margin-left:auto;font-size:13px;font-weight:700;color:var(--ok);background:var(--card);border:1px solid var(--ok);border-radius:999px;padding:1px 10px}
+.combo{font-size:12px;font-weight:700;color:#B4500B;background:#FFF1E2;border:1px solid #F5C08A;border-radius:999px;padding:1px 9px;white-space:nowrap}
+.combo.anim{animation:bump .35s ease}
+.ring .fg{transition:stroke-dashoffset .9s cubic-bezier(.2,.7,.2,1)}
+.gains{display:flex;gap:8px;flex-wrap:wrap}
+.gotrow{display:flex;gap:6px;flex-wrap:wrap}
+.got{font-size:13px;font-weight:700;background:var(--card);border:1px solid #E9C46A;border-radius:999px;padding:2px 10px;color:var(--ink)}
+.fb.anim .got{animation:bump .4s ease .15s both}
+.newbdg{display:flex;flex-direction:column;gap:6px}
+.gain{font-size:13px;color:var(--sub);background:var(--code-bg);border-radius:999px;padding:3px 12px}
+.gain b{color:var(--ink);font-size:15px}
+.lvcard{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow)}
+.lv-l{display:flex;flex-direction:column;gap:6px;min-width:0}
+.lv-b{font-weight:700;font-size:22px;color:var(--accent);line-height:1}
+.lv-bar{height:10px;border-radius:5px;background:var(--code-bg);overflow:hidden}
+.lv-bar i{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,var(--accent),#5B7FE0)}
+.lv-r{display:flex;flex-direction:column;align-items:center;text-align:center;gap:0;padding-left:14px;border-left:1px solid var(--line);min-width:84px}
+.lv-fire{font-size:22px;line-height:1.2}
+.lv-r b{font-size:16px}
+.lv-r span:last-child{font-size:11px;color:var(--sub)}
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.bdg{display:grid;grid-template-columns:36px minmax(0,1fr);grid-template-rows:auto auto;column-gap:8px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--code-bg)}
+.bdg .bi{grid-row:1/3;font-size:24px;text-align:center;filter:grayscale(1);opacity:.5}
+.bdg b{font-size:13px;color:var(--sub)}
+.bdg span:last-child{font-size:11px;color:var(--sub);line-height:1.4}
+.bdg.on{background:var(--card);border-color:#E9C46A}
+.bdg.on .bi{filter:none;opacity:1}
+.bdg.on b{color:var(--ink)}
+.confetti{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:40}
+@media (prefers-reduced-motion:reduce){.anim,.anim *{animation:none!important}.ring .fg{transition:none}}
+:root[data-theme="dark"] .combo{color:#FFC48A;background:#3A2614;border-color:#7A4A1E}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .combo{color:#FFC48A;background:#3A2614;border-color:#7A4A1E}}
 /* notes */
 .points{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column}
 .points>li{display:grid;grid-template-columns:auto auto minmax(0,1fr);gap:4px 10px;padding:12px 0;border-top:1px dashed var(--line);align-items:start}
@@ -1212,7 +1254,7 @@ R(19,10,`オブジェクトに別名を与え、他のデータベースユー�
   公開ページ（github.io）では version.json を見て、新しい版があれば
   問題を解いていないタイミングでローディング画面を出して自動で読み直す。
   版を上げるときは APP_VER と version.json を同じ値にする。 */
-const APP_VER='2026-11-05.19';
+const APP_VER='2026-11-05.20';
 let UPD=null;
 const SAFE_VIEWS=['home','lessons','lesson','gram','test','record','setup'];
 const isPages=/\.github\.io$/.test(location.hostname);
@@ -1239,6 +1281,7 @@ setInterval(checkUpdate,5*60*1000);
 
 /* ===== お知らせ（アップデート内容）。新しいものを上に足す ===== */
 const NEWS=[
+ {v:'2026-11-05.20',d:'11月5日',t:'もっと楽しく勉強できるようになりました',items:['正解するとXPがたまってレベルが上がります。続けて正解するとコンボになって、XPと正解の音がアップします','ホームに、レベルと何日連続で勉強しているかが出ます','バッジが16種類あります。記録タブで、取ったバッジと取り方が見られます','正解・不正解の動きや、結果の円グラフの動き、全問正解やクリアのときの紙吹雪をつけました（スマホの「視差効果を減らす」がオンのときは動きません）']},
  {v:'2026-11-05.19',d:'11月5日',t:'授業回を3ステップにしました',items:['授業回の「練習問題」ステップをなくし、「ノート → チェック問題 → カルテ」の3ステップにしました','練習問題に入っていた単語・穴埋め・SQLの問題は、テストタブの「分野ごとに10問」「SQL書き込み」「コードの穴埋め」などから解けます']},
  {v:'2026-11-05.18',d:'11月5日',t:'テストタブに「SQL書き込み」ができました',items:['テストタブの「SQL書き込み」で、分野をえらんでSQLを書く問題だけを解けるようになりました','前回追加した74問は、授業回の練習問題と模擬テストからは外し、「SQL書き込み」で分野をえらんだときだけ出るようにしました']},
  {v:'2026-11-05.17',d:'11月5日',t:'SQLを書く問題を74問ふやしました',items:['第2回〜第19回の各回に、SQLを書く問題を3〜6問ずつ追加しました（全部で108問）','授業回の「練習問題」や、テストタブの「SQLを書く」で出てきます','問題がふえたので、全部で714問になりました']},
@@ -1274,11 +1317,12 @@ function showNews(){
 }
 function toast(msg,btn,fn){
   const t=document.createElement('div');t.className='toast';t.setAttribute('role','status');
+  const stack=document.querySelectorAll('.toast:not(.hide)').length;if(stack)t.style.bottom=`calc(env(safe-area-inset-bottom,0px) + ${84+stack*54}px)`;
   t.innerHTML=`<span>${esc(msg)}</span>${btn?`<button type="button">${esc(btn)}</button>`:''}`;
   document.body.appendChild(t);
   const close=()=>{t.classList.add('hide');setTimeout(()=>t.remove(),400)};
   if(btn)t.querySelector('button').onclick=()=>{close();fn&&fn()};
-  setTimeout(close,7000);
+  setTimeout(close,4500);
 }
 
 /* ===== ランキング =====
@@ -1409,7 +1453,9 @@ function tone(f,t0,d,type,v,f2){const c=ac();if(!c)return;const t=c.currentTime+
 const SND={
   tap:()=>tone(700,0,.045,'triangle',.06),
   pick:()=>tone(560,0,.07,'triangle',.08,760),
-  ok:()=>{tone(784,0,.13,'sine',.16);tone(1175,.09,.28,'sine',.16)},
+  ok:()=>{const k=Math.pow(2,Math.min(((typeof Z!=='undefined'&&Z&&Z.combo)||1)-1,8)/12);tone(784*k,0,.13,'sine',.16);tone(1175*k,.09,.28,'sine',.16)},
+  levelup:()=>[523,659,784,1047,1319].forEach((f,i)=>tone(f,i*.09,i===4?.6:.18,'triangle',.14)),
+  badge:()=>[1319,1568,2093].forEach((f,i)=>tone(f,i*.07,.22,'sine',.09)),
   ng:()=>{tone(233,0,.16,'square',.05);tone(175,.13,.28,'square',.05)},
   check:()=>{tone(1046,0,.05,'triangle',.07);tone(1568,.04,.08,'triangle',.06)},
   uncheck:()=>tone(520,0,.05,'triangle',.05),
@@ -1763,6 +1809,10 @@ function renderHome(){
   }else next=`<section class="card next"><span class="label">つぎにやること</span><div class="stepname">全部の回を一通り終えました！</div><p class="small muted">あとは模擬テストと苦手復習で仕上げましょう。</p><button class="btn primary big" id="mock1">模擬テスト 50問 ›</button></section>`;
   app.innerHTML=`
   ${next}
+  ${(()=>{const L=levelOf(S.xp),ds=dayStreak();return `<section class="lvcard" aria-label="レベル">
+    <div class="lv-l"><div class="row" style="gap:8px;align-items:baseline"><span class="lv-b">Lv.${L.lv}</span><span class="small muted">${S.xp} XP</span></div>
+      <div class="lv-bar" aria-hidden="true"><i style="width:${L.rest/L.need*100}%"></i></div><span class="small muted">次のレベルまで あと <b class="num" style="color:var(--ink)">${L.need-L.rest}</b> XP</span></div>
+    <div class="lv-r">${ds?`<span class="lv-fire">🔥</span><b class="num">${ds}日</b><span>連続で勉強中</span>`:`<span class="lv-fire">📅</span><b>今日の1問</b><span>からはじめよう</span>`}</div></section>`})()}
   ${RANK_ON?'<div id="rankmini"></div>':''}
   <section class="tiles" aria-label="進み具合">
     <div class="tile"><b>${t.lessonsDone}<small class="muted" style="font-size:13px"> / ${t.lessonN}</small></b><span>終わった回</span></div>
@@ -2092,12 +2142,72 @@ function renderRecord(){
   <section class="card"><h2 style="margin-bottom:12px">分野ごとの正答率</h2><div class="catrows">${CATS.map(c=>{const s=catStats(c.id);
     return `<div class="catrow"><span>${c.name}</span><div class="bar2"><i style="width:${s.acc??0}%"></i></div><span class="small muted num">${s.acc==null?'—':s.acc+'%'}${s.weak?` <span style="color:var(--ng)">苦手${s.weak}</span>`:''}</span></div>`}).join('')}</div>
     <p class="small muted" style="margin-top:12px">本番の出題数：${CATS.filter(c=>c.id).map(c=>`${c.name} ${c.n}`).join('・')}（計50問）</p></section>
+  <section class="card"><div class="row between" style="margin-bottom:10px"><h2>バッジ</h2><span class="small muted num">${BADGES.filter(b=>S.badges[b.id]).length} / ${BADGES.length}</span></div>
+    <div class="badges">${BADGES.map(b=>`<div class="bdg ${S.badges[b.id]?'on':''}"><span class="bi" aria-hidden="true">${S.badges[b.id]?b.i:'🔒'}</span><b>${b.t}</b><span>${b.h}</span></div>`).join('')}</div></section>
   <section class="card"><h2 style="margin-bottom:6px">記録を消す</h2><p class="small muted" style="margin-bottom:10px">解いた結果・覚えたチェックをすべて消して、最初からやり直します。</p><button class="btn" id="rs">記録をリセット</button></section>`;
   rankCard(document.getElementById('rankbox'),false);
   document.getElementById('rs').onclick=()=>modal(`<h2>記録をすべて消しますか？</h2><p class="muted">元には戻せません。</p><div class="row end"><button class="btn" id="rn">やめる</button><button class="btn primary" id="ry">消す</button></div>`,()=>{
     document.getElementById('rn').onclick=closeModal;
-    document.getElementById('ry').onclick=()=>{S.r={};S.m={};S.nr={};save();closeModal();renderRecord()};
+    document.getElementById('ry').onclick=()=>{S.r={};S.m={};S.nr={};S.xp=0;S.badges={};S.days=[];S.maxCombo=0;save();closeModal();renderRecord()};
   });
+}
+
+/* ===== たのしい演出：XP・レベル・コンボ・連続学習日数・バッジ・紙吹雪 =====
+  文字の読みやすさを優先し、動きは短く、文字の上には重ねない。
+  「視差効果を減らす」設定のときは動きを出さない。 */
+const RM=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmtD=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const today=()=>fmtD(new Date());
+if(!S.days)S.days=[];if(!S.badges)S.badges={};if(!S.maxCombo)S.maxCombo=0;
+if(S.xp==null){let x=0;Object.values(S.r).forEach(r=>{x+=(r[0]||0)*10});S.xp=x;save()}   /* 今までの正解をXPに換算 */
+const lvNeed=lv=>100+(lv-1)*50;
+function levelOf(xp){let lv=1,rest=xp;while(rest>=lvNeed(lv)){rest-=lvNeed(lv);lv++}return {lv,rest,need:lvNeed(lv)}}
+function markToday(){const t=today();if(!S.days.includes(t)){S.days.push(t);S.days=S.days.slice(-120)}}
+function dayStreak(){const set=new Set(S.days);const d=new Date();if(!set.has(fmtD(d))){d.setDate(d.getDate()-1);if(!set.has(fmtD(d)))return 0}let n=0;while(set.has(fmtD(d))){n++;d.setDate(d.getDate()-1)}return n}
+const BADGES=[
+ {id:'first',i:'🌱',t:'はじめの一歩',h:'はじめて正解する'},
+ {id:'c5',i:'🔥',t:'5問連続正解',h:'5問続けて正解する'},
+ {id:'c10',i:'⚡',t:'10問連続正解',h:'10問続けて正解する'},
+ {id:'c20',i:'🌟',t:'20問連続正解',h:'20問続けて正解する'},
+ {id:'perfect',i:'💯',t:'パーフェクト',h:'10問以上のテストで全問正解する'},
+ {id:'lesson1',i:'📘',t:'はじめてのクリア',h:'授業回を1つクリアする'},
+ {id:'lesson5',i:'📚',t:'5回クリア',h:'授業回を5つクリアする'},
+ {id:'lessonAll',i:'🎓',t:'全回クリア',h:'授業回を全部クリアする'},
+ {id:'ok100',i:'🏅',t:'100問正解',h:'正解した問題が100問になる'},
+ {id:'ok300',i:'🏆',t:'300問正解',h:'正解した問題が300問になる'},
+ {id:'sql20',i:'✍️',t:'SQL書きの見習い',h:'SQLを書く問題を20問正解する'},
+ {id:'mock80',i:'🎯',t:'模擬テスト合格ライン',h:'模擬テスト50問で80%以上とる'},
+ {id:'d3',i:'📅',t:'3日連続',h:'3日続けて勉強する'},
+ {id:'d7',i:'🗓️',t:'7日連続',h:'7日続けて勉強する'},
+ {id:'lv5',i:'⭐',t:'レベル5',h:'レベル5になる'},
+ {id:'lv10',i:'👑',t:'レベル10',h:'レベル10になる'}
+];
+function badgeCheck(extra={}){
+  const got=[],add=id=>{if(!S.badges[id]){S.badges[id]=today();got.push(id)}};
+  const okN=QS.filter(doneOk).length,t=totals(),mc=Math.max(S.maxCombo||0,extra.combo||0),ds=dayStreak(),lv=levelOf(S.xp).lv;
+  if(okN>=1)add('first');if(mc>=5)add('c5');if(mc>=10)add('c10');if(mc>=20)add('c20');if(extra.perfect)add('perfect');
+  if(t.lessonsDone>=1)add('lesson1');if(t.lessonsDone>=5)add('lesson5');if(t.lessonsDone>=t.lessonN)add('lessonAll');
+  if(okN>=100)add('ok100');if(okN>=300)add('ok300');if(QS.filter(q=>q.k==='d'&&doneOk(q)).length>=20)add('sql20');if(extra.mock80)add('mock80');
+  if(ds>=3)add('d3');if(ds>=7)add('d7');if(lv>=5)add('lv5');if(lv>=10)add('lv10');
+  if(got.length){save();if(Z){Z.newBadges=(Z.newBadges||[]).concat(got)}setTimeout(()=>sfx('badge'),500)}
+  return got;
+}
+function gainXP(ok){
+  if(!ok){Z.combo=0;return 0}
+  Z.combo=(Z.combo||0)+1;Z.maxCombo=Math.max(Z.maxCombo||0,Z.combo);S.maxCombo=Math.max(S.maxCombo||0,Z.combo);
+  const g=10+Math.min(Z.combo-1,10)*2,before=levelOf(S.xp).lv;S.xp+=g;Z.xp=(Z.xp||0)+g;save();
+  const after=levelOf(S.xp).lv;if(after>before){Z.cur.lvUp=after;setTimeout(()=>{sfx('levelup');confetti()},450)}
+  return g;
+}
+function confetti(){
+  if(RM())return;
+  const c=document.createElement('canvas');c.className='confetti';c.width=innerWidth*devicePixelRatio;c.height=innerHeight*devicePixelRatio;document.body.appendChild(c);
+  const x=c.getContext('2d'),dpr=devicePixelRatio,cols=['#2C4A9A','#FFD45C','#1E7A4C','#E2483A','#93AAF0','#F2994A'];
+  const ps=Array.from({length:110},()=>({x:innerWidth*(0.2+Math.random()*0.6),y:innerHeight*0.35,vx:(Math.random()-.5)*9,vy:-Math.random()*11-4,r:Math.random()*6+4,a:Math.random()*6,va:(Math.random()-.5)*.3,c:cols[Math.random()*cols.length|0]}));
+  const t0=performance.now();
+  (function f(t){const k=(t-t0)/1600;x.clearRect(0,0,c.width,c.height);
+    ps.forEach(p=>{p.vy+=.35;p.x+=p.vx;p.y+=p.vy;p.a+=p.va;x.save();x.globalAlpha=Math.max(0,1-k);x.translate(p.x*dpr,p.y*dpr);x.rotate(p.a);x.fillStyle=p.c;x.fillRect(-p.r*dpr/2,-p.r*dpr/4,p.r*dpr,p.r*dpr/2);x.restore()});
+    if(k<1)requestAnimationFrame(f);else c.remove()})(t0);
 }
 
 /* ===== 問題を解く ===== */
@@ -2112,7 +2222,7 @@ function renderQuiz(){
   if(q.code)body+=`<pre class="code">${esc(q.code).replace(/___/g,'<span class="blank">？</span>')}</pre>`;
   if(q.t==='c'){
     body+=`<div class="opts">${cur.order.map((oi,j)=>{
-      let cls='';if(cur.done){if(oi<q.n)cls='right';else if(cur.sel.has(oi))cls='wrong'}
+      let cls='';if(cur.done){if(oi<q.n)cls='right'+(cur.anim&&cur.sel.has(oi)?' anim':'');else if(cur.sel.has(oi))cls='wrong'+(cur.anim?' anim':'')}
       return `<button class="opt ${cls}" data-o="${oi}" aria-pressed="${cur.sel.has(oi)}" ${cur.done?'disabled':''}><span class="k">${'アイウエオカ'[j]}</span><span>${optHTML(q.o[oi])}</span></button>`}).join('')}</div>`;
     if(!cur.done){
       if(q.n>1){hint=`正しいものを <b>${q.n}つ</b> 選んでから、下の「答え合わせ」を押してください。`;acts=`<button class="btn primary grow" id="chk" ${cur.sel.size?'':'disabled'}>答え合わせ（${cur.sel.size} / ${q.n} 選択中）</button>`}
@@ -2128,7 +2238,7 @@ function renderQuiz(){
   if(cur.done){const ov=!cur.ok&&q.t==='d'&&!cur.skipped;
     acts=`${ov?'<button class="btn" id="ov">自分の答えも正解</button>':''}<button class="btn primary grow" id="next">${Z.i+1<n?'次へ ›':'結果を見る ›'}</button>`}
   app.innerHTML=`
-  <div class="qprog"><div class="progress" aria-hidden="true"><i style="width:${(Z.i+(cur.done?1:0))/n*100}%"></i></div><span class="small num"><b>${Z.i+1}</b> / ${n}</span></div>
+  <div class="qprog"><div class="progress" aria-hidden="true"><i style="width:${(Z.i+(cur.done?1:0))/n*100}%"></i></div>${(Z.combo||0)>=2?`<span class="combo${cur.anim&&cur.ok?' anim':''}">🔥 ${Z.combo}問連続</span>`:''}<span class="small num"><b>${Z.i+1}</b> / ${n}</span></div>
   <section class="card qbody">
     <div class="row"><span class="pill">${q.k==='g'?'文法':catName(q.c)}</span><span class="pill plain">${kind}</span></div>
     <div class="qtext">${qHTML(q.q)}</div>
@@ -2137,6 +2247,7 @@ function renderQuiz(){
   </section>
   ${cur.done?feedback(q,cur):''}
   <div class="actbar"><div class="wrap">${acts}</div></div>`;
+  cur.anim=false;
   if(!cur.done){
     if(q.t==='c'){
       app.querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>{const oi=+b.dataset.o;
@@ -2157,7 +2268,7 @@ function renderQuiz(){
     const ov=document.getElementById('ov');if(ov)ov.onclick=()=>{const r=S.r[q.id];r[1]--;r[0]++;r[2]=1;save();Z.res[Z.i].ok=true;cur.ok=true;cur.over=true;renderQuiz()};
   }
 }
-function judge(ok){sfx(ok?'ok':'ng');const q=Z.list[Z.i];Z.cur.done=true;Z.cur.ok=ok;record(q,ok);Z.res[Z.i]={q,ok,given:Z.cur.given};renderQuiz();
+function judge(ok){const q=Z.list[Z.i];Z.cur.done=true;Z.cur.ok=ok;record(q,ok);markToday();Z.cur.gain=gainXP(ok);Z.cur.anim=true;sfx(ok?'ok':'ng');Z.res[Z.i]={q,ok,given:Z.cur.given};Z.cur.badges=badgeCheck({combo:Z.combo});renderQuiz();
   const fb=document.querySelector('.fb');if(fb&&fb.getBoundingClientRect().bottom>window.innerHeight-80)fb.scrollIntoView({block:'end',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}
 function next(){sfx('page');if(Z.i+1<Z.list.length){Z.i++;prep();renderQuiz();window.scrollTo(0,0)}else go('result',{replace:true})}
 function answerText(q){
@@ -2243,8 +2354,10 @@ function whyHTML(q,cur){
 }
 function feedback(q,cur){
   const ok=cur.ok;
-  return `<div class="fb ${ok?'ok':'ng'}" role="status">
-    <div class="verdict"><span class="mark">${ok?'○':'×'}</span>${ok?(cur.over?'正解にしました':'正解！'):(cur.skipped?'答えを確認しよう':'不正解')}</div>
+  const an=cur.anim?' anim':'';
+  return `<div class="fb ${ok?'ok':'ng'}${an}" role="status">
+    <div class="verdict"><span class="mark">${ok?'○':'×'}</span>${ok?(cur.over?'正解にしました':'正解！'):(cur.skipped?'答えを確認しよう':'不正解')}${ok&&cur.gain?`<span class="xpgain">+${cur.gain} XP</span>`:''}</div>
+    ${cur.lvUp||(cur.badges&&cur.badges.length)?`<div class="gotrow">${cur.lvUp?`<span class="got">🎉 Lv.${cur.lvUp} にアップ！</span>`:''}${(cur.badges||[]).map(id=>{const b=BADGES.find(x=>x.id===id);return `<span class="got">${b.i} バッジ獲得：${b.t}</span>`}).join('')}</div>`:''}
     ${ok&&q.t==='c'?'':`<div><span class="label">正解</span>${answerText(q)}</div>`}
     ${whyHTML(q,cur)}
     <p>${br(q.e)}</p>
@@ -2266,7 +2379,11 @@ function renderResult(){
   const res=Z.res.filter(Boolean),ok=res.filter(r=>r.ok).length,n=res.length,pct=n?Math.round(ok/n*100):0;
   const by={};res.forEach(r=>{const b=by[r.q.c]||(by[r.q.c]={ok:0,n:0});b.n++;if(r.ok)b.ok++});
   const wrong=res.filter(r=>!r.ok),ctx=Z.ctx;
-  if(!Z.played){rkPush().catch(()=>{});Z.played=1;const fin=Z.ctx&&!lessonProg(Z.ctx.l).next;setTimeout(()=>sfx(fin||pct>=90?'done':pct>=60?'good':'soft'),150)}
+  const perfect=n>=10&&ok===n,lessonFin=!!(Z.ctx&&!lessonProg(Z.ctx.l).next);
+  let first=false;
+  if(!Z.played){first=true;rkPush().catch(()=>{});Z.played=1;setTimeout(()=>sfx(lessonFin||pct>=90?'done':pct>=60?'good':'soft'),150);
+    if(lessonFin||pct>=90||perfect)setTimeout(confetti,250);
+    badgeCheck({perfect,mock80:/模擬テスト/.test(Z.title)&&n>=40&&pct>=80})}
   const msg=pct>=90?'すばらしい！':pct>=70?'いい調子！':pct>=50?'あと少し！':'間違えたところを見直そう';
   const C=2*Math.PI*42;
   let main='';
@@ -2277,9 +2394,11 @@ function renderResult(){
   <section class="card" style="display:flex;flex-direction:column;gap:16px">
     <span class="label">${esc(Z.title)}${n<Z.list.length?`（${Z.list.length}問中 ${n}問で終了）`:''}</span>
     <div class="score">
-      <svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle class="bg" cx="50" cy="50" r="42"/><circle class="fg" cx="50" cy="50" r="42" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct/100)}"/><text x="50" y="58" text-anchor="middle">${pct}%</text></svg>
-      <div class="msg"><b>${msg}</b><span class="muted"><b class="num" style="font-size:18px;color:var(--ink)">${ok}</b> / ${n} 問正解</span></div>
+      <svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><circle class="bg" cx="50" cy="50" r="42"/><circle class="fg" id="ringfg" cx="50" cy="50" r="42" stroke-dasharray="${C}" stroke-dashoffset="${first&&!RM()?C:C*(1-pct/100)}" data-to="${C*(1-pct/100)}"/><text x="50" y="58" text-anchor="middle" id="ringtx" data-to="${pct}">${first&&!RM()?0:pct}%</text></svg>
+      <div class="msg"><b>${perfect?'パーフェクト！':msg}</b><span class="muted"><b class="num" style="font-size:18px;color:var(--ink)">${ok}</b> / ${n} 問正解</span></div>
     </div>
+    ${Z.xp||Z.maxCombo?`<div class="gains">${Z.xp?`<span class="gain"><b>+${Z.xp}</b> XP</span>`:''}${Z.maxCombo>=2?`<span class="gain">最大 <b>${Z.maxCombo}</b>問連続</span>`:''}<span class="gain">Lv.<b>${levelOf(S.xp).lv}</b></span></div>`:''}
+    ${Z.newBadges&&Z.newBadges.length?`<div class="newbdg"><span class="label">今回とったバッジ</span><div class="gotrow">${Z.newBadges.map(id=>{const b=BADGES.find(x=>x.id===id);return `<span class="got">${b.i} ${b.t}</span>`}).join('')}</div></div>`:''}
     ${main}
     <div class="rbtns2">${wrong.length?`<button class="btn ${main?'':'primary'}" id="again">間違えた ${wrong.length}問をやり直す</button>`:''}<button class="btn" id="home">ホームへ</button></div>
   </section>
@@ -2290,6 +2409,8 @@ function renderResult(){
     ${r.given&&r.q.t!=='c'?`<div class="small">あなたの答え</div><pre class="code">${esc(r.q.t==='d'?fmtSQL(r.given):r.given)}</pre>`:''}
     <div><span class="label">正解 </span>${answerText(r.q)}</div></li>`).join('')}</ol></section>`:''}`;
   const $=id=>document.getElementById(id);
+  if(first&&!RM()){const fg=$('ringfg'),tx=$('ringtx');requestAnimationFrame(()=>requestAnimationFrame(()=>{fg.style.strokeDashoffset=fg.dataset.to}));
+    const t0=performance.now(),to=+tx.dataset.to;(function f(t){const k=Math.min(1,(t-t0)/900),e=1-Math.pow(1-k,3);tx.textContent=Math.round(to*e)+'%';if(k<1)requestAnimationFrame(f)})(t0)}
   if($('nx'))$('nx').onclick=()=>startStep(ctx.l,lessonProg(ctx.l).next.id);
   if($('nl'))$('nl').onclick=()=>go('lesson',{l:LESSONS[LESSONS.indexOf(ctx.l)+1]});
   if($('again'))$('again').onclick=()=>startQuiz(shuffle(wrong.map(r=>r.q)),'間違えた問題',{ctx});

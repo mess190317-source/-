@@ -60,6 +60,21 @@ button{cursor:pointer;-webkit-tap-highlight-color:transparent}
 header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border-bottom:1px solid var(--line)}
 .bar{display:grid;grid-template-columns:84px minmax(0,1fr) 84px;align-items:center;height:52px}
 .rbtns{display:flex;justify-content:flex-end;gap:2px}
+.lbtns{display:flex;justify-content:flex-start}
+.lbtns .iconbtn[hidden]{display:none!important}
+#bell{position:relative}
+.badge{position:absolute;top:3px;right:2px;min-width:17px;height:17px;border-radius:9px;background:var(--ng);color:#fff;font-size:10.5px;font-weight:700;display:grid;place-items:center;padding:0 4px;line-height:1;border:2px solid var(--card)}
+.badge[hidden]{display:none!important}
+.toast{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 62px);transform:translateX(-50%);z-index:15;background:var(--ink);color:var(--paper);border-radius:12px;padding:10px 10px 10px 16px;display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;box-shadow:0 8px 24px rgba(0,0,0,.25);width:max-content;max-width:calc(100% - 32px);transition:opacity .3s}
+.toast button{border:0;background:var(--accent);color:var(--accent-ink);border-radius:8px;padding:6px 12px;font-weight:700;font-size:13px;white-space:nowrap}
+.toast.hide{opacity:0;pointer-events:none}
+.news{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.news>li{border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.news>li.new{border-color:var(--accent);background:var(--accent-soft)}
+.news .nh{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.news .nd{font-size:12px;color:var(--sub);font-weight:700}
+.news .nt{font-weight:700;font-size:15px}
+.news ul{margin:0;padding-left:1.2em;font-size:14px;line-height:1.7}
 #snd[aria-pressed="false"]{color:var(--sub)}
 .ttl{text-align:center;font-weight:700;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .iconbtn{width:40px;height:40px;border:0;background:transparent;border-radius:10px;display:grid;place-items:center;color:var(--accent)}
@@ -296,7 +311,8 @@ ol.ilist li::before{counter-increment:s;content:counter(s);width:24px;height:24p
 
 <div id="splash" role="status" aria-live="polite"><div class="sp-in"><div class="sp-logo">DB3<span>ドリル</span></div><div class="sp-spin" aria-hidden="true"></div><p class="sp-msg">読み込み中…</p></div></div>
 <header><div class="wrap bar">
-  <button class="iconbtn" id="back" type="button" aria-label="戻る"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+  <div class="lbtns"><button class="iconbtn" id="back" type="button" aria-label="戻る"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+  <button class="iconbtn" id="bell" type="button" aria-label="お知らせ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg><span class="badge" id="badge" hidden></span></button></div>
   <div class="ttl" id="ttl">DB3 試験ドリル</div>
   <div class="rbtns"><button class="iconbtn" id="snd" type="button" aria-label="効果音" aria-pressed="true"></button>
   <button class="iconbtn" id="help" type="button" aria-label="使い方"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M9.6 9.2a2.5 2.5 0 0 1 4.8.9c0 1.7-2.4 2.2-2.4 3.6"/><path d="M12 17h.01"/></svg></button></div>
@@ -1047,7 +1063,7 @@ R(19,10,`オブジェクトに別名を与え、他のデータベースユー�
   公開ページ（github.io）では version.json を見て、新しい版があれば
   問題を解いていないタイミングでローディング画面を出して自動で読み直す。
   版を上げるときは APP_VER と version.json を同じ値にする。 */
-const APP_VER='2026-11-05.2';
+const APP_VER='2026-11-05.3';
 let UPD=null;
 const SAFE_VIEWS=['home','lessons','lesson','gram','test','record','setup'];
 const isPages=/\.github\.io$/.test(location.hostname);
@@ -1071,6 +1087,31 @@ function tryUpdate(){
 }
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
 setInterval(checkUpdate,5*60*1000);
+
+/* ===== お知らせ（アップデート内容）。新しいものを上に足す ===== */
+const NEWS=[
+ {v:'2026-11-05.3',d:'11月5日',t:'お知らせ機能ができました',items:['左上のベルから、アプリのアップデート内容が見られるようになりました','新しいお知らせがあると、ベルに赤い数字がつきます']},
+ {v:'2026-11-05.2',d:'11月5日',t:'文法辞典が見やすくなりました',items:['単語を開くと、まず「例題（やりたいこと）」が出て、そのあとに書き方・意味・実行結果が見られる順番になりました','最後に「書き方のまとめ」で形を確認できます']},
+ {v:'2026-11-05.1',d:'11月5日',t:'カルテの問題を修正・自動更新',items:['「問3のSQLで」のように前の問題を前提にしていたカルテ13問を、1問だけでも解ける問題文に直しました（正答率などの記録はそのままです）','新しい版が出ると、自動で最新版に切りかわるようになりました（問題を解いている途中は切りかわりません）','起動時にローディング画面が出るようになりました']},
+ {v:'2026-11-04.1',d:'11月4日',t:'DB3 試験ドリルを公開しました',items:['授業回ごとの4ステップ（ノート → チェック問題 → カルテ → 練習問題）','文法辞典、模擬テスト50問、苦手復習、効果音']}
+];
+const unreadNews=()=>NEWS.filter(n=>!S.news||n.v>S.news).length;
+function setBadge(){const b=document.getElementById('badge');if(!b)return;const n=unreadNews();b.hidden=!n;b.textContent=n>9?'9+':n;document.getElementById('bell').setAttribute('aria-label',n?`お知らせ（未読${n}件）`:'お知らせ')}
+function showNews(){
+  document.querySelectorAll('.toast').forEach(t=>t.remove());
+  const last=S.news;
+  modal(`<h2>お知らせ</h2><ul class="news">${NEWS.map(n=>`<li class="${!last||n.v>last?'new':''}"><div class="nh">${!last||n.v>last?'<span class="pill">NEW</span>':''}<span class="nd">${n.d}</span></div><span class="nt">${esc(n.t)}</span><ul>${n.items.map(i=>`<li>${esc(i)}</li>`).join('')}</ul></li>`).join('')}</ul>
+    <div class="row end"><button class="btn primary" id="nclose">とじる</button></div>`,()=>{document.getElementById('nclose').onclick=closeModal});
+  S.news=NEWS[0].v;save();setBadge();
+}
+function toast(msg,btn,fn){
+  const t=document.createElement('div');t.className='toast';t.setAttribute('role','status');
+  t.innerHTML=`<span>${esc(msg)}</span>${btn?`<button type="button">${esc(btn)}</button>`:''}`;
+  document.body.appendChild(t);
+  const close=()=>{t.classList.add('hide');setTimeout(()=>t.remove(),400)};
+  if(btn)t.querySelector('button').onclick=()=>{close();fn&&fn()};
+  setTimeout(close,7000);
+}
 
 /* ===== 問題文を直した問題は、前と同じIDを使う（記録を引き継ぐため） ===== */
 const IDFIX={"qe4ytw2": "qkp66r", "q1qym1wb": "qbm74p6", "qts8gln": "q1i4mntp", "q1nw14sp": "q1mncp88", "q1nnex8s": "q805310", "q1b4xo38": "qsm4a5h", "q1qlggxl": "q1v0y0jv", "q1padj87": "q1fmg5pz", "q1cimuga": "qdphone", "q167binf": "q9sjgy3", "q14kkqcg": "qh40x9a", "qpcdl1g": "qsedxq8", "q1leiedp": "q1o1xkph"};
@@ -1328,6 +1369,7 @@ window.addEventListener('popstate',e=>{const s=e.state;if(!s)return;
 try{history.replaceState({v:'home',l:CUR},'')}catch(e){}
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>go(b.dataset.tab));
 document.getElementById('help').onclick=()=>showIntro(0);
+document.getElementById('bell').onclick=showNews;
 document.getElementById('back').onclick=()=>{
   if(view==='quiz')return confirmQuit();
   const p={lesson:'lessons',note:'lesson',guide:'lesson',setup:'test',result:Z&&Z.ctx?'lesson':'home'}[view];
@@ -1341,6 +1383,7 @@ function render(){
   document.getElementById('ttl').textContent=T[view]||'';
   const back=document.getElementById('back');
   back.hidden=!['lesson','note','guide','setup','quiz','result'].includes(view);
+  document.getElementById('bell').hidden=!back.hidden;setBadge();
   back.setAttribute('aria-label',view==='quiz'?'やめる':'戻る');
   back.innerHTML=view==='quiz'
     ?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>'
@@ -1362,7 +1405,7 @@ function showIntro(i){
   modal(`<div class="dots big" aria-hidden="true">${INTRO.map((_,j)=>`<i class="${j===i?'on':''}"></i>`).join('')}</div>
     <h2>${s.t}</h2><div class="ibody">${s.b}</div>
     <div class="row between">${last?'<span></span>':'<button class="btn ghost" id="isk">スキップ</button>'}<div class="row">${i?'<button class="btn" id="ipv">戻る</button>':''}<button class="btn primary" id="inx">${last?'はじめる':'次へ'}</button></div></div>`,()=>{
-    const fin=()=>{S.intro=1;save();closeModal();sfx('good');if(view==='home')renderHome()};
+    const fin=()=>{S.intro=1;if(!S.news)S.news=NEWS[0].v;save();setBadge();closeModal();sfx('good');if(view==='home')renderHome()};
     document.getElementById('inx').onclick=()=>last?fin():showIntro(i+1);
     const pv=document.getElementById('ipv');if(pv)pv.onclick=()=>showIntro(i-1);
     const sk=document.getElementById('isk');if(sk)sk.onclick=fin;
@@ -1751,6 +1794,9 @@ function renderResult(){
 render();
 setTimeout(hideSplash,450);
 if(!S.intro)showIntro(0);
+else{let up='';try{up=sessionStorage.getItem('db3upd')||''}catch(e){}
+  if(up===APP_VER){try{sessionStorage.removeItem('db3upd')}catch(e){}if(unreadNews())setTimeout(()=>toast('最新版に更新しました','内容を見る',showNews),700)}
+  else if(unreadNews())setTimeout(()=>toast('新しいお知らせがあります','見る',showNews),900)}
 checkUpdate();
 </script>
 

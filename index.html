@@ -225,6 +225,26 @@ p{margin:0}
 /* 文節改行：<wbr> の位置だけで改行し、入りきらない長い言葉だけ途中で折る */
 .bx body{word-break:keep-all;overflow-wrap:anywhere;line-break:strict}
 .bx pre.code,.bx code,.bx textarea,.bx input{word-break:normal}
+/* ranking */
+.rank{display:flex;flex-direction:column;gap:10px}
+.rk-head{display:flex;align-items:baseline;gap:6px;font-weight:700;font-size:18px}
+.rk-big{font-size:48px;line-height:1;color:var(--accent)}
+.rk-gap{font-size:15px;line-height:1.7}
+.rk-gap b{color:var(--accent)}
+.rk-list{list-style:none;margin:0;padding:0;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.rk-list li{display:grid;grid-template-columns:4.2em minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 14px;border-top:1px solid var(--line);font-size:15px}
+.rk-list li:first-child{border-top:0}
+.rk-list li.me{background:var(--accent-soft);font-weight:700}
+.rk-l{font-size:12px;color:var(--sub);font-weight:700}
+.rk-n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rk-s{font-weight:700}
+.rankmini{width:100%;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow)}
+.rankmini:hover{border-color:var(--accent)}
+.rankmini .rk-pos{font-weight:700;white-space:nowrap}
+.rankmini .rk-big{font-size:26px}
+.rankmini .rk-sub{font-size:13px;color:var(--sub)}
+.rankmini .rk-sub b{color:var(--accent)}
+.rankmini .chev{color:var(--sub);font-size:20px}
 /* notes */
 .points{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column}
 .points>li{display:grid;grid-template-columns:auto auto minmax(0,1fr);gap:4px 10px;padding:12px 0;border-top:1px dashed var(--line);align-items:start}
@@ -1089,7 +1109,7 @@ R(19,10,`オブジェクトに別名を与え、他のデータベースユー�
   公開ページ（github.io）では version.json を見て、新しい版があれば
   問題を解いていないタイミングでローディング画面を出して自動で読み直す。
   版を上げるときは APP_VER と version.json を同じ値にする。 */
-const APP_VER='2026-11-05.7';
+const APP_VER='2026-11-05.8';
 let UPD=null;
 const SAFE_VIEWS=['home','lessons','lesson','gram','test','record','setup'];
 const isPages=/\.github\.io$/.test(location.hostname);
@@ -1116,6 +1136,7 @@ setInterval(checkUpdate,5*60*1000);
 
 /* ===== お知らせ（アップデート内容）。新しいものを上に足す ===== */
 const NEWS=[
+ {v:'2026-11-05.8',d:'11月5日',t:'ランキングができました',items:['「記録」タブから、ニックネームでランキングに参加できるようになりました','正解した問題の数で「何人中何位」か、次の人まであと何問かがわかります','ほかの人に表示されるのはニックネームだけです。いつでもやめられます']},
  {v:'2026-11-05.7',d:'11月5日',t:'赤シートの不具合を直しました',items:['ノートの赤シートで、箇条書きの印（○）だけが見えてしまうことがあったのを直しました']},
  {v:'2026-11-05.6',d:'11月5日',t:'文章の改行が読みやすくなりました',items:['「1 / 行でもよい」のように言葉の途中で改行されないように、言葉のまとまり（文節）で改行するようにしました','iPhone・Android・PCのどれでも同じように効きます']},
  {v:'2026-11-05.5',d:'11月5日',t:'ノートなどが読みやすくなりました',items:['ノート（赤シート）の答えを、区切りごとに改行し、SQLはコード用の枠で表示するようにしました','結果画面・記録・条件を決めて解く画面で、文字が変なところで折り返されないようにしました']},
@@ -1141,6 +1162,111 @@ function toast(msg,btn,fn){
   const close=()=>{t.classList.add('hide');setTimeout(()=>t.remove(),400)};
   if(btn)t.querySelector('button').onclick=()=>{close();fn&&fn()};
   setTimeout(close,7000);
+}
+
+/* ===== ランキング =====
+  Firebase の匿名ログインと Firestore を、SDK を使わず REST API で使う。
+  公開ページ（github.io）で、FB の設定が入っているときだけ動く。
+  Firestore の ranking/<自分のuid> に {name, ok, solved, updated} を保存し、全員分を読んで順位を出す。 */
+const FB={apiKey:'AIzaSyAosSUB9WTWS6vkla79APxjQjh8rFs5n7Y',projectId:'db3-drill'};
+const RANK_ON=isPages&&!!FB.apiKey&&!!FB.projectId;
+let RK=null;try{RK=JSON.parse(localStorage.getItem('db3rank')||'null')}catch(e){}
+const rkSave=()=>{try{localStorage.setItem('db3rank',JSON.stringify(RK))}catch(e){}};
+async function rkToken(){
+  if(RK&&RK.idToken&&RK.exp>Date.now()+60000)return RK.idToken;
+  if(RK&&RK.refresh){
+    const r=await fetch('https://securetoken.googleapis.com/v1/token?key='+FB.apiKey,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'grant_type=refresh_token&refresh_token='+encodeURIComponent(RK.refresh)});
+    if(r.ok){const j=await r.json();RK={uid:j.user_id,idToken:j.id_token,refresh:j.refresh_token,exp:Date.now()+(+j.expires_in)*1000};rkSave();return RK.idToken}
+  }
+  const r=await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key='+FB.apiKey,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({returnSecureToken:true})});
+  if(!r.ok)throw new Error('auth '+r.status);
+  const j=await r.json();RK={uid:j.localId,idToken:j.idToken,refresh:j.refreshToken,exp:Date.now()+(+j.expiresIn)*1000};rkSave();return RK.idToken;
+}
+const FS=()=>`https://firestore.googleapis.com/v1/projects/${FB.projectId}/databases/(default)/documents`;
+const myScore=()=>({ok:QS.filter(doneOk).length,solved:QS.filter(q=>S.r[q.id]).length});
+let RANKS=null,RANKS_AT=0;
+async function rkPush(force){
+  if(!RANK_ON||!S.rank||!S.rank.name)return;
+  const sc=myScore(),key=S.rank.name+'|'+sc.ok+'|'+sc.solved;
+  if(!force&&S.rank.last===key)return;
+  const t=await rkToken();
+  const body={fields:{name:{stringValue:S.rank.name},ok:{integerValue:String(sc.ok)},solved:{integerValue:String(sc.solved)},updated:{integerValue:String(Date.now())}}};
+  const r=await fetch(`${FS()}/ranking/${RK.uid}`,{method:'PATCH',headers:{'Content-Type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify(body)});
+  if(!r.ok)throw new Error('push '+r.status);
+  S.rank.last=key;save();RANKS=null;
+}
+async function rkFetch(){
+  if(RANKS&&Date.now()-RANKS_AT<60000)return RANKS;
+  const t=await rkToken();const out=[];let page='';
+  do{
+    const r=await fetch(`${FS()}/ranking?pageSize=300${page?'&pageToken='+encodeURIComponent(page):''}`,{headers:{Authorization:'Bearer '+t}});
+    if(!r.ok)throw new Error('list '+r.status);
+    const j=await r.json();
+    (j.documents||[]).forEach(d=>{const f=d.fields||{};out.push({uid:d.name.split('/').pop(),name:(f.name&&f.name.stringValue)||'？',ok:+((f.ok&&f.ok.integerValue)||0),solved:+((f.solved&&f.solved.integerValue)||0)})});
+    page=j.nextPageToken||'';
+  }while(page);
+  RANKS=out;RANKS_AT=Date.now();return out;
+}
+async function rkLeave(){
+  const t=await rkToken();
+  const r=await fetch(`${FS()}/ranking/${RK.uid}`,{method:'DELETE',headers:{Authorization:'Bearer '+t}});
+  if(!r.ok&&r.status!==404)throw new Error('leave '+r.status);
+  S.rank=null;save();RANKS=null;
+}
+/* 順位：正解数が多い順。正解数が同じなら同じ順位 */
+function rkStanding(list){
+  const me=RK&&list.find(x=>x.uid===RK.uid);if(!me)return null;
+  const sc=myScore();me.ok=sc.ok;me.solved=sc.solved;me.name=S.rank.name;
+  const sorted=list.slice().sort((a,b)=>b.ok-a.ok||b.solved-a.solved);
+  const higher=sorted.filter(x=>x.ok>me.ok);
+  return {n:list.length,rank:higher.length+1,me,above:higher[higher.length-1]||null,below:sorted.find(x=>x.ok<me.ok)||null,ties:sorted.filter(x=>x.ok===me.ok&&x!==me).length};
+}
+const rkName=s=>String(s||'').replace(/[\u0000-\u001f]/g,'').trim().slice(0,12);
+/* ランキングのカード（compact=true はホーム用の1行） */
+async function rankCard(el,compact){
+  if(!RANK_ON||!el)return;
+  if(!S.rank){
+    if(compact){el.innerHTML='';return}
+    el.innerHTML=`<section class="card rank"><h2>ランキング</h2>
+      <p class="muted small">使っている人の中で、<b>正解した問題の数</b>が何位かがわかります。ほかの人に表示されるのはニックネームだけです。いつでもやめられます。</p>
+      <div class="row" style="gap:8px"><input class="ans-input" id="rkn" maxlength="12" placeholder="ニックネーム（12文字まで）" style="flex:1;min-width:0"><button class="btn primary" id="rkj">参加する</button></div>
+      <p class="small" id="rkmsg" style="color:var(--ng)"></p></section>`;
+    const go1=async()=>{const n=rkName(document.getElementById('rkn').value);const m=document.getElementById('rkmsg');
+      if(!n){m.textContent='ニックネームを入れてください';return}
+      m.style.color='var(--sub)';m.textContent='参加しています…';
+      S.rank={name:n};save();
+      try{await rkPush(true);sfx('good');rankCard(el,compact)}catch(e){S.rank=null;save();m.style.color='var(--ng)';m.textContent='通信できませんでした。電波のよいところでもう一度ためしてください。'}};
+    document.getElementById('rkj').onclick=go1;
+    document.getElementById('rkn').onkeydown=e=>{if(e.key==='Enter'&&!e.isComposing&&e.keyCode!==229)go1()};
+    return;
+  }
+  el.innerHTML=compact?'':`<section class="card rank"><h2>ランキング</h2><p class="muted small">読み込み中…</p></section>`;
+  let st;
+  try{await rkPush().catch(()=>{});const list=await rkFetch();st=rkStanding(list);if(!st){await rkPush(true);RANKS=null;st=rkStanding(await rkFetch())}}
+  catch(e){if(!compact)el.innerHTML=`<section class="card rank"><h2>ランキング</h2><p class="muted small">通信できませんでした。</p><button class="btn" id="rkr">もう一度読みこむ</button></section>`;const b=document.getElementById('rkr');if(b)b.onclick=()=>{RANKS=null;rankCard(el,compact)};return}
+  if(!st)return;
+  const gapUp=st.above?st.above.ok-st.me.ok:0,gapDn=st.below?st.me.ok-st.below.ok:0;
+  if(compact){
+    el.innerHTML=`<button class="rankmini" id="rkgo"><span class="rk-pos"><b>${st.n}</b>人中 <b class="rk-big">${st.rank}</b>位</span><span class="rk-sub">${st.above?`次の人まで あと <b>${gapUp}</b>問`:'いま1位です！'}</span><span class="chev" aria-hidden="true">›</span></button>`;
+    document.getElementById('rkgo').onclick=()=>go('record');return;
+  }
+  const row=(x,cls,label)=>x?`<li class="${cls}"><span class="rk-l">${label}</span><span class="rk-n">${esc(x.name)}${x===st.me?'（あなた）':''}</span><span class="rk-s num">${x.ok}問</span></li>`:'';
+  el.innerHTML=`<section class="card rank">
+    <div class="row between"><h2>ランキング</h2><span class="small muted">正解した問題の数</span></div>
+    <div class="rk-head"><span><b class="num">${st.n}</b>人中</span><b class="rk-big num">${st.rank}</b><span>位</span></div>
+    <p class="rk-gap">${st.above?`次の人（${esc(st.above.name)}）まで <b>あと ${gapUp}問</b>`:'<b>いま1位です！</b>'}${st.ties?`<br><span class="small muted">同じ正解数の人が ${st.ties}人います</span>`:''}</p>
+    <ol class="rk-list">${row(st.above,'up','1つ上')}${row(st.me,'me','あなた')}${row(st.below,'down','1つ下')}</ol>
+    ${st.below?`<p class="small muted">後ろの人（${esc(st.below.name)}）とは ${gapDn}問差です。</p>`:''}
+    <div class="row" style="gap:8px"><button class="btn" id="rkre">ニックネームを変える</button><button class="btn ghost" id="rkl">ランキングをやめる</button></div>
+    <p class="small muted">正解した問題＝640問のうち、最後に解いたとき正解だった問題の数です。問題を解き終わるたびに自動で送られます。</p></section>`;
+  document.getElementById('rkre').onclick=()=>modal(`<h2>ニックネームを変える</h2><input class="ans-input" id="rkn2" maxlength="12" value="${esc(S.rank.name)}"><div class="row end"><button class="btn" id="rkc">やめる</button><button class="btn primary" id="rks">変える</button></div>`,()=>{
+    document.getElementById('rkc').onclick=closeModal;
+    document.getElementById('rks').onclick=async()=>{const n=rkName(document.getElementById('rkn2').value);if(!n)return;const old=S.rank.name;S.rank.name=n;save();closeModal();try{await rkPush(true)}catch(e){S.rank.name=old;save()}rankCard(el,compact)};
+  });
+  document.getElementById('rkl').onclick=()=>modal(`<h2>ランキングをやめますか？</h2><p class="muted">あなたの順位の記録をランキングから消します。アプリの中の記録（正答率など）はそのまま残ります。</p><div class="row end"><button class="btn" id="rkc">やめない</button><button class="btn primary" id="rky">やめる</button></div>`,()=>{
+    document.getElementById('rkc').onclick=closeModal;
+    document.getElementById('rky').onclick=async()=>{closeModal();try{await rkLeave()}catch(e){toast('通信できませんでした')}rankCard(el,compact)};
+  });
 }
 
 /* ===== 問題文を直した問題は、前と同じIDを使う（記録を引き継ぐため） ===== */
@@ -1502,6 +1628,7 @@ function renderHome(){
   }else next=`<section class="card next"><span class="label">つぎにやること</span><div class="stepname">全部の回を一通り終えました！</div><p class="small muted">あとは模擬テストと苦手復習で仕上げましょう。</p><button class="btn primary big" id="mock1">模擬テスト 50問 ›</button></section>`;
   app.innerHTML=`
   ${next}
+  ${RANK_ON?'<div id="rankmini"></div>':''}
   <section class="tiles" aria-label="進み具合">
     <div class="tile"><b>${t.lessonsDone}<small class="muted" style="font-size:13px"> / ${t.lessonN}</small></b><span>終わった回</span></div>
     <div class="tile"><b>${t.tried}</b><span>解いた問題<br>（全${QS.length}問）</span></div>
@@ -1519,6 +1646,7 @@ function renderHome(){
   if(nx){$('go').onclick=()=>startStep(nx.l,nx.step.id);$('openL').onclick=()=>go('lesson',{l:nx.l})}
   else $('mock1').onclick=()=>quick('mock');
   $('h-weak').onclick=()=>quick('weak');$('h-mock').onclick=()=>quick('mock');
+  rankCard($('rankmini'),true);
   $('h-ls').onclick=()=>go('lessons');$('h-gram').onclick=()=>go('gram');$('h-help').onclick=()=>showIntro(0);
 }
 
@@ -1797,7 +1925,7 @@ function renderSetup(){
 /* ===== 記録 ===== */
 function renderRecord(){
   const t=totals();
-  app.innerHTML=`
+  app.innerHTML=`${RANK_ON?'<div id="rankbox"></div>':''}
   <section class="tiles">
     <div class="tile"><b>${t.lessonsDone}<small class="muted" style="font-size:13px"> / ${t.lessonN}</small></b><span>終わった回</span></div>
     <div class="tile"><b>${t.tried}</b><span>解いた問題</span></div>
@@ -1807,6 +1935,7 @@ function renderRecord(){
     return `<div class="catrow"><span>${c.name}</span><div class="bar2"><i style="width:${s.acc??0}%"></i></div><span class="small muted num">${s.acc==null?'—':s.acc+'%'}${s.weak?` <span style="color:var(--ng)">苦手${s.weak}</span>`:''}</span></div>`}).join('')}</div>
     <p class="small muted" style="margin-top:12px">本番の出題数：${CATS.filter(c=>c.id).map(c=>`${c.name} ${c.n}`).join('・')}（計50問）</p></section>
   <section class="card"><h2 style="margin-bottom:6px">記録を消す</h2><p class="small muted" style="margin-bottom:10px">解いた結果・覚えたチェックをすべて消して、最初からやり直します。</p><button class="btn" id="rs">記録をリセット</button></section>`;
+  rankCard(document.getElementById('rankbox'),false);
   document.getElementById('rs').onclick=()=>modal(`<h2>記録をすべて消しますか？</h2><p class="muted">元には戻せません。</p><div class="row end"><button class="btn" id="rn">やめる</button><button class="btn primary" id="ry">消す</button></div>`,()=>{
     document.getElementById('rn').onclick=closeModal;
     document.getElementById('ry').onclick=()=>{S.r={};S.m={};S.nr={};save();closeModal();renderRecord()};
@@ -1902,7 +2031,7 @@ function renderResult(){
   const res=Z.res.filter(Boolean),ok=res.filter(r=>r.ok).length,n=res.length,pct=n?Math.round(ok/n*100):0;
   const by={};res.forEach(r=>{const b=by[r.q.c]||(by[r.q.c]={ok:0,n:0});b.n++;if(r.ok)b.ok++});
   const wrong=res.filter(r=>!r.ok),ctx=Z.ctx;
-  if(!Z.played){Z.played=1;const fin=Z.ctx&&!lessonProg(Z.ctx.l).next;setTimeout(()=>sfx(fin||pct>=90?'done':pct>=60?'good':'soft'),150)}
+  if(!Z.played){rkPush().catch(()=>{});Z.played=1;const fin=Z.ctx&&!lessonProg(Z.ctx.l).next;setTimeout(()=>sfx(fin||pct>=90?'done':pct>=60?'good':'soft'),150)}
   const msg=pct>=90?'すばらしい！':pct>=70?'いい調子！':pct>=50?'あと少し！':'間違えたところを見直そう';
   const C=2*Math.PI*42;
   let main='';

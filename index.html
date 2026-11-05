@@ -4,21 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>DB3 試験ドリル</title>
-<meta name="description" content="データベース技術3（Oracle SQL）の試験対策アプリ。授業ごとの4ステップ学習、文法辞典、模擬テスト50問。">
+<meta name="description" content="データベース技術3（Oracle SQL）の試験対策アプリ。授業ごとの3ステップ学習、文法辞典、模擬テスト50問。">
 <meta name="theme-color" content="#2C4A9A">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="DB3 試験ドリル">
 <meta property="og:title" content="DB3 試験ドリル">
-<meta property="og:description" content="授業ごとに進めるだけの試験対策アプリ。4ステップ学習・文法辞典・模擬テスト50問。">
+<meta property="og:description" content="授業ごとに進めるだけの試験対策アプリ。3ステップ学習・文法辞典・模擬テスト50問。">
 <meta property="og:url" content="https://mess190317-source.github.io/-/">
-<meta property="og:image" content="https://mess190317-source.github.io/-/og.png">
+<meta property="og:image" content="https://mess190317-source.github.io/-/og.png?v=2">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="ja_JP">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="DB3 試験ドリル">
 <meta name="twitter:description" content="授業ごとに進めるだけの試験対策アプリ。">
-<meta name="twitter:image" content="https://mess190317-source.github.io/-/og.png">
+<meta name="twitter:image" content="https://mess190317-source.github.io/-/og.png?v=2">
 <link rel="icon" type="image/png" href="icon-512.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-title" content="DB3ドリル">
@@ -1212,7 +1212,7 @@ R(19,10,`オブジェクトに別名を与え、他のデータベースユー�
   公開ページ（github.io）では version.json を見て、新しい版があれば
   問題を解いていないタイミングでローディング画面を出して自動で読み直す。
   版を上げるときは APP_VER と version.json を同じ値にする。 */
-const APP_VER='2026-11-05.18';
+const APP_VER='2026-11-05.19';
 let UPD=null;
 const SAFE_VIEWS=['home','lessons','lesson','gram','test','record','setup'];
 const isPages=/\.github\.io$/.test(location.hostname);
@@ -1239,6 +1239,7 @@ setInterval(checkUpdate,5*60*1000);
 
 /* ===== お知らせ（アップデート内容）。新しいものを上に足す ===== */
 const NEWS=[
+ {v:'2026-11-05.19',d:'11月5日',t:'授業回を3ステップにしました',items:['授業回の「練習問題」ステップをなくし、「ノート → チェック問題 → カルテ」の3ステップにしました','練習問題に入っていた単語・穴埋め・SQLの問題は、テストタブの「分野ごとに10問」「SQL書き込み」「コードの穴埋め」などから解けます']},
  {v:'2026-11-05.18',d:'11月5日',t:'テストタブに「SQL書き込み」ができました',items:['テストタブの「SQL書き込み」で、分野をえらんでSQLを書く問題だけを解けるようになりました','前回追加した74問は、授業回の練習問題と模擬テストからは外し、「SQL書き込み」で分野をえらんだときだけ出るようにしました']},
  {v:'2026-11-05.17',d:'11月5日',t:'SQLを書く問題を74問ふやしました',items:['第2回〜第19回の各回に、SQLを書く問題を3〜6問ずつ追加しました（全部で108問）','授業回の「練習問題」や、テストタブの「SQLを書く」で出てきます','問題がふえたので、全部で714問になりました']},
  {v:'2026-11-05.16',d:'11月5日',t:'文法辞典の例題をテストの形にしました',items:['文法辞典の例題を、SQLを書く問題と同じ「〜を表示するSELECT文を書きなさい」の形にそろえました','列名も（ ）で書いてあるので、そのままテストの練習になります']},
@@ -1647,12 +1648,11 @@ const ORDERS=[
  {k:'GRANT',t:'権限をあたえる',b:[['GRANT 権限名',1,'grant'],['ON オブジェクト名',0,'grant'],['TO ユーザー名;',1,'grant']],n:'ON は表などに対する権限（SELECT・INSERT など）のときだけ。取り消しは REVOKE … FROM。'}
 ];
 
-/* ===== 授業回の4ステップ ===== */
+/* ===== 授業回の3ステップ ===== */
 const STEPS=[
   {id:'note',name:'ノートで覚える',desc:'授業シートの要点を赤シートでかくして暗記します。'},
   {id:'check',name:'チェック問題',desc:'ノートの要点が覚えられたか、4択でたしかめます。'},
-  {id:'karte',name:'カルテ',desc:'授業のカルテを問1から順番に解きます。'},
-  {id:'practice',name:'練習問題',desc:'単語・コードの穴埋め・SQLを書く問題で仕上げます。'}
+  {id:'karte',name:'カルテ',desc:'授業のカルテを問1から順番に解きます。'}
 ];
 function stepQs(l,id){
   if(id==='check')return QS.filter(q=>q.l===l&&q.k==='p');
@@ -1721,7 +1721,7 @@ function modal(html,bind){const m=document.getElementById('modal');m.innerHTML=`
 function closeModal(){const m=document.getElementById('modal');if(m)m.innerHTML='';if(typeof UPD!=='undefined'&&UPD)setTimeout(tryUpdate,300)}
 const INTRO=[
   {t:'ようこそ！',b:`<p>DB3（データベース技術3）の試験勉強アプリです。</p><p>授業の回ごとに<b>決まった順番で進めるだけ</b>でOK。次に何をやればいいかは、ホームの<b>「つぎにやること」</b>がいつも教えてくれます。</p>`},
-  {t:'1回分は4ステップ',b:`<ol class="ilist">${STEPS.map(s=>`<li><b>${s.name}</b><span>${s.desc}</span></li>`).join('')}</ol><p class="small muted">1つ終わると、次のステップに進むボタンが出ます。</p>`},
+  {t:'1回分は3ステップ',b:`<ol class="ilist">${STEPS.map(s=>`<li><b>${s.name}</b><span>${s.desc}</span></li>`).join('')}</ol><p class="small muted">1つ終わると、次のステップに進むボタンが出ます。</p>`},
   {t:'問題の答え方',b:`<ul class="ilist"><li><b>ふつうの選択問題</b><span>選んだ瞬間に答え合わせされます</span></li><li><b>「2つ選びなさい」など</b><span>全部選んでから、画面下の「答え合わせ」</span></li><li><b>書く問題</b><span>入力して「答え合わせ」。わからなければ「わからない」で答えが見られます</span></li></ul><p class="small muted">答え合わせのあとは、画面下の「次へ」で進みます。左上の × でいつでもやめられます。</p>`},
   {t:'テスト前は「テスト」タブ',b:`<p>本番と同じ配分の<b>模擬テスト50問</b>や、間違えた問題だけの<b>苦手復習</b>ができます。</p><p>WHERE や GROUP BY などの単語の使い方は、<b>「文法」タブ</b>の辞典でいつでも調べられます。</p><p class="small muted">記録はこの端末のブラウザに保存されます（別の端末には引き継がれません）。使い方は右上の <b>?</b>、効果音のオン/オフは右上のスピーカーで切りかえられます。</p>`}
 ];
@@ -1787,7 +1787,7 @@ function renderHome(){
 
 /* ===== 授業の一覧 ===== */
 function renderLessons(){
-  app.innerHTML=`<p class="muted small">回をえらぶと、その回の4ステップが出ます。緑の点が終わったステップです。</p>`+
+  app.innerHTML=`<p class="muted small">回をえらぶと、その回の3ステップが出ます。緑の点が終わったステップです。</p>`+
   CATS.map(c=>`<p class="sec-t">${c.id?c.name:'基礎編（DB1・2）：データベースが初めての人はここから'}</p><section class="list">${c.ls.map(l=>{const p=lessonProg(l),done=!p.next;
     return `<button class="nrow" data-l="${l}"><span class="ic ${done?'done':''}">${done?'✓':(l>90?'基'+(l-90):l)}</span><span class="tx"><b>${LT[l]}</b><span class="meta">${lname(l)} ${dotsOf(l)} ${p.d}/${p.n}</span></span>${chev}</button>`}).join('')}</section>`).join('');
   app.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>go('lesson',{l:+b.dataset.l}));

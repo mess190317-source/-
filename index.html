@@ -1109,7 +1109,7 @@ R(19,10,`オブジェクトに別名を与え、他のデータベースユー�
   公開ページ（github.io）では version.json を見て、新しい版があれば
   問題を解いていないタイミングでローディング画面を出して自動で読み直す。
   版を上げるときは APP_VER と version.json を同じ値にする。 */
-const APP_VER='2026-11-05.7';
+const APP_VER='2026-11-05.8';
 let UPD=null;
 const SAFE_VIEWS=['home','lessons','lesson','gram','test','record','setup'];
 const isPages=/\.github\.io$/.test(location.hostname);
@@ -1136,6 +1136,7 @@ setInterval(checkUpdate,5*60*1000);
 
 /* ===== お知らせ（アップデート内容）。新しいものを上に足す ===== */
 const NEWS=[
+ {v:'2026-11-05.8',d:'11月5日',t:'ランキングができました',items:['「記録」タブから、ニックネームでランキングに参加できるようになりました','正解した問題の数で「何人中何位」か、次の人まであと何問かがわかります','ほかの人に表示されるのはニックネームだけです。いつでもやめられます']},
  {v:'2026-11-05.7',d:'11月5日',t:'赤シートの不具合を直しました',items:['ノートの赤シートで、箇条書きの印（○）だけが見えてしまうことがあったのを直しました']},
  {v:'2026-11-05.6',d:'11月5日',t:'文章の改行が読みやすくなりました',items:['「1 / 行でもよい」のように言葉の途中で改行されないように、言葉のまとまり（文節）で改行するようにしました','iPhone・Android・PCのどれでも同じように効きます']},
  {v:'2026-11-05.5',d:'11月5日',t:'ノートなどが読みやすくなりました',items:['ノート（赤シート）の答えを、区切りごとに改行し、SQLはコード用の枠で表示するようにしました','結果画面・記録・条件を決めて解く画面で、文字が変なところで折り返されないようにしました']},
@@ -1167,7 +1168,7 @@ function toast(msg,btn,fn){
   Firebase の匿名ログインと Firestore を、SDK を使わず REST API で使う。
   公開ページ（github.io）で、FB の設定が入っているときだけ動く。
   Firestore の ranking/<自分のuid> に {name, ok, solved, updated} を保存し、全員分を読んで順位を出す。 */
-const FB={apiKey:'',projectId:''};
+const FB={apiKey:'AIzaSyAosSUB9WTWS6vkla79APxjQjh8rFs5n7Y',projectId:'db3-drill'};
 const RANK_ON=isPages&&!!FB.apiKey&&!!FB.projectId;
 let RK=null;try{RK=JSON.parse(localStorage.getItem('db3rank')||'null')}catch(e){}
 const rkSave=()=>{try{localStorage.setItem('db3rank',JSON.stringify(RK))}catch(e){}};

@@ -1124,7 +1124,7 @@ R(19,10,`オブジェクトに別名を与え、他のデータベースユー�
   公開ページ（github.io）では version.json を見て、新しい版があれば
   問題を解いていないタイミングでローディング画面を出して自動で読み直す。
   版を上げるときは APP_VER と version.json を同じ値にする。 */
-const APP_VER='2026-11-05.11';
+const APP_VER='2026-11-05.12';
 let UPD=null;
 const SAFE_VIEWS=['home','lessons','lesson','gram','test','record','setup'];
 const isPages=/\.github\.io$/.test(location.hostname);
@@ -1151,6 +1151,7 @@ setInterval(checkUpdate,5*60*1000);
 
 /* ===== お知らせ（アップデート内容）。新しいものを上に足す ===== */
 const NEWS=[
+ {v:'2026-11-05.12',d:'11月5日',t:'SQLの言葉が途中で改行されないようにしました',items:['「UNION ALL」「GROUP BY」「PRIMARY KEY」「NOT NULL」のように2語以上でひとつの言葉になるSQLが、途中で改行されないようにしました','「> ANY」「<> ALL」なども、ひとまとまりで表示します']},
  {v:'2026-11-05.11',d:'11月5日',t:'改行の細かい不具合を直しました',items:['「）」や「】」などのかっこや句読点だけが、次の行の先頭に来てしまうことがあったのを直しました']},
  {v:'2026-11-05.10',d:'11月5日',t:'4択で「なぜ違うか」がわかるようになりました',items:['カルテと授業シートの4択（307問）で、間違えた選択肢を選ぶと、その選択肢がなぜ違うのかが表示されるようになりました']},
  {v:'2026-11-05.9',d:'11月5日',t:'間違えたところがわかるようになりました',items:['SQLを書く問題で間違えると、足りない単語を緑、余計な単語を赤で表示し、よくある間違いの理由も出すようにしました','単語の問題では、どの文字が違うかを表示します','4択では、自分が選んだ答えを表示します。ノートの要点の問題では、選んだのがどの要点の説明かもわかります']},
@@ -1364,11 +1365,23 @@ const bxSplit=(()=>{
     return fixed};
 })();
 const BX_DONE=new WeakSet(),BX_JA=/[぀-ヿ㐀-鿿]/;
+/* 2語以上でひとつの言葉になるSQL（UNION ALL など）は、間を「改行しないスペース」にしてひとまとまりで表示する。
+  コード枠（pre）と入力欄は、コピーして実行できるように置きかえない。 */
+const SQL_PHRASES=['CREATE OR REPLACE VIEW','CREATE FORCE VIEW','CREATE PUBLIC SYNONYM','DROP PUBLIC SYNONYM','ON DELETE SET NULL','ON DELETE CASCADE','CASCADE CONSTRAINTS','WITH CHECK OPTION','WITH ADMIN OPTION','WITH GRANT OPTION','WITH READ ONLY','SELECT ANY TABLE','DROP ANY TABLE','LEFT OUTER JOIN','RIGHT OUTER JOIN','FULL OUTER JOIN','QUOTA UNLIMITED ON','TO SAVEPOINT','IS NOT NULL','CREATE TABLE','ALTER TABLE','DROP TABLE','TRUNCATE TABLE','CREATE VIEW','DROP VIEW','CREATE INDEX','DROP INDEX','CREATE SEQUENCE','ALTER SEQUENCE','DROP SEQUENCE','CREATE SYNONYM','DROP SYNONYM','CREATE USER','ALTER USER','DROP USER','CREATE ROLE','CREATE SESSION','INSERT INTO','DELETE FROM','UNION ALL','GROUP BY','ORDER BY','PRIMARY KEY','FOREIGN KEY','UNIQUE KEY','NOT NULL','IS NULL','NOT IN','READ ONLY','READ WRITE','IDENTIFIED BY','INCREMENT BY','START WITH','OR REPLACE','ROLLBACK TO','OUTER JOIN','SET NULL','NO FORCE'];
+const SQL_PH_RE=new RegExp('\\b('+SQL_PHRASES.map(p=>p.replace(/ /g,'\\s+')).join('|')+')\\b','gi');
+function nbspSQL(t){
+  return t.replace(SQL_PH_RE,m=>m.replace(/\s+/g,'\u00a0'))
+    .replace(/(<>|>=|<=|!=|[=<>])\s+(ANY|ALL|SOME)\b/gi,(m,a,b)=>a+'\u00a0'+b)
+    .replace(/\b([A-Za-z_][A-Za-z0-9_]*\([^()\s,]{1,8}),\s+([^()\s,]{1,8}\))/g,'$1,\u00a0$2');
+}
+const NB_SKIP='pre,textarea,input,script,style,svg,.tk';
 const BX_SKIP='code,pre,textarea,input,script,style,svg,.ocode,.ttl,.tk';
 function bxApply(root){
   if(!root)return;
   const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),list=[];let n;
-  while((n=w.nextNode())){if(BX_DONE.has(n))continue;BX_DONE.add(n);if(BX_JA.test(n.nodeValue)&&!n.parentElement.closest(BX_SKIP))list.push(n)}
+  while((n=w.nextNode())){if(BX_DONE.has(n))continue;BX_DONE.add(n);
+    if(!n.parentElement.closest(NB_SKIP)){const v=nbspSQL(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v}
+    if(BX_JA.test(n.nodeValue)&&!n.parentElement.closest(BX_SKIP))list.push(n)}
   list.forEach(t=>{const parts=bxSplit(t.nodeValue);if(parts.length<2)return;
     const f=document.createDocumentFragment();
     parts.forEach((p,i)=>{if(i)f.appendChild(document.createElement('wbr'));const tn=document.createTextNode(p);BX_DONE.add(tn);f.appendChild(tn)});

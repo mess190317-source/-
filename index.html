@@ -245,6 +245,19 @@ p{margin:0}
 .rankmini .rk-sub{font-size:13px;color:var(--sub)}
 .rankmini .rk-sub b{color:var(--accent)}
 .rankmini .chev{color:var(--sub);font-size:20px}
+/* why (間違えたところ) */
+.why{display:flex;flex-direction:column;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px}
+.why .label{display:block}
+.why .pick{border:1.5px solid var(--ng);background:var(--ng-soft);border-radius:8px;padding:8px 10px;line-height:1.6}
+.why-r{font-size:14px;line-height:1.7}
+.why-h{margin:0;padding-left:1.2em;font-size:14px;line-height:1.7;display:flex;flex-direction:column;gap:4px}
+.cmp{display:flex;flex-direction:column;gap:8px}
+.cmp>div{display:flex;flex-direction:column;gap:2px}
+.code.tk{font-family:var(--f-code);font-size:14px;background:var(--code-bg);border:1px solid var(--line);border-radius:8px;padding:9px 11px;line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal}
+code.wd{font-size:15px;padding:3px 8px;align-self:flex-start;letter-spacing:.02em}
+mark.ex{background:var(--ng-soft);color:var(--ng);border:1px solid var(--ng);border-radius:4px;padding:0 3px;text-decoration:line-through;text-decoration-thickness:1px}
+mark.ms{background:var(--ok-soft);color:var(--ok);border:1px solid var(--ok);border-radius:4px;padding:0 3px;font-weight:700}
+.why mark{font-family:inherit}
 /* notes */
 .points{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column}
 .points>li{display:grid;grid-template-columns:auto auto minmax(0,1fr);gap:4px 10px;padding:12px 0;border-top:1px dashed var(--line);align-items:start}
@@ -1109,7 +1122,7 @@ R(19,10,`オブジェクトに別名を与え、他のデータベースユー�
   公開ページ（github.io）では version.json を見て、新しい版があれば
   問題を解いていないタイミングでローディング画面を出して自動で読み直す。
   版を上げるときは APP_VER と version.json を同じ値にする。 */
-const APP_VER='2026-11-05.8';
+const APP_VER='2026-11-05.9';
 let UPD=null;
 const SAFE_VIEWS=['home','lessons','lesson','gram','test','record','setup'];
 const isPages=/\.github\.io$/.test(location.hostname);
@@ -1136,6 +1149,7 @@ setInterval(checkUpdate,5*60*1000);
 
 /* ===== お知らせ（アップデート内容）。新しいものを上に足す ===== */
 const NEWS=[
+ {v:'2026-11-05.9',d:'11月5日',t:'間違えたところがわかるようになりました',items:['SQLを書く問題で間違えると、足りない単語を緑、余計な単語を赤で表示し、よくある間違いの理由も出すようにしました','単語の問題では、どの文字が違うかを表示します','4択では、自分が選んだ答えを表示します。ノートの要点の問題では、選んだのがどの要点の説明かもわかります']},
  {v:'2026-11-05.8',d:'11月5日',t:'ランキングができました',items:['「記録」タブから、ニックネームでランキングに参加できるようになりました','正解した問題の数で「何人中何位」か、次の人まであと何問かがわかります','ほかの人に表示されるのはニックネームだけです。いつでもやめられます']},
  {v:'2026-11-05.7',d:'11月5日',t:'赤シートの不具合を直しました',items:['ノートの赤シートで、箇条書きの印（○）だけが見えてしまうことがあったのを直しました']},
  {v:'2026-11-05.6',d:'11月5日',t:'文章の改行が読みやすくなりました',items:['「1 / 行でもよい」のように言葉の途中で改行されないように、言葉のまとまり（文節）で改行するようにしました','iPhone・Android・PCのどれでも同じように効きます']},
@@ -1341,7 +1355,7 @@ const bxSplit=(()=>{
     out.push(s.slice(st));return out};
 })();
 const BX_DONE=new WeakSet(),BX_JA=/[぀-ヿ㐀-鿿]/;
-const BX_SKIP='code,pre,textarea,input,script,style,svg,.ocode,.ttl';
+const BX_SKIP='code,pre,textarea,input,script,style,svg,.ocode,.ttl,.tk';
 function bxApply(root){
   if(!root)return;
   const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),list=[];let n;
@@ -2007,11 +2021,85 @@ function answerText(q){
   if(q.t==='w')return `<code>${esc(q.a[0])}</code>${q.a.length>1?`<span class="small muted">（${q.a.slice(1).map(esc).join('・')} もOK）</span>`:''}`;
   return `<pre class="code">${esc(fmtSQL(q.a[0]))}</pre>${q.a.length>1?`<div class="small muted" style="margin-top:6px">別解</div><pre class="code">${esc(fmtSQL(q.a[1]))}</pre>`:''}`;
 }
+/* ===== 間違えたところと理由 ===== */
+const sqlTok=s=>String(s).normalize('NFKC').match(/'[^']*'?|"[^"]*"?|[A-Za-z_][A-Za-z0-9_$#.]*|\d+(?:\.\d+)?|<>|>=|<=|!=|\S/g)||[];
+const tKey=t=>/^'/.test(t)?t:t.toUpperCase();
+function lcsDiff(a,b){
+  /* a=自分, b=正解 のトークン列。同じ部分・余計な部分・足りない部分に分ける */
+  const n=a.length,m=b.length,dp=Array.from({length:n+1},()=>new Array(m+1).fill(0));
+  for(let i=n-1;i>=0;i--)for(let j=m-1;j>=0;j--)dp[i][j]=tKey(a[i])===tKey(b[j])?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);
+  const mine=[],ans=[];let i=0,j=0;
+  while(i<n&&j<m){if(tKey(a[i])===tKey(b[j])){mine.push([a[i],0]);ans.push([b[j],0]);i++;j++}else if(dp[i+1][j]>=dp[i][j+1]){mine.push([a[i],1]);i++}else{ans.push([b[j],1]);j++}}
+  while(i<n)mine.push([a[i++],1]);while(j<m)ans.push([b[j++],1]);
+  return {mine,ans,same:dp[0][0]};
+}
+function edit(a,b){a=a.toUpperCase();b=b.toUpperCase();const d=Array.from({length:a.length+1},(_,i)=>[i]);for(let j=1;j<=b.length;j++)d[0][j]=j;
+  for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length]}
+const tokHTML=(list,cls)=>list.map(([t,d])=>d?`<mark class="${cls}">${esc(t)}</mark>`:esc(t)).join(' ');
+const CLAUSES=['SELECT','FROM','WHERE','GROUP BY','HAVING','ORDER BY'];
+function sqlHints(given,ans,diff){
+  const g=String(given).normalize('NFKC'),G=g.toUpperCase(),A=String(ans).toUpperCase(),H=[];
+  if(/"[^"]*"/.test(g))H.push('文字列は " "（ダブルクォーテーション）ではなく \' \'（シングルクォーテーション）で囲みます。');
+  if(/'NULL'/i.test(g))H.push("NULL は 'NULL' と囲まずに、そのまま NULL と書きます（囲むと文字列になります）。");
+  if(/\bSET\b[^;]*=\s*[^,]*\bAND\b[^;]*=/i.test(g)&&!/\bSET\b[^;]*\bAND\b/i.test(A))H.push('SET で2つ以上の列を変えるときは、AND ではなくカンマ（,）で区切ります。');
+  if(/\bDELETE\s+\*|\bDELETE\s+(?!FROM\b)[A-Z_]+\s+FROM\b/i.test(g))H.push('DELETE は行ごと消すので、DELETE のあとに列名や * は書きません（DELETE FROM 表名）。');
+  if(/\bINSERT\s+(?!INTO\b)/i.test(g)&&/\bINSERT\s+INTO\b/.test(A))H.push('INSERT のあとには INTO が必要です（INSERT INTO 表名）。');
+  if(/\bVALUE\s*\(/i.test(g))H.push('VALUE ではなく VALUES です（最後に S）。');
+  if(/\bVARCHAR\s*\(/i.test(g)&&/VARCHAR2/.test(A))H.push('文字型は VARCHAR ではなく VARCHAR2 です。');
+  if(/\bDATA\b/i.test(g)&&/\bDATE\b/.test(A))H.push('日付型は DATA ではなく DATE です。');
+  if(/\(\s*SELECT\b/.test(A)&&/(=|>|<|\bIN|\bANY|\bALL)\s*SELECT\b/i.test(g))H.push('副問い合わせ（内側の SELECT）は ( ) で囲みます。');
+  if(/\bIN\s*\(\s*SELECT/.test(A)&&/=\s*\(\s*SELECT/i.test(g)&&!/=\s*ANY/.test(A.replace(/\s/g,'')))H.push('副問い合わせが複数行を返すかもしれないので、= ではなく IN を使います。');
+  if(/\bWHERE\b/.test(A)&&!/\bWHERE\b/.test(G))H.push('WHERE（条件）が抜けています。UPDATE・DELETE で WHERE を忘れると、全部の行が対象になります。');
+  if(/\bFROM\b/.test(A)&&/^\s*(SELECT|DELETE)\b/.test(A)&&!/\bFROM\b/.test(G))H.push('FROM（どの表から）が抜けています。');
+  if(/\bGROUP BY\b/.test(A)&&!/\bGROUP\s+BY\b/.test(G))H.push('部署ごと・〜ごとに集計するときは GROUP BY が必要です。');
+  if(/\bAS\b/.test(A)&&/^\s*CREATE\s+(VIEW|TABLE)/.test(A)&&/\bSELECT\b/.test(A)&&!/\bAS\b/.test(G))H.push('CREATE VIEW ビュー名 AS SELECT … のように、AS が必要です。');
+  if(/REFERENCES/.test(A)&&!/FOREIGN KEY/.test(A)&&/FOREIGN\s+KEY/i.test(g))H.push('列レベルの外部キーは REFERENCES だけを書きます（FOREIGN KEY は表レベルで使います）。');
+  if(/\bDESC\b|\bASC\b/.test(A)&&/ORDER BY/.test(A)){const a1=/\bDESC\b/.test(A),g1=/\bDESC\b/.test(G);if(a1!==g1)H.push(a1?'大きい順（降順）は DESC です。':'DESC をつけると大きい順（降順）になります。');}
+  if(/\bCASCADE\b/.test(A)&&!/\bCASCADE\b/.test(G))H.push('オブジェクトごと削除するには CASCADE が必要です。');
+  /* 句の順番 */
+  const pos=CLAUSES.map(c=>G.search(new RegExp('\\b'+c.replace(' ','\\s+')+'\\b'))).filter(p=>p>=0);
+  if(pos.some((p,i)=>i&&p<pos[i-1]))H.push('句の順番が違います。SELECT → FROM → WHERE → GROUP BY → HAVING → ORDER BY の順に書きます。');
+  /* つづりまちがい */
+  const extra=diff.mine.filter(x=>x[1]).map(x=>x[0]).filter(t=>/^[A-Za-z_][A-Za-z0-9_]*$/.test(t));
+  const miss=diff.ans.filter(x=>x[1]).map(x=>x[0]).filter(t=>/^[A-Za-z_][A-Za-z0-9_]*$/.test(t));
+  extra.forEach(t=>{const near=miss.find(m=>m.length>2&&edit(t,m)<=2&&t.toUpperCase()!==m.toUpperCase());if(near)H.push(`「${t}」は「${near}」のつづりまちがいかもしれません。`)});
+  return [...new Set(H)];
+}
+function whyHTML(q,cur){
+  if(cur.ok||cur.skipped)return '';
+  /* 4択：選んだ答えを表示。ノートの要点問題なら、どの要点の説明かも */
+  if(q.t==='c'){
+    const picked=[...cur.sel].filter(x=>x>=q.n);if(!picked.length)return '';
+    let reason='';
+    if(q.k==='p'){const pts=NOTES[q.l]||[];reason=picked.map(oi=>{const hit=pts.find(p=>p[1]===q.o[oi]);return hit?`あなたが選んだのは【${esc(hit[0])}】の説明です。`:''}).filter(Boolean).join('<br>');
+      if(reason)reason+=`<br>この問題は【${esc(pts[q.pi][0])}】についての問題です。`}
+    if(q.n>1){const okPicked=[...cur.sel].filter(x=>x<q.n).length;reason=(reason?reason+'<br>':'')+`正しいものは ${q.n}つで、あなたは ${okPicked}つ当たっていました。`}
+    return `<div class="why"><span class="label">あなたが選んだ答え</span>${picked.map(oi=>`<div class="pick">${optHTML(q.o[oi])}</div>`).join('')}${reason?`<p class="why-r">${reason}</p>`:''}</div>`;
+  }
+  const given=(cur.given||'').trim();if(!given)return '';
+  if(q.t==='w'){
+    const f=normW,best=q.a.slice().sort((x,y)=>edit(f(given),f(x))-edit(f(given),f(y)))[0];
+    const d=edit(f(given),f(best));
+    const note=d<=2&&f(best).length>3?'<p class="why-r"><b>おしい！</b> つづりが少し違います。</p>':'';
+    const df=lcsDiff([...given.normalize('NFKC')],[...best.normalize('NFKC')]);
+    return `<div class="why"><span class="label">どこが違う？</span><div class="cmp"><div><span class="small muted">あなた</span><code class="wd">${df.mine.map(([c,x])=>x?`<mark class="ex">${esc(c)}</mark>`:esc(c)).join('')}</code></div><div><span class="small muted">正解</span><code class="wd">${df.ans.map(([c,x])=>x?`<mark class="ms">${esc(c)}</mark>`:esc(c)).join('')}</code></div></div>${note}</div>`;
+  }
+  /* SQL：いちばん近い模範解答と比べる */
+  const gt=sqlTok(given).filter(t=>t!==';');
+  const cand=q.a.map(a=>{const d=lcsDiff(gt,sqlTok(a).filter(t=>t!==';'));return {a,d}}).sort((x,y)=>y.d.same-x.d.same)[0];
+  const hints=sqlHints(given,cand.a,cand.d);
+  return `<div class="why"><span class="label">どこが違う？</span>
+    <p class="small muted"><mark class="ex">赤</mark>＝あなたの答えにあって正解にないもの　<mark class="ms">緑</mark>＝正解にあって、あなたの答えにないもの</p>
+    <div class="cmp"><div><span class="small muted">あなた</span><div class="code tk">${tokHTML(cand.d.mine,'ex')||'（なし）'}</div></div>
+    <div><span class="small muted">正解</span><div class="code tk">${tokHTML(cand.d.ans,'ms')}</div></div></div>
+    ${hints.length?`<span class="label" style="margin-top:4px">ここに注意</span><ul class="why-h">${hints.map(h=>`<li>${esc(h)}</li>`).join('')}</ul>`:''}</div>`;
+}
 function feedback(q,cur){
   const ok=cur.ok;
   return `<div class="fb ${ok?'ok':'ng'}" role="status">
     <div class="verdict"><span class="mark">${ok?'○':'×'}</span>${ok?(cur.over?'正解にしました':'正解！'):(cur.skipped?'答えを確認しよう':'不正解')}</div>
     ${ok&&q.t==='c'?'':`<div><span class="label">正解</span>${answerText(q)}</div>`}
+    ${whyHTML(q,cur)}
     <p>${br(q.e)}</p>
     <span class="src">出典：${srcLabel(q)}</span>
     ${q.k==='g'?`<pre class="code">${esc(gById(q.gid).ex)}</pre>`:''}

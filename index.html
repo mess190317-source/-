@@ -238,7 +238,7 @@ p{margin:0}
 .toggle input{accent-color:var(--sheet);width:18px;height:18px}
 code,.code{font-family:var(--f-code);font-size:.92em}
 code{background:var(--code-bg);padding:0 4px;border-radius:4px}
-pre.code{background:var(--code-bg);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:0;overflow-x:auto;white-space:pre;line-height:1.6;font-size:14px}
+pre.code{background:var(--code-bg);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:0;white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal;line-height:1.65;font-size:14px;tab-size:4}
 .blank{display:inline-block;min-width:4.5em;text-align:center;border-bottom:2px solid var(--ng);color:var(--ng);font-weight:700}
 /* quiz */
 .qprog{display:flex;align-items:center;gap:10px}
@@ -246,7 +246,13 @@ pre.code{background:var(--code-bg);border:1px solid var(--line);border-radius:8p
 .progress{height:8px;background:var(--code-bg);border-radius:4px;overflow:hidden}
 .progress i{display:block;height:100%;background:var(--accent);transition:width .25s}
 .qbody{display:flex;flex-direction:column;gap:14px}
-.qtext{font-size:17px;font-weight:700;line-height:1.7;overflow-wrap:anywhere}
+.qtext{font-size:17px;font-weight:700;line-height:1.7;overflow-wrap:anywhere;display:flex;flex-direction:column;gap:8px}
+.qtext p{margin:0}
+.qtext code{font-weight:700}
+.qtext pre.qsql{font-weight:400;font-size:14.5px}
+.qtext.small-q{font-size:15px}
+.ocode{font-family:var(--f-code);font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.6}
+@media (min-width:621px){pre.code,.qtext pre.qsql{font-size:15px}}
 .opts{display:flex;flex-direction:column;gap:8px}
 .opt{display:flex;gap:10px;align-items:flex-start;text-align:left;border:1.5px solid var(--line);background:var(--card);border-radius:10px;padding:12px 14px;line-height:1.6;min-height:48px}
 .opt:hover:not(:disabled){border-color:var(--accent)}
@@ -305,6 +311,8 @@ ol.ilist li::before{counter-increment:s;content:counter(s);width:24px;height:24p
   .card{padding:15px}
   .catrow{grid-template-columns:minmax(0,7.5em) minmax(0,1fr) auto}
   .ring{width:92px;height:92px}
+  pre.code{font-size:13.5px;padding:11px 12px}
+  .qtext pre.qsql{font-size:13.5px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -1063,7 +1071,7 @@ R(19,10,`オブジェクトに別名を与え、他のデータベースユー�
   公開ページ（github.io）では version.json を見て、新しい版があれば
   問題を解いていないタイミングでローディング画面を出して自動で読み直す。
   版を上げるときは APP_VER と version.json を同じ値にする。 */
-const APP_VER='2026-11-05.3';
+const APP_VER='2026-11-05.4';
 let UPD=null;
 const SAFE_VIEWS=['home','lessons','lesson','gram','test','record','setup'];
 const isPages=/\.github\.io$/.test(location.hostname);
@@ -1090,6 +1098,7 @@ setInterval(checkUpdate,5*60*1000);
 
 /* ===== お知らせ（アップデート内容）。新しいものを上に足す ===== */
 const NEWS=[
+ {v:'2026-11-05.4',d:'11月5日',t:'SQLが読みやすくなりました',items:['問題文の中のSQLを、文章と分けてコード用の枠で表示するようにしました','長いSQLは FROM・WHERE などの区切りで改行し、副問い合わせは字下げして表示します','スマホでもPCでも、横にスクロールせずに読めるようにしました']},
  {v:'2026-11-05.3',d:'11月5日',t:'お知らせ機能ができました',items:['左上のベルから、アプリのアップデート内容が見られるようになりました','新しいお知らせがあると、ベルに赤い数字がつきます']},
  {v:'2026-11-05.2',d:'11月5日',t:'文法辞典が見やすくなりました',items:['単語を開くと、まず「例題（やりたいこと）」が出て、そのあとに書き方・意味・実行結果が見られる順番になりました','最後に「書き方のまとめ」で形を確認できます']},
  {v:'2026-11-05.1',d:'11月5日',t:'カルテの問題を修正・自動更新',items:['「問3のSQLで」のように前の問題を前提にしていたカルテ13問を、1問だけでも解ける問題文に直しました（正答率などの記録はそのままです）','新しい版が出ると、自動で最新版に切りかわるようになりました（問題を解いている途中は切りかわりません）','起動時にローディング画面が出るようになりました']},
@@ -1574,6 +1583,70 @@ function glossQuiz(n){
     return {l:0,c:0,k:'g',t:'c',n:1,q,o,id:'g'+dir+x.id,gid:x.id,e:`書き方：${x.s.replace(/\n/g,' ')}${x.n?'\n'+x.n:''}`};
   });
 }
+/* ===== SQLを見やすく表示する =====
+  ・長い1行のSQLは、FROM・WHERE などの前で改行し、( SELECT … ) の副問い合わせは字下げする
+  ・問題文の中のSQLは、文章と分けてコード用の枠に入れる */
+const SQL_BREAK=/^(SELECT|FROM|WHERE|GROUP BY|HAVING|ORDER BY|VALUES|SET|UNION ALL|UNION|MINUS|INTERSECT|EXCEPT|JOIN|LEFT OUTER JOIN|ON|WITH CHECK OPTION|WITH READ ONLY)\b/i;
+const SQL_WIDTH=34;
+function fmtSQL(s){
+  s=String(s);
+  if(s.includes('\n'))return s.split('\n').map(fmtSQL).join('\n');
+  if(s.length<=SQL_WIDTH)return s;
+  const pad=s.match(/^\s*/)[0];
+  return fmtLines(s.trim(),pad);
+}
+function fmtLines(s,pad){
+  /* 深さ0の句の前で区切る（' ' の中や ( ) の中は区切らない） */
+  const parts=[];let depth=0,q=false,start=0;
+  for(let i=0;i<s.length;i++){
+    const c=s[i];
+    if(c==="'"){q=!q;continue}
+    if(q)continue;
+    if(c==='(')depth++;else if(c===')')depth--;
+    else if(depth===0&&i>start&&s[i-1]===' '&&SQL_BREAK.test(s.slice(i))&&!/^ON\b/i.test(s.slice(i))){parts.push(s.slice(start,i).trim());start=i}
+  }
+  parts.push(s.slice(start).trim());
+  return parts.map(line=>pad+fmtSub(line,pad)).join('\n');
+}
+function fmtSub(line,pad){
+  /* 長い行の中の ( SELECT … ) を、字下げした別の行にする */
+  if((pad+line).length<=SQL_WIDTH)return line;
+  const m=/\(\s*SELECT\b/i.exec(line);if(!m)return line;
+  let depth=0,q=false,end=-1;
+  for(let i=m.index;i<line.length;i++){const c=line[i];if(c==="'"){q=!q;continue}if(q)continue;if(c==='(')depth++;else if(c===')'){depth--;if(depth===0){end=i;break}}}
+  if(end<0)return line;
+  const head=line.slice(0,m.index).trimEnd(),inner=line.slice(m.index+1,end).trim(),tail=line.slice(end+1);
+  return `${head} (\n${fmtLines(inner,pad+'    ')}\n${pad})${tail}`;
+}
+const SQL_KW=/^\s*(SELECT|INSERT|UPDATE|DELETE|CREATE|DROP|ALTER|GRANT|REVOKE|TRUNCATE|WHERE|FROM|VALUES|SET|ROLLBACK|SAVEPOINT|COMMIT|DESC)(?=[\s(*])/i;
+const SQL_CHAR=/^(?:'[^']*'|【[^】]*】|[\x20-\x7E])*/;
+const PARTICLE=/^(で|の|に|を|と|は|が|について|では)/;
+/* 問題文を、文章の行とSQLの行に分けてHTMLにする */
+function qHTML(text){
+  const out=[];let buf=[];
+  const flush=()=>{if(buf.length){out.push(`<pre class="code qsql">${esc(buf.map(fmtSQL).join('\n'))}</pre>`);buf=[]}};
+  String(text).split('\n').forEach(line=>{
+    const isTpl=/【[^】]*】/.test(line)&&/;\s*$/.test(line)&&!/[。？]/.test(line);
+    if(buf.length&&/^\s*\(/.test(line)&&!/[。？]/.test(line)){buf[buf.length-1]+=' '+line.trim();return}   /* ( で始まる続きの行は前の行につなげる */
+    if(!SQL_KW.test(line)&&!isTpl){flush();out.push(`<p>${esc(line)}</p>`);return}
+    const pre=line.match(SQL_CHAR)[0],rest=line.slice(pre.length).trim();
+    if(!rest||(!/[。？、]/.test(rest)&&!PARTICLE.test(rest))){buf.push(line);return}   /* 行全体がSQL */
+    const code=pre.trim();
+    if(/[;)]$/.test(code)||PARTICLE.test(rest)){
+      flush();
+      if(code.length<=24&&!code.includes(';'))out.push(`<p><code>${esc(code)}</code> ${esc(rest)}</p>`);  /* 短いものは文の中に */
+      else{out.push(`<pre class="code qsql">${esc(fmtSQL(code))}</pre>`);out.push(`<p>${esc(rest)}</p>`)}
+      return;
+    }
+    flush();out.push(`<p>${esc(line)}</p>`);
+  });
+  flush();
+  return out.join('');
+}
+/* 選択肢がSQLならコード用の文字にする */
+const isSQLopt=s=>/^\s*(SELECT|INSERT|UPDATE|DELETE|CREATE|DROP|ALTER|GRANT|REVOKE|TRUNCATE|WHERE|SET|VALUES|PRIMARY KEY|UNIQUE|CHECK|REFERENCES|FOREIGN KEY|DEFAULT|ROUND|NVL|COUNT)(?=[\s(;]|$)/.test(s)&&!/[。]/.test(s);
+const optHTML=s=>isSQLopt(s)?`<span class="ocode">${esc(fmtSQL(s))}</span>`:br(s);
+
 /* 答えの中の SQL っぽい部分を code 表示に */
 function fmtA(s){return esc(s).replace(/((?:CREATE|DROP|ALTER|INSERT|UPDATE|DELETE|SELECT|GRANT|REVOKE|TRUNCATE|ROLLBACK|SAVEPOINT|DESC)\b[^、。／（）]*?;|WHERE [^、。／）]+?\)|[A-Za-z_]+\.(?:NEXTVAL|CURRVAL))/g,'<code>$1</code>')}
 
@@ -1685,7 +1758,7 @@ function renderQuiz(){
   if(q.t==='c'){
     body+=`<div class="opts">${cur.order.map((oi,j)=>{
       let cls='';if(cur.done){if(oi<q.n)cls='right';else if(cur.sel.has(oi))cls='wrong'}
-      return `<button class="opt ${cls}" data-o="${oi}" aria-pressed="${cur.sel.has(oi)}" ${cur.done?'disabled':''}><span class="k">${'アイウエオカ'[j]}</span><span>${br(q.o[oi])}</span></button>`}).join('')}</div>`;
+      return `<button class="opt ${cls}" data-o="${oi}" aria-pressed="${cur.sel.has(oi)}" ${cur.done?'disabled':''}><span class="k">${'アイウエオカ'[j]}</span><span>${optHTML(q.o[oi])}</span></button>`}).join('')}</div>`;
     if(!cur.done){
       if(q.n>1){hint=`正しいものを <b>${q.n}つ</b> 選んでから、下の「答え合わせ」を押してください。`;acts=`<button class="btn primary grow" id="chk" ${cur.sel.size?'':'disabled'}>答え合わせ（${cur.sel.size} / ${q.n} 選択中）</button>`}
       else{hint='答えをタップすると、すぐに答え合わせします。';acts='<span class="note">答えをタップしてください</span>'}
@@ -1703,7 +1776,7 @@ function renderQuiz(){
   <div class="qprog"><div class="progress" aria-hidden="true"><i style="width:${(Z.i+(cur.done?1:0))/n*100}%"></i></div><span class="small num"><b>${Z.i+1}</b> / ${n}</span></div>
   <section class="card qbody">
     <div class="row"><span class="pill">${q.k==='g'?'文法':catName(q.c)}</span><span class="pill plain">${kind}</span></div>
-    <div class="qtext">${br(q.q)}</div>
+    <div class="qtext">${qHTML(q.q)}</div>
     ${body}
     ${hint?`<p class="hint">${hint}</p>`:''}
   </section>
@@ -1733,9 +1806,9 @@ function judge(ok){sfx(ok?'ok':'ng');const q=Z.list[Z.i];Z.cur.done=true;Z.cur.o
   const fb=document.querySelector('.fb');if(fb&&fb.getBoundingClientRect().bottom>window.innerHeight-80)fb.scrollIntoView({block:'end',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}
 function next(){sfx('page');if(Z.i+1<Z.list.length){Z.i++;prep();renderQuiz();window.scrollTo(0,0)}else go('result',{replace:true})}
 function answerText(q){
-  if(q.t==='c')return q.o.slice(0,q.n).map(o=>`<div>${br(o)}</div>`).join('');
+  if(q.t==='c')return q.o.slice(0,q.n).map(o=>`<div>${optHTML(o)}</div>`).join('');
   if(q.t==='w')return `<code>${esc(q.a[0])}</code>${q.a.length>1?`<span class="small muted">（${q.a.slice(1).map(esc).join('・')} もOK）</span>`:''}`;
-  return `<pre class="code">${esc(q.a[0])}</pre>${q.a.length>1?`<div class="small muted">別解：<code>${esc(q.a[1])}</code></div>`:''}`;
+  return `<pre class="code">${esc(fmtSQL(q.a[0]))}</pre>${q.a.length>1?`<div class="small muted" style="margin-top:6px">別解</div><pre class="code">${esc(fmtSQL(q.a[1]))}</pre>`:''}`;
 }
 function feedback(q,cur){
   const ok=cur.ok;
@@ -1781,8 +1854,8 @@ function renderResult(){
   ${Object.keys(by).length>1?`<section class="card"><h2 style="margin-bottom:12px">分野ごと</h2><div class="catrows">${Object.entries(by).map(([c,b])=>`<div class="catrow"><span>${catName(+c)}</span><div class="bar2"><i style="width:${b.ok/b.n*100}%"></i></div><span class="small muted num">${b.ok} / ${b.n}</span></div>`).join('')}</div></section>`:''}
   ${wrong.length?`<section class="card"><h2 style="margin-bottom:12px">間違えた問題の答え</h2><ol class="wronglist">${wrong.map(r=>`<li>
     <span class="small muted">${catName(r.q.c)}・${srcLabel(r.q)}</span>
-    <b>${br(r.q.q)}</b>${r.q.code?`<pre class="code">${esc(r.q.code).replace(/___/g,'<span class="blank">？</span>')}</pre>`:''}
-    ${r.given&&r.q.t!=='c'?`<div class="small">あなたの答え：<code>${esc(r.given)}</code></div>`:''}
+    <div class="qtext small-q">${qHTML(r.q.q)}</div>${r.q.code?`<pre class="code">${esc(r.q.code).replace(/___/g,'<span class="blank">？</span>')}</pre>`:''}
+    ${r.given&&r.q.t!=='c'?`<div class="small">あなたの答え</div><pre class="code">${esc(r.q.t==='d'?fmtSQL(r.given):r.given)}</pre>`:''}
     <div><span class="label">正解 </span>${answerText(r.q)}</div></li>`).join('')}</ol></section>`:''}`;
   const $=id=>document.getElementById(id);
   if($('nx'))$('nx').onclick=()=>startStep(ctx.l,lessonProg(ctx.l).next.id);

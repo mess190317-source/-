@@ -203,6 +203,10 @@ p{margin:0}
 .sp-msg{font-size:14px;font-weight:700;color:#DCE4FA;margin:0}
 @keyframes spin{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.sp-spin{animation-duration:2.4s}}
+.qex{background:var(--accent-soft);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.qex .qtag{align-self:flex-start;font-size:12px;font-weight:700;background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:1px 10px}
+.qex p{font-weight:700;font-size:15px;line-height:1.7}
+.form{border-top:1px dashed var(--line);padding-top:10px}
 /* notes */
 .points{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column}
 .points li{display:grid;grid-template-columns:auto auto minmax(0,1fr);gap:4px 10px;padding:12px 0;border-top:1px dashed var(--line);align-items:start}
@@ -1043,7 +1047,7 @@ R(19,10,`オブジェクトに別名を与え、他のデータベースユー�
   公開ページ（github.io）では version.json を見て、新しい版があれば
   問題を解いていないタイミングでローディング画面を出して自動で読み直す。
   版を上げるときは APP_VER と version.json を同じ値にする。 */
-const APP_VER='2026-11-05.1';
+const APP_VER='2026-11-05.2';
 let UPD=null;
 const SAFE_VIEWS=['home','lessons','lesson','gram','test','record','setup'];
 const isPages=/\.github\.io$/.test(location.hostname);
@@ -1473,12 +1477,14 @@ function blk(x){
 let GT=0,GQ='';
 const relName=l=>l>90?`基礎${l-90}`:`第${l}回`;
 function gEntry(x){
+  const e=EXD[x.id];
   return `<details class="gi" id="g-${x.id}"><summary><span class="gw"><code>${esc(x.w)}</code><span class="gy">${esc(x.y)}</span></span><span class="gm">${esc(x.m)}</span></summary>
   <div class="gb">
-    <div><span class="label">書き方</span><pre class="code">${esc(x.s)}</pre></div>
-    <div><span class="label">例</span><pre class="code">${esc(x.ex)}</pre></div>
-    ${EXD[x.id]?`<div class="exd"><p class="exj"><span class="label">日本語にすると</span>${esc(EXD[x.id].j)}</p><ol class="exp">${EXD[x.id].p.map(p=>`<li><code>${esc(p[0])}</code><span>${esc(p[1])}</span></li>`).join('')}</ol></div>`:''}
-    ${x.r?blk({t:x.r,cap:RES}):''}
+    ${e?`<div class="qex"><span class="qtag">例題</span><p>${esc(e.j)}</p></div>`:''}
+    <div><span class="label">${e?'① こう書く':'例'}</span><pre class="code">${esc(x.ex)}</pre></div>
+    ${e?`<div><span class="label">② 1つずつ見ると</span><ol class="exp">${e.p.map(p=>`<li><code>${esc(p[0])}</code><span>${esc(p[1])}</span></li>`).join('')}</ol></div>`:''}
+    ${x.r?`<div><span class="label">③ 実行結果</span>${blk({t:x.r})}</div>`:''}
+    <div class="form"><span class="label">まとめ：${esc(x.w)} の書き方</span><pre class="code">${esc(x.s)}</pre></div>
     ${x.n?`<p class="hint"><b>注意</b>　${esc(x.n)}</p>`:''}
     ${x.rel&&x.rel.some(l=>l<90)?`<div class="row"><span class="label">出てくる回</span>${x.rel.filter(l=>l<90).map(l=>`<button class="mini" data-rl="${l}">${relName(l)}</button>`).join('')}</div>`:''}
   </div></details>`;

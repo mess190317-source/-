@@ -1048,6 +1048,147 @@ DX(19,`scott.dept 表に対して、パブリックシノニム dept を作成�
 DX(19,`プライベートシノニム e を削除する文を書きなさい。`,`DROP SYNONYM e;`,`プライベートシノニムの削除に PUBLIC はいりません。`);
 DX(19,`パブリックシノニム emp を削除する文を書きなさい。`,`DROP PUBLIC SYNONYM emp;`,`パブリックシノニムの削除にも PUBLIC が必要です。`);
 
+/* ===== 演習68〜102（後半・演習プリント）のSQL書き込み … 「SQL書き込み」の分野別だけに出る。演習の番号順に出す ===== */
+const EX=(ex,l,q,a,e)=>add({l,k:'d',t:'d',q:`【演習${ex}】${q}`,a:a.split('|'),e,x:1,ex});
+/* 演習68 表の作成（再掲） */
+EX(68,8,`次の部署表 DEPTS を作成するCREATE TABLE文を書きなさい。\n・DNO：数値型 整数4桁\n・DNAME：文字型 20バイト\n・LOC：文字型 16バイト、DEFAULT値 'TOKYO'`,`CREATE TABLE depts (dno NUMBER(4), dname VARCHAR2(20), loc VARCHAR2(16) DEFAULT 'TOKYO');`,`文字型は VARCHAR2(バイト数)、数値型は NUMBER(桁数) です。DEFAULT値は データ型のあとに DEFAULT 値 と書きます。`);
+EX(68,8,`depts表(dno, dname, loc)に、部署番号30、部署名 'First Sales'、所在地は DEFAULT値 を登録するINSERT文を書きなさい（列名を指定し、DEFAULTキーワードを使う）。`,`INSERT INTO depts (dno, dname, loc) VALUES (30, 'First Sales', DEFAULT);`,`VALUES句に DEFAULT と書くと、表を作ったときに決めたDEFAULT値（ここでは 'TOKYO'）が入ります。DEFAULT は ' ' で囲みません。`);
+EX(68,8,`次の従業員表 EMPS を作成するCREATE TABLE文を書きなさい。\n・ENO：数値型 整数6桁\n・ENAME：文字型 20バイト\n・JOB：文字型 20バイト\n・SAL：数値型 整数7桁\n・DNO：数値型 整数4桁\n・HIREDATE：日付型、DEFAULT値 SYSDATE`,`CREATE TABLE emps (eno NUMBER(6), ename VARCHAR2(20), job VARCHAR2(20), sal NUMBER(7), dno NUMBER(4), hiredate DATE DEFAULT SYSDATE);`,`日付型は DATE（サイズはつけない）。DEFAULT SYSDATE で、登録した日の日付が自動で入ります。`);
+EX(68,8,`emps表(eno, ename, job, sal, dno, hiredate)に、1004、'SCOTT'、'SALES'、200000、30 を登録し、hiredate には今日の日付が自動で入るようにするINSERT文を書きなさい（列名を指定し、DEFAULTキーワードを使う）。`,`INSERT INTO emps (eno, ename, job, sal, dno, hiredate) VALUES (1004, 'SCOTT', 'SALES', 200000, 30, DEFAULT);|INSERT INTO emps VALUES (1004, 'SCOTT', 'SALES', 200000, 30, DEFAULT);`,`hiredate の DEFAULT値は SYSDATE なので、DEFAULT と書けば今日の日付になります。列名を省略しても、全部の列に値を書けば登録できます。`);
+/* 演習69 表の作成とデータ型（再掲） */
+EX(69,8,`次の友だち表 Friends を作成するCREATE TABLE文を書きなさい。\n・FNO：数値型 整数4桁\n・FNAME：可変長文字型 20バイト\n・PHONE：固定長文字型 18バイト\n・BIRTHDAY：日付型\n・MEMO：可変長文字型 50バイト、DEFAULT値 'ゲームプログラミング科'`,`CREATE TABLE friends (fno NUMBER(4), fname VARCHAR2(20), phone CHAR(18), birthday DATE, memo VARCHAR2(50) DEFAULT 'ゲームプログラミング科');`,`可変長文字型は VARCHAR2、固定長文字型は CHAR です。CHAR は足りない分を空白でうめて、いつも18バイトになります。`);
+EX(69,8,`friends表(fno, fname, phone, birthday, memo)に、3、'田中英二'、'090-3344-5566'、'93-02-12' を登録し、memo には DEFAULT値 が入るようにするINSERT文を書きなさい（列名を4つだけ指定する）。`,`INSERT INTO friends (fno, fname, phone, birthday) VALUES (3, '田中英二', '090-3344-5566', '93-02-12');`,`列名を書かなかった列には、DEFAULT値（ここでは 'ゲームプログラミング科'）が入ります。DEFAULT値がない列なら NULL です。`);
+/* 演習70 表の作成とデフォルト値の活用（再掲） */
+EX(70,8,`次のキャラクター表 Characters を作成するCREATE TABLE文を書きなさい。\n・CharName：可変長文字型 20バイト\n・Job：可変長文字型 30バイト、DEFAULT値 '冒険者'\n・CharLevel：数値型 3桁、DEFAULT値 1\n・Gold：数値型 6桁、DEFAULT値 500`,`CREATE TABLE characters (charname VARCHAR2(20), job VARCHAR2(30) DEFAULT '冒険者', charlevel NUMBER(3) DEFAULT 1, gold NUMBER(6) DEFAULT 500);`,`文字のDEFAULT値は ' ' で囲み、数値のDEFAULT値はそのまま書きます。`);
+EX(70,8,`characters表に、CharName だけを指定して '俺たちのヒーロー' を登録するINSERT文を書きなさい（ほかの列は DEFAULT値 になる）。`,`INSERT INTO characters (charname) VALUES ('俺たちのヒーロー');`,`列名を CharName だけにすると、Job・CharLevel・Gold には DEFAULT値（冒険者・1・500）が入ります。`);
+EX(70,8,`characters表に、CharName と Job を指定して、'海の守り神'・'神官' を登録するINSERT文を書きなさい。`,`INSERT INTO characters (charname, job) VALUES ('海の守り神', '神官');`,`指定しなかった CharLevel と Gold には DEFAULT値（1 と 500）が入ります。`);
+EX(70,8,`characters表に、CharName と CharLevel を指定して、'荒ぶる大男'・5 を登録するINSERT文を書きなさい。`,`INSERT INTO characters (charname, charlevel) VALUES ('荒ぶる大男', 5);`,`Job には '冒険者'、Gold には 500 が入ります。`);
+EX(70,8,`characters表で、CharName が '荒ぶる大男' のキャラクターのレベル(CharLevel)を今より1上げ、Gold を今より1000増やすUPDATE文を書きなさい。`,`UPDATE characters SET charlevel = charlevel + 1, gold = gold + 1000 WHERE charname = '荒ぶる大男';|UPDATE characters SET gold = gold + 1000, charlevel = charlevel + 1 WHERE charname = '荒ぶる大男';`,`「今の値から増やす」ときは 列名 = 列名 + 数 と書きます。複数の列はカンマで区切ります。WHERE を忘れると全員が変わります。`);
+/* 演習71 表の作成と複数表の連携 */
+EX(71,8,`次の学食メニュー表 Menu を作成するCREATE TABLE文を書きなさい。\n・MenuNo：数値型 整数3桁\n・MenuName：可変長文字型 30バイト\n・MenuGroup：可変長文字型 10バイト、DEFAULT値 '定食'\n・Price：数値型 整数4桁、DEFAULT値 800`,`CREATE TABLE menu (menuno NUMBER(3), menuname VARCHAR2(30), menugroup VARCHAR2(10) DEFAULT '定食', price NUMBER(4) DEFAULT 800);`,`DEFAULT値はデータ型のあとに書きます。`);
+EX(71,8,`menu表(menuno, menuname, menugroup, price)に、6、'とんこつラーメン'、'麺類'、750 を登録するINSERT文を書きなさい（列名は省略する）。`,`INSERT INTO menu VALUES (6, 'とんこつラーメン', '麺類', 750);`,`列名を省略するときは、表の列の順番どおりに全部の値を書きます。`);
+EX(71,8,`menu表に、メニュー番号1、メニュー名 '生姜焼き定食' だけを指定して登録するINSERT文を書きなさい（MenuGroup と Price は DEFAULT値 になる）。`,`INSERT INTO menu (menuno, menuname) VALUES (1, '生姜焼き定食');`,`指定しなかった MenuGroup には '定食'、Price には 800 が入ります。`);
+/* 演習72 表の作成と複数表の連携_2 */
+EX(72,8,`次の学食スマホ用オーダー表 Cafe_orders を作成するCREATE TABLE文を書きなさい。\n・OrderId：数値型 整数6桁\n・StudentNo：数値型 整数4桁\n・MenuNo：数値型 整数3桁\n・Quantity：数値型 整数3桁、DEFAULT値 1\n・IsTakeout：固定長文字列 1バイト、DEFAULT値 'N'\n・OrderDate：日付型、DEFAULT値 SYSDATE`,`CREATE TABLE cafe_orders (orderid NUMBER(6), studentno NUMBER(4), menuno NUMBER(3), quantity NUMBER(3) DEFAULT 1, istakeout CHAR(1) DEFAULT 'N', orderdate DATE DEFAULT SYSDATE);`,`固定長文字列は CHAR です。'N' のような1文字だけ入る列によく使います。`);
+EX(72,8,`cafe_orders表(orderid, studentno, menuno, quantity, istakeout, orderdate)に、注文番号3、学生番号11、メニュー番号5、数量3 を登録し、istakeout と orderdate は DEFAULT値 にするINSERT文を書きなさい（列名を4つだけ指定する）。`,`INSERT INTO cafe_orders (orderid, studentno, menuno, quantity) VALUES (3, 11, 5, 3);`,`指定しなかった istakeout には 'N'、orderdate には今日の日付が入ります。`);
+/* 演習73 DROP TABLE、TRUNCATE TABLE、DELETE文の比較 */
+EX(73,7,`sales表と sales_items表を sales_id で、さらに products表と prod_id で USING を使って結合し、sales_id, cust_id, line_item_id, prod_id, prod_name, unit_price * quantity（別名 price）, sales_total の列を持つ sales_details表を作成する文を書きなさい（別名には AS をつける）。`,`CREATE TABLE sales_details AS SELECT sales_id, cust_id, line_item_id, prod_id, prod_name, unit_price * quantity AS price, sales_total FROM sales JOIN sales_items USING(sales_id) JOIN products USING(prod_id);`,`CREATE TABLE 表名 AS SELECT … で、SELECTの結果をそのまま新しい表にできます。式の列には別名が必要です。`);
+EX(73,7,`sales_details表の全部の行を、DELETE文で削除しなさい（ROLLBACKで元に戻せる方法）。`,`DELETE FROM sales_details;|DELETE sales_details;`,`DELETE はDMLなので、ROLLBACK すればデータが戻ります。`);
+EX(73,7,`sales_details表の全部の行を、表の定義は残したまま、ROLLBACKできない方法で一気に削除する文を書きなさい。`,`TRUNCATE TABLE sales_details;`,`TRUNCATE はDDLなので自動でコミットされ、ROLLBACK しても戻りません。表の定義（DESCで見える列）は残ります。`);
+EX(73,7,`sales_details表を、表の定義ごと削除する文を書きなさい。`,`DROP TABLE sales_details;`,`DROP TABLE は表そのものを消すので、DESC すると「オブジェクトは存在しません」になります。`);
+/* 演習74 制約のある表の作成 */
+EX(74,9,`制約のある表に作り直すため、いまある emps表を削除する文を書きなさい。`,`DROP TABLE emps;`,`作り直す前に DROP TABLE で表を消します。`);
+EX(74,9,`次の制約つきの EMPS表を作成するCREATE TABLE文を書きなさい（制約は列レベルで、表の順に書く）。\n・ENO：NUMBER(6)、PRIMARY KEY（制約名 PK_EMPS_NO）\n・ENAME：VARCHAR2(20)、NOT NULL（制約名なし）、UNIQUE（制約名 UQ_EMPS_ENAME）\n・JOB：VARCHAR2(20)、CHECK（制約名 CK_EMPS_JOB：'AFFAIRS', 'ENGINEER', 'RESEARCH', 'SALES', 'PRESIDENT' のどれか）\n・SAL：NUMBER(7)、CHECK（制約名なし：180000以上 500000以下、BETWEENを使う）\n・DNO：NUMBER(4)\n・HIREDATE：DATE、DEFAULT SYSDATE、NOT NULL（制約名なし）`,`CREATE TABLE emps (eno NUMBER(6) CONSTRAINT pk_emps_no PRIMARY KEY, ename VARCHAR2(20) NOT NULL CONSTRAINT uq_emps_ename UNIQUE, job VARCHAR2(20) CONSTRAINT ck_emps_job CHECK (job IN ('AFFAIRS', 'ENGINEER', 'RESEARCH', 'SALES', 'PRESIDENT')), sal NUMBER(7) CHECK (sal BETWEEN 180000 AND 500000), dno NUMBER(4), hiredate DATE DEFAULT SYSDATE NOT NULL);`,`制約名をつけるときは CONSTRAINT 制約名 制約 の順。名前なしなら制約だけ書きます（システムが SYS_Cxxxx という名前をつける）。DEFAULT は NOT NULL より前に書きます。`);
+EX(74,9,`データディクショナリ USER_CONSTRAINTS を使い、EMPS表の table_name, constraint_name, constraint_type を表示するSELECT文を書きなさい。`,`SELECT table_name, constraint_name, constraint_type FROM user_constraints WHERE table_name = 'EMPS';`,`データディクショナリの中の表名は大文字で入っているので、'EMPS' と大文字で書きます。constraint_type は P=主キー、U=一意、C=CHECKまたはNOT NULL、R=参照整合性。`);
+/* 演習75 Menu表への制約の組み込み */
+EX(75,9,`次の制約つきの Menu表を作成するCREATE TABLE文を書きなさい（制約は列レベルで書く）。\n・MenuNo：NUMBER(3)、主キー（制約名 PK_MENU_NO）\n・MenuName：VARCHAR2(30)、NOT NULL（制約名なし）\n・MenuGroup：VARCHAR2(10)、DEFAULT '定食'\n・Price：NUMBER(4)、DEFAULT 800、チェック（制約名 CK_MENU_PRICE：0以上 9999以下、BETWEENを使う）`,`CREATE TABLE menu (menuno NUMBER(3) CONSTRAINT pk_menu_no PRIMARY KEY, menuname VARCHAR2(30) NOT NULL, menugroup VARCHAR2(10) DEFAULT '定食', price NUMBER(4) DEFAULT 800 CONSTRAINT ck_menu_price CHECK (price BETWEEN 0 AND 9999));`,`DEFAULT は制約より前に書きます。CHECK の条件は ( ) で囲みます。`);
+EX(75,9,`データディクショナリ USER_CONSTRAINTS を使い、MENU表の table_name, constraint_name, constraint_type を表示するSELECT文を書きなさい。`,`SELECT table_name, constraint_name, constraint_type FROM user_constraints WHERE table_name = 'MENU';`,`表名は大文字で 'MENU' と書きます。SYS_Cxxxx は名前をつけなかった制約（だいたい NOT NULL）です。`);
+/* 演習76 参照整合性制約のある表の作成 */
+EX(76,10,`参照整合性制約をつけたあとのことを考えて、emps表（子表）と depts表（親表）を正しい順番で削除する2つの文を書きなさい。`,`DROP TABLE emps; DROP TABLE depts;`,`子表（参照している側）から先に削除します。親表を先に消そうとすると、参照されているのでエラーになります。`);
+EX(76,10,`次の制約つきの DEPTS表（親表）を作成するCREATE TABLE文を書きなさい（制約は列レベルで書く）。\n・DNO：NUMBER(4)、PRIMARY KEY（制約名 PK_DEPTS_DNO）\n・DNAME：VARCHAR2(20)、NOT NULL（制約名なし）\n・LOC：VARCHAR2(16)、DEFAULT 'TOKYO'`,`CREATE TABLE depts (dno NUMBER(4) CONSTRAINT pk_depts_dno PRIMARY KEY, dname VARCHAR2(20) NOT NULL, loc VARCHAR2(16) DEFAULT 'TOKYO');|CREATE TABLE depts (dno NUMBER(4) CONSTRAINT pk_deps_dno PRIMARY KEY, dname VARCHAR2(20) NOT NULL, loc VARCHAR2(16) DEFAULT 'TOKYO');`,`親表は子表より先に作ります（プリントの表では制約名が PK_DEPS_DNO と書かれているので、どちらでも正解にしています）。`);
+EX(76,10,`次の制約つきの EMPS表（子表）を作成するCREATE TABLE文を書きなさい（制約は列レベルで、表の順に書く）。\n・ENO：NUMBER(6)、PRIMARY KEY（PK_EMPS_NO）\n・ENAME：VARCHAR2(20)、NOT NULL（制約名なし）、UNIQUE（UQ_EMPS_ENAME）\n・JOB：VARCHAR2(20)、CHECK（CK_EMPS_JOB：'AFFAIRS', 'ENGINEER', 'RESEARCH', 'SALES', 'PRESIDENT' のどれか）\n・SAL：NUMBER(7)、CHECK（CK_EMPS_SAL：180000以上 500000以下、BETWEENを使う）\n・DNO：NUMBER(4)、FOREIGN KEY（FK_EMPS_DEPTS：DEPTS表の DNO列を参照）\n・HIREDATE：DATE、DEFAULT SYSDATE、NOT NULL（制約名なし）`,`CREATE TABLE emps (eno NUMBER(6) CONSTRAINT pk_emps_no PRIMARY KEY, ename VARCHAR2(20) NOT NULL CONSTRAINT uq_emps_ename UNIQUE, job VARCHAR2(20) CONSTRAINT ck_emps_job CHECK (job IN ('AFFAIRS', 'ENGINEER', 'RESEARCH', 'SALES', 'PRESIDENT')), sal NUMBER(7) CONSTRAINT ck_emps_sal CHECK (sal BETWEEN 180000 AND 500000), dno NUMBER(4) CONSTRAINT fk_emps_depts REFERENCES depts(dno), hiredate DATE DEFAULT SYSDATE NOT NULL);`,`列レベルの参照整合性制約は REFERENCES 親表(列) だけで書けます（FOREIGN KEY という言葉は表レベルで書くときに使います）。`);
+EX(76,10,`emps表(eno, ename, job, sal, dno)に、1005、'JONES'、'AFFAIRS'、350000、部署番号10 を登録するINSERT文を書きなさい（この5つの列名を指定する）。`,`INSERT INTO emps (eno, ename, job, sal, dno) VALUES (1005, 'JONES', 'AFFAIRS', 350000, 10);`,`部署番号10は depts表にあるので登録できます。depts表にない50を入れると「親キーがありません」(ORA-02291)になります。`);
+EX(76,10,`depts表から、どの従業員からも参照されていない部署番号40の行を削除するDELETE文を書きなさい。`,`DELETE FROM depts WHERE dno = 40;`,`参照されていない親キーは削除できます。部署番号10のように子表から参照されている行を消すと「子レコードがあります」(ORA-02292)になります。`);
+/* 演習77 Cafe_orders表への制約の組み込み */
+EX(77,10,`次の制約つきの Cafe_orders表を作成するCREATE TABLE文を書きなさい（制約は列レベルで、表の順に書く）。\n・OrderId：NUMBER(6)、主キー（PK_CafeOrder_ID）\n・StudentNo：NUMBER(4)、NOT NULL、外部キー（FK_CafeOrder_Student：students表の studentno列を参照）\n・MenuNo：NUMBER(3)、NOT NULL、外部キー（FK_CafeOrder_Menu：menu表の menuno列を参照）\n・Quantity：NUMBER(3)、DEFAULT 1、NOT NULL\n・IsTakeout：CHAR(1)、DEFAULT 'N'、NOT NULL、チェック（CK_CafeOrder_TAKEOUT：'Y' か 'N'）\n・OrderDate：DATE、DEFAULT SYSDATE、NOT NULL\n（NOT NULL の制約名は省略）`,`CREATE TABLE cafe_orders (orderid NUMBER(6) CONSTRAINT pk_cafeorder_id PRIMARY KEY, studentno NUMBER(4) NOT NULL CONSTRAINT fk_cafeorder_student REFERENCES students(studentno), menuno NUMBER(3) NOT NULL CONSTRAINT fk_cafeorder_menu REFERENCES menu(menuno), quantity NUMBER(3) DEFAULT 1 NOT NULL, istakeout CHAR(1) DEFAULT 'N' NOT NULL CONSTRAINT ck_cafeorder_takeout CHECK (istakeout IN ('Y', 'N')), orderdate DATE DEFAULT SYSDATE NOT NULL);`,`1つの列に制約を何個も並べられます。DEFAULT はいちばん前に書きます。（プリントの表には参照先の表が書かれていないので、学生表は students(studentno) としています）`);
+EX(77,10,`データディクショナリ USER_CONSTRAINTS を使い、CAFE_ORDERS表の table_name, constraint_name, constraint_type を表示するSELECT文を書きなさい。`,`SELECT table_name, constraint_name, constraint_type FROM user_constraints WHERE table_name = 'CAFE_ORDERS';`,`外部キー（参照整合性制約）の constraint_type は R です。`);
+/* 演習78 副問い合わせによる表のコピー */
+EX(78,7,`emp表のうち、job が 'MANAGER' と 'PRESIDENT' 以外の従業員の empno, ename, job, sal をコピーして、次の EMPcopy表を作成する文を書きなさい（列名と制約はCREATE TABLEのあとの( )に書く）。\n・EMPNO：PRIMARY KEY（PK_EMPS_CP）\n・EMPNAME\n・JOB：DEFAULT 'SALES'\n・SALARY：CHECK（CK_EMPS_CP_SAL：800以上 10000以下、BETWEENを使う）\n（WHERE句は NOT IN を使う）`,`CREATE TABLE empcopy (empno CONSTRAINT pk_emps_cp PRIMARY KEY, empname, job DEFAULT 'SALES', salary CONSTRAINT ck_emps_cp_sal CHECK (salary BETWEEN 800 AND 10000)) AS SELECT empno, ename, job, sal FROM emp WHERE job NOT IN ('MANAGER', 'PRESIDENT');`,`副問い合わせで表を作るときは、列名のあとにデータ型を書きません（SELECTした列の型になる）。制約やDEFAULTは書けます。`);
+EX(78,7,`データディクショナリ USER_CONSTRAINTS を使い、EMPCOPY表の table_name, constraint_name, constraint_type を表示するSELECT文を書きなさい。`,`SELECT table_name, constraint_name, constraint_type FROM user_constraints WHERE table_name = 'EMPCOPY';`,`EMPcopy と作っても、ディクショナリの中では大文字の 'EMPCOPY' です。`);
+/* 演習79 VIEWの作成 */
+EX(79,12,`emps表から eno, ename, job を表示するSELECT文を書きなさい。`,`SELECT eno, ename, job FROM emps;`,`このSELECT文をもとにビューを作ります。`);
+EX(79,12,`emps表の eno, ename, job を表示するビュー e_job を作成する文を書きなさい。`,`CREATE VIEW e_job AS SELECT eno, ename, job FROM emps;`,`CREATE VIEW ビュー名 AS SELECT文; です。`);
+EX(79,12,`e_job ビュー(eno, ename, job)を通じて、2001、'SUZUKI'、'RESEARCH' を登録するINSERT文を書きなさい（列名は省略する）。`,`INSERT INTO e_job VALUES (2001, 'SUZUKI', 'RESEARCH');`,`ビューを通じて元の emps表に登録されます。ビューにない列（sal, dno）は NULL、hiredate は DEFAULT値 になります。`);
+EX(79,12,`e_job ビューを通じて、eno が 2001 の行の job を 'SALES' に変更するUPDATE文を書きなさい。`,`UPDATE e_job SET job = 'SALES' WHERE eno = 2001;`,`ビューに対するUPDATEも、元の表が変更されます。`);
+EX(79,12,`e_job ビューを削除する文を書きなさい。`,`DROP VIEW e_job;`,`ビューを削除しても、元の emps表のデータはなくなりません。`);
+EX(79,12,`e_job ビューを OR REPLACE で再定義しなさい。emps表の eno, ename, job に、ビューの列名 empno, empname, job をつける（列名はビュー名のあとの( )に書く）。`,`CREATE OR REPLACE VIEW e_job (empno, empname, job) AS SELECT eno, ename, job FROM emps;|CREATE OR REPLACE VIEW e_job AS SELECT eno AS empno, ename AS empname, job FROM emps;|CREATE OR REPLACE VIEW e_job AS SELECT eno empno, ename empname, job FROM emps;`,`OR REPLACE をつけると、同じ名前のビューがあっても作り直せます。SELECT句で別名をつけても同じです。`);
+EX(79,12,`データディクショナリ USER_VIEWS を使い、E_JOB ビューの view_name と text（定義のSELECT文）を表示するSELECT文を書きなさい。`,`SELECT view_name, text FROM user_views WHERE view_name = 'E_JOB';`,`ビューの中身は SELECT文として保存されています（text列）。`);
+EX(79,12,`列名を empno, empname, job にした e_job ビューから、従業員番号と従業員名を表示するSELECT文を書きなさい（エラーにならないように）。`,`SELECT empno, empname FROM e_job;`,`ビューで別名をつけたときは、元の列名（eno, ename）を使うと「無効な識別子です」(ORA-00904)になります。ビューの列名を使います。`);
+/* 演習80 FORCEオプション */
+EX(80,12,`まだ存在しない表 testFO をもとに、ビュー testVW を作成する文を書きなさい（元表がなくても作れるオプションをつける）。`,`CREATE FORCE VIEW testvw AS SELECT * FROM testfo;`,`FORCE をつけると、元の表がなくてもビューを作れます（ただし SELECT するとエラー）。ふつうは表を作ってからビューを作ります。`);
+EX(80,12,`データディクショナリ USER_VIEWS を使い、TESTVW ビューの view_name と text を表示するSELECT文を書きなさい。`,`SELECT view_name, text FROM user_views WHERE view_name = 'TESTVW';`,`FORCE で作ったビューも、ディクショナリにはちゃんと登録されています。`);
+/* 演習81 VIEWでのデータ操作（単一ビューを通したDML） */
+EX(81,13,`e_job ビュー(empno, empname, job)を通じて、empno が2000以上の行を削除するDELETE文を書きなさい。`,`DELETE FROM e_job WHERE empno >= 2000;|DELETE e_job WHERE empno >= 2000;`,`単一の表からできたビューなら、DELETE・UPDATE・INSERT ができます。WHERE を忘れると全部消えます。`);
+EX(81,13,`e_job ビュー(empno, empname, job)を通じて、empno が1002の行の empname を 'YAMADA' に変更するUPDATE文を書きなさい。`,`UPDATE e_job SET empname = 'YAMADA' WHERE empno = 1002;`,`ビューの列名（empname）を使います。元の emps表の ename が変わります。`);
+EX(81,13,`e_job ビュー(empno, empname, job)を通じて、2003、'MORIYAMA'、'SALES' を登録するINSERT文を書きなさい（列名は省略する）。`,`INSERT INTO e_job VALUES (2003, 'MORIYAMA', 'SALES');`,`登録後は emps表・e_job ビューのどちらにも出てきます。`);
+/* 演習82 グループ化された列を持つビュー */
+EX(82,13,`emps表をもとに、JOB と、JOBごとの SAL の平均（別名 HEIKIN）を表示するビュー HEIKIN_SAL を作成する文を書きなさい（別名には AS をつける）。`,`CREATE VIEW heikin_sal AS SELECT job, AVG(sal) AS heikin FROM emps GROUP BY job;|CREATE VIEW heikin_sal (job, heikin) AS SELECT job, AVG(sal) FROM emps GROUP BY job;`,`グループ関数を使うビューでは、関数の列に別名が必要です。このビューは DELETE・UPDATE・INSERT ができません（ORA-01732など）。`);
+EX(82,13,`HEIKIN_SAL ビューを削除する文を書きなさい。`,`DROP VIEW heikin_sal;`,`ビューは DROP VIEW で削除します。`);
+/* 演習83 式によって定義された列をもつビュー */
+EX(83,13,`emps表をもとに、ENO列、ENAME列、SAL列の1/2（別名 KISO）を表示するビュー EMPKISO を作成する文を書きなさい（別名には AS をつける）。`,`CREATE VIEW empkiso AS SELECT eno, ename, sal / 2 AS kiso FROM emps;|CREATE VIEW empkiso (eno, ename, kiso) AS SELECT eno, ename, sal / 2 FROM emps;`,`式の列（kiso）は元表にないので「仮想列」です。仮想列を UPDATE したり、値を INSERT したりするとエラー(ORA-01733)になります。`);
+EX(83,13,`empkiso ビュー(eno, ename, kiso)を通じて、計算列を含めずに、eno 3001、ename 'KATO' を登録するINSERT文を書きなさい。`,`INSERT INTO empkiso (eno, ename) VALUES (3001, 'KATO');`,`計算列を含めなければ登録できます。sal が NULL なので kiso も NULL になります。`);
+EX(83,13,`empkiso ビューを通じて、eno が 2002 の行を削除するDELETE文を書きなさい。`,`DELETE FROM empkiso WHERE eno = 2002;|DELETE empkiso WHERE eno = 2002;`,`計算列を含むビューでも、行の削除はできます。`);
+EX(83,13,`ここまでの変更を取り消してから、empkiso ビューを削除する2つの文を、正しい順番で書きなさい。`,`ROLLBACK; DROP VIEW empkiso;`,`DDL（DROP VIEW）を先に実行すると、それまでの変更が自動でコミットされて取り消せなくなります。ROLLBACK が先です。`);
+/* 演習84 NOT NULL制約の列を含まないビュー */
+EX(84,13,`emps表をもとに、ENAME と HIREDATE だけを表示するビュー EMPNULL を作成する文を書きなさい。`,`CREATE VIEW empnull AS SELECT ename, hiredate FROM emps;`,`このビューには NOT NULL の eno（主キー）がないので、INSERT すると「NULLは挿入できません」(ORA-01400)になります。`);
+/* 演習85 読み取り専用のビュー */
+EX(85,13,`emps表の ENO, ENAME, JOB を表示する、読み取り専用のビュー EMP_READ_ONLY を作成する文を書きなさい。`,`CREATE VIEW emp_read_only AS SELECT eno, ename, job FROM emps WITH READ ONLY;`,`WITH READ ONLY をつけると、ビューを通じたDML（登録・更新・削除）ができなくなります(ORA-42399)。`);
+/* 演習86 WITH CHECK OPTION（練習問題） */
+EX(86,13,`emp表のうち deptno が3の行だけを表示するビュー emp_vu を、WHERE句の条件に合わない変更ができないように作成する文を書きなさい（制約名 emp_deptno_ck、SELECT * を使う）。`,`CREATE VIEW emp_vu AS SELECT * FROM emp WHERE deptno = 3 WITH CHECK OPTION CONSTRAINT emp_deptno_ck;`,`このビューで UPDATE emp_vu SET deptno = 2 WHERE empno = 1000; を実行すると、条件（deptno = 3）から外れるのでエラー(ORA-01402)になり、更新されません。`);
+/* 演習87 WHERE句の条件で更新を制限する */
+EX(87,13,`emp表の EMPNO, ENAME, JOB, SAL を表示するビュー V_PART_JOB を、WITH CHECK OPTION つきで作成する文を書きなさい。条件は「empno が1100以上1200以下 かつ sal が1000以上2500以下」（どちらも BETWEEN を使う）。`,`CREATE VIEW v_part_job AS SELECT empno, ename, job, sal FROM emp WHERE empno BETWEEN 1100 AND 1200 AND sal BETWEEN 1000 AND 2500 WITH CHECK OPTION;`,`WITH CHECK OPTION をつけると、WHERE句の条件に合わない行は INSERT も UPDATE もできません(ORA-01402)。`);
+EX(87,13,`v_part_job ビュー(empno, ename, job, sal)を通じて、1100、'TANAKA'、'FLOOR'、1200 を登録するINSERT文を書きなさい（列名は省略する）。`,`INSERT INTO v_part_job VALUES (1100, 'TANAKA', 'FLOOR', 1200);`,`条件の範囲内のデータなので登録できます。empno 11001 や sal 700 だとエラーになります。`);
+EX(87,13,`v_part_job ビューを通じて、empno が1100の行の sal を 6000 に変更しようとするUPDATE文を書きなさい（条件の範囲外なのでエラーになることを確かめる文）。`,`UPDATE v_part_job SET sal = 6000 WHERE empno = 1100;`,`sal 6000 は条件（1000〜2500）の外なので、ORA-01402 になって変更できません。`);
+/* 演習88 WHERE句によるアクセス制限の例 */
+EX(88,13,`emps表の全列を表示するビュー emp_check を、9時から17時前までの間だけ行が戻るように作成する文を書きなさい。条件は TO_CHAR(SYSDATE, 'HH24:MI:SS') が '09:00:00' 以上 かつ '17:00:00' より小さい。WITH CHECK OPTION（制約名 ck_emp_check_vw）をつける。`,`CREATE VIEW emp_check AS SELECT * FROM emps WHERE TO_CHAR(SYSDATE, 'HH24:MI:SS') >= '09:00:00' AND TO_CHAR(SYSDATE, 'HH24:MI:SS') < '17:00:00' WITH CHECK OPTION CONSTRAINT ck_emp_check_vw;`,`業務時間外は条件が成り立たないので、行が1つも戻りません。こうしてアクセスを制限できます。`);
+/* 演習89 表の読み取り専用／読み書き可能 */
+EX(89,13,`emps表を読み取り専用にする文を書きなさい。`,`ALTER TABLE emps READ ONLY;`,`読み取り専用の表には INSERT・UPDATE・DELETE ができません(ORA-12081)。SELECT はできます。`);
+EX(89,13,`読み取り専用にした emps表を、読み書きできる状態に戻す文を書きなさい。`,`ALTER TABLE emps READ WRITE;`,`READ ONLY の反対は READ WRITE です。`);
+/* 演習90 索引の作成 */
+EX(90,14,`次の表 IndexTest を作成するCREATE TABLE文を書きなさい（制約は列レベルで書く）。\n・Iid：NUMBER(3)、PRIMARY KEY（制約名 pk_IndexTest）\n・Iname：VARCHAR2(10)、UNIQUE（制約名はつけない）\n・Idata：VARCHAR2(10)`,`CREATE TABLE indextest (iid NUMBER(3) CONSTRAINT pk_indextest PRIMARY KEY, iname VARCHAR2(10) UNIQUE, idata VARCHAR2(10));`,`PRIMARY KEY と UNIQUE の列には、索引が自動で作られます（索引名は制約名と同じ）。`);
+EX(90,14,`INDEXTEST表に、索引名 idx_Idata で Idata列に索引を作成する文を書きなさい。`,`CREATE INDEX idx_idata ON indextest(idata);`,`CREATE INDEX 索引名 ON 表名(列名); です。CREATE INDEX で作った索引は非一意索引（NONUNIQUE）です。`);
+EX(90,14,`データディクショナリ USER_INDEXES を使い、INDEXTEST表の index_name, table_name, uniqueness を表示するSELECT文を書きなさい。`,`SELECT index_name, table_name, uniqueness FROM user_indexes WHERE table_name = 'INDEXTEST';`,`主キー・UNIQUE制約の索引は UNIQUE、自分で作った索引は NONUNIQUE と表示されます。`);
+EX(90,14,`データディクショナリ USER_IND_COLUMNS を使い、INDEXTEST表の索引の index_name と column_name を表示するSELECT文を書きなさい。`,`SELECT index_name, column_name FROM user_ind_columns WHERE table_name = 'INDEXTEST';`,`どの列に索引がついているかは USER_IND_COLUMNS で調べます。`);
+EX(90,14,`データディクショナリ USER_CONS_COLUMNS を使い、INDEXTEST表の制約の constraint_name と column_name を表示するSELECT文を書きなさい。`,`SELECT constraint_name, column_name FROM user_cons_columns WHERE table_name = 'INDEXTEST';`,`制約名と索引名が同じになっていることが確かめられます。`);
+/* 演習92 索引の削除 */
+EX(92,14,`索引 IDX_IDATA を削除する文を書きなさい。`,`DROP INDEX idx_idata;`,`主キーやUNIQUE制約のための索引（PK_INDEXTESTなど）は DROP INDEX では削除できません(ORA-02429)。`);
+EX(92,14,`INDEXTEST表を削除する文を書きなさい（表の索引もいっしょに自動で削除される）。`,`DROP TABLE indextest;`,`表を削除すると、その表の索引も自動で削除されます。表はごみ箱（RECYCLEBIN）に移ります。`);
+EX(92,14,`削除した INDEXTEST表を、ごみ箱から元に戻す文を書きなさい。`,`FLASHBACK TABLE indextest TO BEFORE DROP;`,`戻した表の索引や制約は、BIN$… というごみ箱の名前になっているので、ALTER INDEX … RENAME TO などで名前を戻します。`);
+EX(92,14,`ごみ箱から戻したあと名前が変わった索引 "BIN$abc" の名前を、idx_idata に変更する文を書きなさい（"BIN$abc" はそのまま書く）。`,`ALTER INDEX "BIN$abc" RENAME TO idx_idata;`,`索引名の変更は ALTER INDEX 古い名前 RENAME TO 新しい名前; です。`);
+EX(92,14,`indextest表の制約 "BIN$xyz" の名前を、pk_IndexTest に変更する文を書きなさい（"BIN$xyz" はそのまま書く）。`,`ALTER TABLE indextest RENAME CONSTRAINT "BIN$xyz" TO pk_indextest;`,`制約名の変更は ALTER TABLE 表名 RENAME CONSTRAINT 古い名前 TO 新しい名前; です。`);
+/* 演習93 順序の作成と使用 */
+EX(93,15,`初期値1000、増分10 の順序 test_seq を作成する文を書きなさい。`,`CREATE SEQUENCE test_seq START WITH 1000 INCREMENT BY 10;|CREATE SEQUENCE test_seq INCREMENT BY 10 START WITH 1000;`,`初期値は START WITH、増分は INCREMENT BY です。MINVALUE を省略すると 1 になります（1000ではない）。`);
+EX(93,15,`データディクショナリ USER_SEQUENCES を使い、TEST_SEQ の sequence_name, min_value, max_value, increment_by, last_number を表示するSELECT文を書きなさい。`,`SELECT sequence_name, min_value, max_value, increment_by, last_number FROM user_sequences WHERE sequence_name = 'TEST_SEQ';`,`last_number は「最後に使った番号」ではなく、次にメモリにキャッシュする番号です（CACHEは省略すると20個）。`);
+EX(93,15,`次の表 dept_n を作成するCREATE TABLE文を書きなさい。\n・did：NUMBER(4)\n・dname：VARCHAR2(10)`,`CREATE TABLE dept_n (did NUMBER(4), dname VARCHAR2(10));`,`順序を使って did に連番を入れるための表です。`);
+EX(93,15,`dept_n表(did, dname)に、順序 test_seq の次の番号と、置換変数 &name を使って登録するINSERT文を書きなさい（列名は省略し、&name は ' ' で囲む）。`,`INSERT INTO dept_n VALUES (test_seq.NEXTVAL, '&name');`,`順序名.NEXTVAL で次の番号を取り出します。&変数名 は実行するときに入力した値に置きかわります。`);
+EX(93,15,`順序 test_seq で最後に採番した番号を表示するSELECT文を書きなさい（DUAL表を使う）。`,`SELECT test_seq.CURRVAL FROM dual;`,`今の番号は CURRVAL、次の番号は NEXTVAL です。`);
+EX(93,15,`順序 test_seq の最小値(MINVALUE)を 10 に変更する文を書きなさい。`,`ALTER SEQUENCE test_seq MINVALUE 10;`,`ALTER SEQUENCE で START WITH（初期値）は変更できません(ORA-02283)。MINVALUE や MAXVALUE は変更できます。`);
+EX(93,15,`順序 test_seq の最大値(MAXVALUE)を 9999 に変更する文を書きなさい。`,`ALTER SEQUENCE test_seq MAXVALUE 9999;`,`定義を変えると、キャッシュされていた番号は捨てられます。`);
+EX(93,15,`順序 test_seq を削除する文を書きなさい。`,`DROP SEQUENCE test_seq;`,`順序を削除しても、すでに表に登録した番号は消えません。`);
+/* 演習94 ユーザの作成 */
+EX(94,16,`ユーザ TBOWNER（パスワード tbownerpass）を作成する文を書きなさい。デフォルト表領域は USERS、USERS表領域に 100MB の QUOTA をつける。`,`CREATE USER tbowner IDENTIFIED BY tbownerpass DEFAULT TABLESPACE users QUOTA 100M ON users;`,`QUOTA サイズ ON 表領域名 で、その表領域を使える量を決めます。100MB は 100M と書きます。`);
+EX(94,16,`ユーザ OPERATOR（パスワード operatorpass）を作成する文を書きなさい（DEFAULT TABLESPACE、QUOTA などの設定はしない）。`,`CREATE USER operator IDENTIFIED BY operatorpass;`,`いちばん簡単なユーザ作成は CREATE USER ユーザ名 IDENTIFIED BY パスワード; です。`);
+/* 演習95 システム権限の付与 */
+EX(95,17,`TBOWNER に、システム権限 CREATE SESSION と CREATE TABLE を1つの文で付与しなさい。`,`GRANT CREATE SESSION, CREATE TABLE TO tbowner;|GRANT CREATE TABLE, CREATE SESSION TO tbowner;`,`CREATE SESSION がないと、ユーザは接続（ログイン）できません。`);
+EX(95,17,`OPERATOR と SELECTOR に、システム権限 CREATE SESSION を1つの文で付与しなさい。`,`GRANT CREATE SESSION TO operator, selector;|GRANT CREATE SESSION TO selector, operator;`,`複数のユーザにはカンマで区切って付与できます。`);
+/* 演習96 オブジェクト権限の付与 */
+EX(96,17,`TBOWNER のスキーマに、次の表 sample を作成するCREATE TABLE文を書きなさい。\n・sid：NUMBER(4)、PRIMARY KEY（制約名 pk_sample）\n・sname：VARCHAR2(10)`,`CREATE TABLE sample (sid NUMBER(4) CONSTRAINT pk_sample PRIMARY KEY, sname VARCHAR2(10));`,`オブジェクト権限は、オブジェクト（表など）を作ったあとで付与します。`);
+EX(96,17,`OPERATOR に、sample表への INSERT、UPDATE、DELETE、SELECT 権限を（この順番で）1つの文で付与しなさい。`,`GRANT INSERT, UPDATE, DELETE, SELECT ON sample TO operator;`,`オブジェクト権限は GRANT 権限 ON オブジェクト TO ユーザ; です。`);
+EX(96,17,`SELECTOR に、game表への SELECT 権限を付与しなさい。`,`GRANT SELECT ON game TO selector;`,`SELECTOR はデータを見ることだけできます。DELETE しようとすると「権限が不足しています」(ORA-01031)になります。`);
+EX(96,17,`SELECTOR の接続で、tbowner ユーザの game表の全部のデータを表示するSELECT文を書きなさい。`,`SELECT * FROM tbowner.game;`,`ほかのユーザの表は スキーマ名.表名 で指定します。`);
+/* 演習97 ロール作成とロールの定義 */
+EX(97,18,`ロール OWNER を作成する文を書きなさい。`,`CREATE ROLE owner;`,`ロールは権限をまとめたものです。CREATE ROLE ロール名; で作ります。`);
+EX(97,18,`ロール OWNER に、CREATE SESSION, CREATE TABLE, CREATE VIEW, CREATE SEQUENCE, CREATE SYNONYM, CREATE PUBLIC SYNONYM の6つのシステム権限を（この順番で）1つの文で付与しなさい。`,`GRANT CREATE SESSION, CREATE TABLE, CREATE VIEW, CREATE SEQUENCE, CREATE SYNONYM, CREATE PUBLIC SYNONYM TO owner;`,`ユーザの代わりにロール名を TO のあとに書きます。`);
+EX(97,18,`ロール DML に、tbowner スキーマの sample表への SELECT、INSERT、UPDATE、DELETE 権限を（この順番で）1つの文で付与しなさい。`,`GRANT SELECT, INSERT, UPDATE, DELETE ON tbowner.sample TO dml;`,`ほかのユーザの表は スキーマ名.表名 で指定します。`);
+EX(97,18,`ロール SEARCH に、tbowner スキーマの game表への SELECT 権限を付与しなさい。`,`GRANT SELECT ON tbowner.game TO search;`,`SEARCH ロールは参照（SELECT）だけです。`);
+EX(97,18,`tbowner ユーザに owner ロールを付与しなさい。`,`GRANT owner TO tbowner;`,`ロールの付与は GRANT ロール名 TO ユーザ; です（ON はいりません）。`);
+/* 演習98 ユーザの作成とロールを通じた権限の付与 */
+EX(98,18,`ユーザ Character を作成する文を書きなさい。パスワード char、デフォルト表領域 USERS、一時表領域 TEMP、USERS に 100M の QUOTA（この順番で書く）。`,`CREATE USER character IDENTIFIED BY char DEFAULT TABLESPACE users TEMPORARY TABLESPACE temp QUOTA 100M ON users;`,`一時表領域は TEMPORARY TABLESPACE で指定します。`);
+EX(98,18,`Character ユーザに owner ロールを付与しなさい。`,`GRANT owner TO character;`,`ロールを付与すると、ロールに入っている権限をまとめて使えるようになります。`);
+/* 演習99 プライベートシノニムの作成 */
+EX(99,19,`PROMOTION_CATEGORIES 表に、prcat という名前のプライベートシノニムを作成する文を書きなさい。`,`CREATE SYNONYM prcat FOR promotion_categories;`,`シノニムは表などの別名です。CREATE SYNONYM 別名 FOR 元の名前; です。`);
+EX(99,19,`シノニム prcat を使って、15、'X(twitter)'、33、'private promotion' を登録するINSERT文を書きなさい（列名は省略する）。`,`INSERT INTO prcat VALUES (15, 'X(twitter)', 33, 'private promotion');`,`シノニムを使っても、元の PROMOTION_CATEGORIES 表に登録されます。`);
+/* 演習100 プライベートシノニムの利用 */
+EX(100,19,`SYSTEM ユーザの接続で、game ユーザの monster 表を参照するプライベートシノニム mon を作成する文を書きなさい。`,`CREATE SYNONYM mon FOR game.monster;`,`スキーマ名.表名 という長い名前の代わりに、短い名前でアクセスでき、スキーマ名もかくせます。`);
+/* 演習101 パブリックシノニムの作成 */
+EX(101,19,`SYSTEM ユーザの接続で、game ユーザの employees 表を参照するパブリックシノニム person を作成する文を書きなさい。`,`CREATE PUBLIC SYNONYM person FOR game.employees;`,`パブリックシノニムは、すべてのユーザが使えるシノニムです。SYNONYM の前に PUBLIC をつけます。`);
+EX(101,19,`person シノニムに対する SELECT 権限を、SELECTOR ユーザに付与しなさい。`,`GRANT SELECT ON person TO selector;`,`シノニムに対しても、オブジェクト権限を付与できます。`);
+EX(101,19,`GAME ユーザの接続で、pokemon_zukann 表を参照するパブリックシノニムを zukann という名前で作成する文を書きなさい。`,`CREATE PUBLIC SYNONYM zukann FOR pokemon_zukann;`,`同じ名前のビュー zukann があるとプライベートシノニムは作れません(ORA-00955)が、パブリックシノニムは作れます。そのときSELECTで戻るのは自分のスキーマのオブジェクト（ビュー）のほうです。`);
+/* 演習102 シノニムの確認 */
+EX(102,19,`データディクショナリ USER_SYNONYMS を使い、synonym_name, table_owner, table_name を表示するSELECT文を書きなさい。`,`SELECT synonym_name, table_owner, table_name FROM user_synonyms;`,`user_synonyms で見えるのはプライベートシノニムだけです。`);
+EX(102,19,`データディクショナリ ALL_SYNONYMS を使い、table_owner が 'GAME' のシノニムの owner, synonym_name, table_owner, table_name を表示するSELECT文を書きなさい。`,`SELECT owner, synonym_name, table_owner, table_name FROM all_synonyms WHERE table_owner = 'GAME';`,`パブリックシノニムは all_synonyms で確認します。owner 列が 'PUBLIC' になっています。`);
+EX(102,19,`SYSTEM の接続で、パブリックシノニム zukann を削除する文を書きなさい。`,`DROP PUBLIC SYNONYM zukann;`,`パブリックシノニムの削除にも PUBLIC が必要です。`);
+
 /* ===== カルテ（第2〜19回・全問を選択式に） =====
   R(回, 問番号, 問題, [選択肢…], 解説, 正解数) … 先頭から「正解数」個が正解 */
 const R=(l,no,q,o,e,n=1)=>add({l,k:'r',t:'c',src:no,q,o,n,e});
@@ -1254,7 +1395,7 @@ R(19,10,`オブジェクトに別名を与え、他のデータベースユー�
   公開ページ（github.io）では version.json を見て、新しい版があれば
   問題を解いていないタイミングでローディング画面を出して自動で読み直す。
   版を上げるときは APP_VER と version.json を同じ値にする。 */
-const APP_VER='2026-11-06.1';
+const APP_VER='2026-11-06.2';
 let UPD=null;
 const SAFE_VIEWS=['home','lessons','lesson','gram','test','record','setup'];
 const isPages=/\.github\.io$/.test(location.hostname);
@@ -1281,6 +1422,7 @@ setInterval(checkUpdate,5*60*1000);
 
 /* ===== お知らせ（アップデート内容）。新しいものを上に足す ===== */
 const NEWS=[
+ {v:'2026-11-06.2',d:'11月6日',t:'演習プリント（演習68〜102）のSQL問題を追加しました',items:['テストタブの「SQL書き込み」の分野別に、後半の演習プリントのSQLを書く問題を追加しました','分野をえらぶと、演習の番号順（演習68→69→…）に出ます。そのあとに、これまでのSQL書き込みの問題が続きます','問題文の最初に【演習76】のように番号がついているので、プリントと見比べながら解けます']},
  {v:'2026-11-06.1',d:'11月6日',t:'カルテを全部復習できるようになりました',items:['テストタブに「カルテ 全問」を追加しました。第2回の問1から第19回まで、授業の順番どおりに全部解けます','「カルテ まだ正解していない問題」で、解いていない問題と最後に間違えた問題だけを解けます。途中でやめても、次は残りから続けられます']},
  {v:'2026-11-05.21',d:'11月5日',t:'音が消えることがある不具合を直しました',items:['ほかのアプリに切りかえたあとや、音楽・動画を再生したあとに、効果音が鳴らなくなることがあったのを直しました','iPhoneのマナーモード（消音スイッチ）がオンのときは、これまでどおり音は鳴りません']},
  {v:'2026-11-05.20',d:'11月5日',t:'もっと楽しく勉強できるようになりました',items:['正解するとXPがたまってレベルが上がります。続けて正解するとコンボになって、XPと正解の音がアップします','ホームに、レベルと何日連続で勉強しているかが出ます','バッジが16種類あります。記録タブで、取ったバッジと取り方が見られます','正解・不正解の動きや、結果の円グラフの動き、全問正解やクリアのときの紙吹雪をつけました（スマホの「視差効果を減らす」がオンのときは動きません）']},
@@ -2086,7 +2228,7 @@ function renderTest(){
   <section class="list">
     <button class="nrow" data-sql="0"><span class="ic">${ICON.pen}</span><span class="tx"><b>全部の分野から10問</b><span>SQLを書く問題 全${QS.filter(q=>q.k==='d').length}問からランダム</span></span>${chev}</button>
     ${CATS.map(c=>{const qs=QS.filter(q=>q.k==='d'&&q.c===c.id),ok=qs.filter(doneOk).length,tr=qs.filter(q=>S.r[q.id]).length;
-      return `<button class="nrow" data-sql="${c.id}"><span class="ic">${c.id}</span><span class="tx"><b>${c.name}</b><span>${qs.length}問${tr?` ・ 正解 ${ok} / ${qs.length}`:''}</span></span>${chev}</button>`}).join('')}
+      return `<button class="nrow" data-sql="${c.id}"><span class="ic">${c.id}</span><span class="tx"><b>${c.name}</b><span>${qs.length}問${qs.some(q=>q.ex)?`（演習${Math.min(...qs.filter(q=>q.ex).map(q=>q.ex))}〜${Math.max(...qs.filter(q=>q.ex).map(q=>q.ex))}を番号順に先に出題）`:''}${tr?` ・ 正解 ${ok} / ${qs.length}`:''}</span></span>${chev}</button>`}).join('')}
   </section>
   <p class="sec-t">形式でえらぶ</p>
   <section class="list">
@@ -2099,7 +2241,7 @@ function renderTest(){
   app.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>quick(b.dataset.q));
   app.querySelectorAll('[data-sql]').forEach(b=>b.onclick=()=>{const c=+b.dataset.sql;
     if(!c)startQuiz(shuffle(QS.filter(q=>q.k==='d')).slice(0,10),'SQL書き込み 10問');
-    else startQuiz(shuffle(QS.filter(q=>q.k==='d'&&q.c===c)),`SQL書き込み：${catName(c)}`)});
+    else{const L=QS.filter(q=>q.k==='d'&&q.c===c);startQuiz([...L.filter(q=>q.ex).sort((a,b)=>a.ex-b.ex),...shuffle(L.filter(q=>!q.ex))],`SQL書き込み：${catName(c)}`)}});
   app.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{const c=+b.dataset.cat;startQuiz(shuffle(QS.filter(q=>q.c===c&&!q.x)).slice(0,10),`${catName(c)} 10問`)});
   document.getElementById('t-set').onclick=()=>go('setup');
 }

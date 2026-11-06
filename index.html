@@ -1254,7 +1254,7 @@ R(19,10,`オブジェクトに別名を与え、他のデータベースユー�
   公開ページ（github.io）では version.json を見て、新しい版があれば
   問題を解いていないタイミングでローディング画面を出して自動で読み直す。
   版を上げるときは APP_VER と version.json を同じ値にする。 */
-const APP_VER='2026-11-05.21';
+const APP_VER='2026-11-06.1';
 let UPD=null;
 const SAFE_VIEWS=['home','lessons','lesson','gram','test','record','setup'];
 const isPages=/\.github\.io$/.test(location.hostname);
@@ -1281,6 +1281,7 @@ setInterval(checkUpdate,5*60*1000);
 
 /* ===== お知らせ（アップデート内容）。新しいものを上に足す ===== */
 const NEWS=[
+ {v:'2026-11-06.1',d:'11月6日',t:'カルテを全部復習できるようになりました',items:['テストタブに「カルテ 全問」を追加しました。第2回の問1から第19回まで、授業の順番どおりに全部解けます','「カルテ まだ正解していない問題」で、解いていない問題と最後に間違えた問題だけを解けます。途中でやめても、次は残りから続けられます']},
  {v:'2026-11-05.21',d:'11月5日',t:'音が消えることがある不具合を直しました',items:['ほかのアプリに切りかえたあとや、音楽・動画を再生したあとに、効果音が鳴らなくなることがあったのを直しました','iPhoneのマナーモード（消音スイッチ）がオンのときは、これまでどおり音は鳴りません']},
  {v:'2026-11-05.20',d:'11月5日',t:'もっと楽しく勉強できるようになりました',items:['正解するとXPがたまってレベルが上がります。続けて正解するとコンボになって、XPと正解の音がアップします','ホームに、レベルと何日連続で勉強しているかが出ます','バッジが16種類あります。記録タブで、取ったバッジと取り方が見られます','正解・不正解の動きや、結果の円グラフの動き、全問正解やクリアのときの紙吹雪をつけました（スマホの「視差効果を減らす」がオンのときは動きません）']},
  {v:'2026-11-05.19',d:'11月5日',t:'授業回を3ステップにしました',items:['授業回の「練習問題」ステップをなくし、「ノート → チェック問題 → カルテ」の3ステップにしました','練習問題に入っていた単語・穴埋め・SQLの問題は、テストタブの「分野ごとに10問」「SQL書き込み」「コードの穴埋め」などから解けます']},
@@ -2089,6 +2090,8 @@ function renderTest(){
   </section>
   <p class="sec-t">形式でえらぶ</p>
   <section class="list">
+    <button class="nrow" data-q="karteAll"><span class="ic">${ICON.card}</span><span class="tx"><b>カルテ 全問（${cnt('r')}問）</b><span>第2回の問1から授業の順番どおりに全部</span></span>${chev}</button>
+    <button class="nrow" data-q="karteLeft" ${karteLeft().length?'':'disabled'}><span class="ic">${ICON.weak}</span><span class="tx"><b>カルテ まだ正解していない問題${karteLeft().length?` ${karteLeft().length}問`:''}</b><span>${karteLeft().length?'解いていない問題と、最後に間違えた問題を授業の順番で':'カルテは全部正解しています！'}</span></span>${chev}</button>
     <button class="nrow" data-q="karte"><span class="ic">${ICON.card}</span><span class="tx"><b>カルテ 10問</b><span>全${cnt('r')}問からランダム</span></span>${chev}</button>
     <button class="nrow" data-q="code"><span class="ic">${ICON.code}</span><span class="tx"><b>コードの穴埋め 10問</b><span>INTO・SET・ON・TO などのキーワード</span></span>${chev}</button>
     <button class="nrow" id="t-set"><span class="ic">${ICON.set}</span><span class="tx"><b>細かく条件を決めて解く</b><span>形式・分野・問題数を自分でえらぶ</span></span>${chev}</button>
@@ -2100,7 +2103,12 @@ function renderTest(){
   app.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{const c=+b.dataset.cat;startQuiz(shuffle(QS.filter(q=>q.c===c&&!q.x)).slice(0,10),`${catName(c)} 10問`)});
   document.getElementById('t-set').onclick=()=>go('setup');
 }
+/* カルテを授業の順番（回 → 問番号）に並べる */
+const karteOrdered=()=>QS.filter(q=>q.k==='r').sort((a,b)=>a.l-b.l||a.src-b.src);
+const karteLeft=()=>karteOrdered().filter(q=>!doneOk(q));
 function quick(t){
+  if(t==='karteAll')startQuiz(karteOrdered(),'カルテ 全問');
+  if(t==='karteLeft')startQuiz(karteLeft(),'カルテ まだ正解していない問題');
   const scope=q=>q.c>0;
   if(t==='karte')startQuiz(shuffle(QS.filter(q=>q.k==='r')).slice(0,10),'カルテ 10問');
   if(t==='code')startQuiz(shuffle(QS.filter(q=>q.k==='k')).slice(0,10),'コードの穴埋め 10問');
